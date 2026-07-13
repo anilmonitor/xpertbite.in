@@ -33,9 +33,9 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.06)]",
         scrolled
-          ? "glass-nav shadow-sm"
+          ? "glass-nav shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
           : "bg-transparent"
       )}
     >
