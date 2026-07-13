@@ -42,15 +42,21 @@ export function Header() {
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between h-16 lg:h-18">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative h-9 w-9 rounded-xl gradient-primary flex items-center justify-center">
-              <span className="text-white font-bold text-lg">X</span>
-              <div className="absolute inset-0 rounded-xl gradient-primary opacity-0 group-hover:opacity-50 blur-lg transition-opacity duration-300" />
+          <Link href="/" className="flex items-center group">
+            <div className="relative h-10 w-10 flex items-center justify-center">
+              {/* Light Mode Logo (Visible in Light Theme) */}
+              <img 
+                src="/logos/xpertbite_logo_light.png" 
+                alt="XpertBite Logo" 
+                className="h-10 w-auto object-contain block dark:hidden group-hover:scale-105 transition-transform duration-300"
+              />
+              {/* Dark Mode Logo (Visible in Dark Theme) */}
+              <img 
+                src="/logos/xpertbite_logo_dark.png" 
+                alt="XpertBite Logo" 
+                className="h-10 w-auto object-contain hidden dark:block group-hover:scale-105 transition-transform duration-300"
+              />
             </div>
-            <span className="font-heading font-bold text-xl hidden sm:block">
-              <span className="gradient-text">Xpert</span>
-              <span className="text-foreground">Bite</span>
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -131,11 +137,19 @@ export function Header() {
                 
                 <div className="flex-1 flex flex-col justify-start">
                   {/* Brand Header inside drawer */}
-                  <div className="flex items-center gap-2 mb-8 border-b pb-4">
-                    <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center text-white font-bold text-sm">X</div>
-                    <span className="font-heading font-bold text-base">
-                      <span className="text-primary">Xpert</span>Bite
-                    </span>
+                  <div className="flex items-center mb-8 border-b pb-4">
+                    <div className="h-9 w-9 flex items-center justify-center">
+                      <img 
+                        src="/logos/xpertbite_logo_light.png" 
+                        alt="XpertBite Logo" 
+                        className="h-9 w-auto object-contain block dark:hidden"
+                      />
+                      <img 
+                        src="/logos/xpertbite_logo_dark.png" 
+                        alt="XpertBite Logo" 
+                        className="h-9 w-auto object-contain hidden dark:block"
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-3">

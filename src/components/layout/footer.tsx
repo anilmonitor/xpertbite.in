@@ -72,13 +72,22 @@ export function Footer() {
           {/* Brand Column */}
           <div className="col-span-2">
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
-              <div className="h-9 w-9 rounded-xl gradient-primary flex items-center justify-center">
-                <span className="text-white font-bold text-lg">X</span>
+              <div className="h-10 w-10 flex items-center justify-center">
+                {/* Always show xpertbite_logo_dark.png in footer as background is always dark */}
+                <img 
+                  src="/logos/xpertbite_logo_dark.png" 
+                  alt="XpertBite Logo" 
+                  className="h-10 w-auto object-contain hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <span className="font-heading font-bold text-xl">
-                <span className="text-primary">Xpert</span>
-                <span className="text-white dark:text-foreground">Bite</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="font-heading font-bold text-xl tracking-tight text-white dark:text-foreground leading-none">
+                  xpertbite
+                </span>
+                <span className="text-[10px] tracking-[0.18em] uppercase text-white/50 dark:text-muted-foreground font-extrabold mt-1.5 leading-none">
+                  Technologies
+                </span>
+              </div>
             </Link>
             <p className="text-white/60 dark:text-muted-foreground text-sm mb-6 max-w-xs">
               {COMPANY.description}

@@ -26,6 +26,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://xpertbite.in"),
+  icons: {
+    icon: "/logos/xpertbite_logo_light.png",
+    shortcut: "/logos/xpertbite_logo_light.png",
+    apple: "/logos/xpertbite_logo_light.png",
+  },
   title: {
     default: "XpertBite Technologies | Software Development Company",
     template: "%s | XpertBite Technologies",

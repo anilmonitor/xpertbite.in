@@ -24,12 +24,20 @@ export function Sidebar() {
     <aside className="w-64 border-r bg-card/60 backdrop-blur-xl h-screen flex flex-col sticky top-0 max-md:hidden">
       <div className="h-16 flex items-center px-6 border-b">
         <Link href="/admin" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center text-white font-bold text-sm">
-            X
+          <div className="h-9 w-9 flex items-center justify-center">
+            <img 
+              src="/logos/xpertbite_logo_light.png" 
+              alt="XpertBite Logo" 
+              className="h-9 w-auto object-contain block dark:hidden"
+            />
+            <img 
+              src="/logos/xpertbite_logo_dark.png" 
+              alt="XpertBite Logo" 
+              className="h-9 w-auto object-contain hidden dark:block"
+            />
           </div>
-          <span className="font-heading font-bold text-lg">
-            <span className="gradient-text">Xpert</span>
-            <span className="text-foreground">Admin</span>
+          <span className="font-heading font-bold text-lg tracking-tight text-foreground">
+            XpertAdmin
           </span>
         </Link>
       </div>
