@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "sonner";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -114,6 +115,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          {/* Google AdSense */}
+          <Script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6651461551545723"
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
           {children}
           <WhatsAppButton />
           <ScrollToTop />
