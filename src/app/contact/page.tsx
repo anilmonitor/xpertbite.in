@@ -46,7 +46,20 @@ export default function ContactPage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-8">
             {[
-              { icon: MapPin, title: "Visit Us", info: `${COMPANY.address.street}, ${COMPANY.address.city}`, action: "#" },
+              { 
+                icon: MapPin, 
+                title: "Visit Us", 
+                info: (
+                  <span className="block text-xs leading-relaxed space-y-1 mt-1">
+                    <span className="font-semibold block text-foreground">Garhwa Office:</span>
+                    <span>{COMPANY.addresses.garhwa}</span>
+                    <span className="block border-t border-border/50 my-1.5" />
+                    <span className="font-semibold block text-foreground">Bangalore Office:</span>
+                    <span>{COMPANY.addresses.bangalore}</span>
+                  </span>
+                ), 
+                action: "#" 
+              },
               { icon: Mail, title: "Email Us", info: COMPANY.email, action: `mailto:${COMPANY.email}` },
               { icon: Phone, title: "Call Us", info: COMPANY.phone, action: `tel:${COMPANY.phone}` },
               { icon: Clock, title: "Working Hours", info: COMPANY.workingHours, action: "#" },
@@ -122,7 +135,7 @@ export default function ContactPage() {
                 {/* Quick Action Buttons */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <a
-                    href={`https://wa.me/919876543210`}
+                    href="https://wa.me/917488168228"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-4 rounded-xl border bg-card hover:bg-emerald-50 dark:hover:bg-emerald-950/20 hover:border-emerald-500/30 transition-all group"

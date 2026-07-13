@@ -88,7 +88,14 @@ export function Footer() {
             <div className="space-y-3 text-sm text-white/60 dark:text-muted-foreground">
               <div className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
-                <span>{COMPANY.address.street}, {COMPANY.address.city}, {COMPANY.address.state} {COMPANY.address.zip}</span>
+                <div className="space-y-1.5 leading-relaxed">
+                  <p>
+                    <span className="font-semibold text-white/80 dark:text-foreground">Garhwa Office:</span> {COMPANY.addresses.garhwa}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-white/80 dark:text-foreground">Bangalore Office:</span> {COMPANY.addresses.bangalore}
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
@@ -148,9 +155,26 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-white/50 dark:text-muted-foreground">
-            <p>
-              © {new Date().getFullYear()} {COMPANY.name}. All rights reserved.
-            </p>
+            <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+              <p>
+                © {new Date().getFullYear()} {COMPANY.name}. All rights reserved.
+              </p>
+              <div className="hidden md:block h-4 w-px bg-white/10 dark:bg-border" />
+              <a
+                href="https://qubitara.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-primary transition-colors group py-1 md:py-0"
+              >
+                <span>Powered by</span>
+                <img
+                  src="/logos/qubitara_Logo.png"
+                  alt="Qubitara Logo"
+                  className="h-5 w-auto object-contain brightness-95 group-hover:brightness-100 group-hover:scale-105 transition-all duration-300"
+                />
+                <span className="font-semibold text-white/80 dark:text-foreground/80 group-hover:text-primary transition-colors">Qubitara</span>
+              </a>
+            </div>
 
 
             <div className="flex items-center gap-4">
