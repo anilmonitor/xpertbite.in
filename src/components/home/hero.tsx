@@ -59,7 +59,6 @@ export function Hero() {
               </div>
             </motion.div>
 
-            {/* Main Heading */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -67,15 +66,7 @@ export function Hero() {
               className="text-4xl sm:text-5xl md:text-6xl font-bold font-heading leading-[1.15] mb-6 text-balance"
             >
               Transforming Ideas Into{" "}
-              <span className="relative inline-block">
-                <span className="gradient-text">Digital Reality</span>
-                <motion.span
-                  className="absolute -bottom-1.5 left-0 right-0 h-1 gradient-primary rounded-full"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.8, delay: 0.8 }}
-                />
-              </span>
+              <span className="gradient-text">Digital Reality</span>
             </motion.h1>
 
             {/* Subtitle */}

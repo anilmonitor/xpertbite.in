@@ -36,8 +36,8 @@ export const BRAND = {
 // ─── Statistics ──────────────────────────────────────────────
 export const STATS = [
   { label: "Years Experience", value: 8, suffix: "+" },
-  { label: "Projects Completed", value: 500, suffix: "+" },
-  { label: "Happy Clients", value: 300, suffix: "+" },
+  { label: "Projects Completed", value: "10k", suffix: "+" },
+  { label: "Happy Clients", value: 800, suffix: "+" },
   { label: "Secure & Encrypted", value: 100, suffix: "%" },
 ] as const;
 

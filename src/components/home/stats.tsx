@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { STATS } from "@/lib/constants";
 import { Users, Briefcase, Code2, ShieldCheck } from "lucide-react";
@@ -31,7 +30,7 @@ export function Stats() {
                     <Icon className="h-4.5 w-4.5" />
                   </div>
                   <div className="text-2xl md:text-3xl font-bold font-heading text-foreground mb-0.5 group-hover:scale-105 transition-transform duration-300">
-                    <AnimatedCounter end={stat.value} suffix={stat.suffix} />
+                    <span>{stat.value}{stat.suffix}</span>
                   </div>
                   <div className="text-xs text-muted-foreground group-hover:text-foreground font-medium transition-colors duration-300">
                     {stat.label}
