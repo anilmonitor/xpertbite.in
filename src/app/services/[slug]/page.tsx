@@ -111,32 +111,6 @@ export default async function ServiceDetailPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Related Services */}
-      {related.length > 0 && (
-        <section className="py-20 bg-muted/30">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <ScrollReveal>
-              <h2 className="text-3xl font-heading font-bold mb-10">Related Services</h2>
-            </ScrollReveal>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {related.map((s) => {
-                const SIcon = s.icon;
-                return (
-                  <ScrollReveal key={s.slug} animation="fade-up">
-                    <Link href={`/services/${s.slug}`} className="group block">
-                      <div className="p-6 rounded-2xl border bg-card hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                        <SIcon className="h-8 w-8 text-primary mb-4" />
-                        <h3 className="font-heading font-bold mb-2 group-hover:text-primary transition-colors">{s.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">{s.shortDescription}</p>
-                      </div>
-                    </Link>
-                  </ScrollReveal>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
 
       <CTASection />
     </PublicLayout>

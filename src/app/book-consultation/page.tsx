@@ -54,15 +54,15 @@ export default function BookConsultationPage() {
                   <ul className="space-y-4">
                     <li className="flex gap-3 text-sm leading-relaxed">
                       <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                      <span><strong>30-Minute Architecture Review:</strong> Quick sanity check of your proposed stack or requirements.</span>
+                      <span><strong>30-Minute Tech & Stack Review:</strong> Quick technical check of your requirements and tech stack.</span>
                     </li>
                     <li className="flex gap-3 text-sm leading-relaxed">
                       <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                      <span><strong>Budget & Estimate Guidelines:</strong> Clear ballpark details to align your investment plans.</span>
+                      <span><strong>Budget & Cost Estimates:</strong> Clear ballpark details to plan your project budget.</span>
                     </li>
                     <li className="flex gap-3 text-sm leading-relaxed">
                       <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                      <span><strong>Confidential Conversation:</strong> Strict NDAs applied. Your business secrets are safe with us.</span>
+                      <span><strong>100% Confidential Call:</strong> Strict NDAs applied. Your business secrets and ideas are completely safe.</span>
                     </li>
                   </ul>
 

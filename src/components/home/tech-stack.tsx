@@ -16,13 +16,13 @@ export function TechStack() {
   const secondRow = techList.slice(techList.length / 2);
 
   return (
-    <section className="py-16 md:py-24 relative overflow-hidden">
+    <section className="py-12 md:py-16 relative overflow-hidden">
       <div className="container mx-auto px-4">
         <ScrollReveal>
           <SectionHeader
             badge="Technologies"
-            title="Our Tech Arsenal"
-            subtitle="We leverage the latest technologies to build scalable, performant, and future-proof solutions."
+            title="Technologies We Use"
+            subtitle="We work with modern programming languages, frameworks, and cloud platforms to build reliable software for your business."
           />
         </ScrollReveal>
       </div>

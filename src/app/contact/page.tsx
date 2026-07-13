@@ -1,13 +1,11 @@
 "use client";
 
-import type { Metadata } from "next";
 import PublicLayout from "@/components/layout/public-layout";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { COMPANY } from "@/lib/constants";
 import { MapPin, Mail, Phone, Clock, MessageCircle, PhoneCall, Send } from "lucide-react";
 import { useState } from "react";
@@ -29,9 +27,9 @@ export default function ContactPage() {
   return (
     <PublicLayout>
       {/* Hero */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh" />
-        <div className="container mx-auto px-4 relative">
+      <section className="pt-32 pb-20 relative overflow-hidden bg-gradient-to-b from-background via-muted/5 to-background">
+        <div className="absolute inset-0 gradient-mesh opacity-60" />
+        <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal>
             <SectionHeader
               title="Let's Start a Conversation"
@@ -42,37 +40,71 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Cards */}
-      <section className="pb-16">
+      <section className="pb-16 relative z-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 -mt-10">
             {[
               { 
                 icon: MapPin, 
                 title: "Visit Us", 
                 info: (
-                  <span className="block text-xs leading-relaxed space-y-1 mt-1">
-                    <span className="font-semibold block text-foreground">Garhwa Office:</span>
-                    <span>{COMPANY.addresses.garhwa}</span>
-                    <span className="block border-t border-border/50 my-1.5" />
-                    <span className="font-semibold block text-foreground">Bangalore Office:</span>
-                    <span>{COMPANY.addresses.bangalore}</span>
+                  <span className="block text-xs leading-relaxed space-y-1.5 mt-2 w-full">
+                    <span className="block"><strong className="text-foreground">Garhwa Office:</strong> Garhwa, JH - 822114</span>
+                    <span className="block border-t border-border/50 my-1" />
+                    <span className="block"><strong className="text-foreground">Bangalore Office:</strong> Bangalore, KA</span>
                   </span>
                 ), 
                 action: "#" 
               },
-              { icon: Mail, title: "Email Us", info: COMPANY.email, action: `mailto:${COMPANY.email}` },
-              { icon: Phone, title: "Call Us", info: COMPANY.phone, action: `tel:${COMPANY.phone}` },
-              { icon: Clock, title: "Working Hours", info: COMPANY.workingHours, action: "#" },
+              { 
+                icon: Mail, 
+                title: "Email Us", 
+                info: (
+                  <span className="block text-xs leading-relaxed space-y-1.5 mt-2 w-full">
+                    <span className="block"><strong className="text-foreground">General Info:</strong> hello@xpertbite.in</span>
+                    <span className="block border-t border-border/50 my-1" />
+                    <span className="block"><strong className="text-foreground">Client Support:</strong> support@xpertbite.in</span>
+                  </span>
+                ), 
+                action: `mailto:${COMPANY.email}` 
+              },
+              { 
+                icon: Phone, 
+                title: "Call Us", 
+                info: (
+                  <span className="block text-xs leading-relaxed space-y-1.5 mt-2 w-full">
+                    <span className="block"><strong className="text-foreground">Primary Hotline:</strong> {COMPANY.phone}</span>
+                    <span className="block border-t border-border/50 my-1" />
+                    <span className="block"><strong className="text-foreground">WhatsApp Call:</strong> +91 74881 68228</span>
+                  </span>
+                ), 
+                action: `tel:${COMPANY.phone}` 
+              },
+              { 
+                icon: Clock, 
+                title: "Working Hours", 
+                info: (
+                  <span className="block text-xs leading-relaxed space-y-1.5 mt-2 w-full">
+                    <span className="block"><strong className="text-foreground">Mon - Fri:</strong> 9:00 AM - 6:00 PM IST</span>
+                    <span className="block border-t border-border/50 my-1" />
+                    <span className="block"><strong className="text-foreground">Saturday:</strong> 10:00 AM - 2:00 PM IST</span>
+                  </span>
+                ), 
+                action: "#" 
+              },
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <ScrollReveal key={item.title} animation="fade-up">
-                  <a href={item.action} className="block p-6 rounded-2xl border bg-card hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-center group">
-                    <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:text-white transition-all">
-                      <Icon className="h-6 w-6" />
+                <ScrollReveal key={item.title} animation="fade-up" className="h-full">
+                  <a 
+                    href={item.action} 
+                    className="flex flex-col h-full p-6 rounded-2xl border border-border/60 bg-card/65 backdrop-blur-md hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 text-center group"
+                  >
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:text-white transition-all shadow-sm group-hover:shadow-md">
+                      <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="font-heading font-bold mb-1">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.info}</p>
+                    <h3 className="font-heading font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{item.title}</h3>
+                    <div className="text-xs text-muted-foreground flex-grow flex items-center justify-center w-full">{item.info}</div>
                   </a>
                 </ScrollReveal>
               );
@@ -82,36 +114,36 @@ export default function ContactPage() {
       </section>
 
       {/* Form + Map */}
-      <section className="py-16">
+      <section className="py-12 bg-background relative z-10">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <ScrollReveal animation="fade-right">
-              <div className="p-8 rounded-2xl border bg-card">
-                <h2 className="text-2xl font-heading font-bold mb-6">Send Us a Message</h2>
+              <div className="p-8 rounded-2xl border border-border/60 bg-card/40 backdrop-blur-sm">
+                <h2 className="text-2xl font-heading font-bold mb-6 text-foreground">Send Us a Message</h2>
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Full Name</label>
-                      <Input placeholder="Anil Kumar" required />
+                      <label className="text-sm font-medium mb-1.5 block text-foreground">Full Name</label>
+                      <Input placeholder="Anil Kumar" required className="bg-background/50" />
                     </div>
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Email Address</label>
-                      <Input type="email" placeholder="amit@example.com" required />
+                      <label className="text-sm font-medium mb-1.5 block text-foreground">Email Address</label>
+                      <Input type="email" placeholder="amit@example.com" required className="bg-background/50" />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Phone Number</label>
-                      <Input type="tel" placeholder="+91 9876 543 210" />
+                      <label className="text-sm font-medium mb-1.5 block text-foreground">Phone Number</label>
+                      <Input type="tel" placeholder="+91 9876 543 210" className="bg-background/50" />
                     </div>
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Subject</label>
-                      <Input placeholder="Project Inquiry" required />
+                      <label className="text-sm font-medium mb-1.5 block text-foreground">Subject</label>
+                      <Input placeholder="Project Inquiry" required className="bg-background/50" />
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1.5 block">Message</label>
-                    <Textarea placeholder="Tell us about your project..." rows={5} required />
+                    <label className="text-sm font-medium mb-1.5 block text-foreground">Message</label>
+                    <Textarea placeholder="Tell us about your project..." rows={5} required className="bg-background/50" />
                   </div>
                   <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={loading}>
                     {loading ? "Sending..." : "Send Message"}
@@ -124,11 +156,12 @@ export default function ContactPage() {
             <ScrollReveal animation="fade-left">
               <div className="space-y-6">
                 {/* Map Placeholder */}
-                <div className="h-72 rounded-2xl bg-muted border overflow-hidden flex items-center justify-center">
-                  <div className="text-center text-muted-foreground">
-                    <MapPin className="h-10 w-10 mx-auto mb-2 text-primary" />
-                    <p className="text-sm font-medium">Google Maps Integration</p>
-                    <p className="text-xs">Garhwa, Jharkhand & Bangalore, Karnataka</p>
+                <div className="h-72 rounded-2xl bg-muted/30 border border-border/60 overflow-hidden flex items-center justify-center relative">
+                  <div className="absolute inset-0 bg-[radial-gradient(#8b5cf6_1px,transparent_1px)] [background-size:16px_16px] opacity-10" />
+                  <div className="text-center text-muted-foreground relative z-10 p-6">
+                    <MapPin className="h-10 w-10 mx-auto mb-3 text-primary animate-pulse" />
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Google Maps Integration</h3>
+                    <p className="text-xs text-muted-foreground max-w-xs mx-auto">Garhwa, Jharkhand & Bangalore, Karnataka Office Hubs</p>
                   </div>
                 </div>
 
@@ -138,25 +171,26 @@ export default function ContactPage() {
                     href="https://wa.me/917488168228"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-4 rounded-xl border bg-card hover:bg-emerald-50 dark:hover:bg-emerald-950/20 hover:border-emerald-500/30 transition-all group"
+                    className="flex items-center gap-3 p-4 rounded-xl border border-border/55 bg-card/40 hover:bg-emerald-500/5 hover:border-emerald-500/20 transition-all duration-300 group"
                   >
-                    <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20">
-                      <MessageCircle className="h-5 w-5 text-emerald-600" />
+                    <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
+                      <MessageCircle className="h-5 w-5 text-emerald-600 group-hover:text-white" />
                     </div>
                     <div>
-                      <div className="font-medium text-sm">WhatsApp</div>
-                      <div className="text-xs text-muted-foreground">Chat with us</div>
+                      <div className="font-semibold text-sm text-foreground">WhatsApp</div>
+                      <div className="text-xs text-muted-foreground">Chat with us instantly</div>
                     </div>
                   </a>
+
                   <a
                     href={`tel:${COMPANY.phone}`}
-                    className="flex items-center gap-3 p-4 rounded-xl border bg-card hover:bg-blue-50 dark:hover:bg-blue-950/20 hover:border-blue-500/30 transition-all group"
+                    className="flex items-center gap-3 p-4 rounded-xl border border-border/55 bg-card/40 hover:bg-primary/5 hover:border-primary/20 transition-all duration-300 group"
                   >
-                    <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20">
-                      <PhoneCall className="h-5 w-5 text-blue-600" />
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                      <PhoneCall className="h-5 w-5 text-primary group-hover:text-white" />
                     </div>
                     <div>
-                      <div className="font-medium text-sm">Call Now</div>
+                      <div className="font-semibold text-sm text-foreground">Call Now</div>
                       <div className="text-xs text-muted-foreground">{COMPANY.phone}</div>
                     </div>
                   </a>

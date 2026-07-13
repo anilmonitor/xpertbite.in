@@ -12,9 +12,10 @@ import { Send, FileText, CheckCircle2 } from "lucide-react";
 
 export default function RequestQuotePage() {
   const [loading, setLoading] = useState(false);
-  const [budget, setBudget] = useState<string>("$5,000 - $10,000");
+  const [budget, setBudget] = useState<string>("₹1 Lakh - ₹5 Lakh");
+  const [category, setCategory] = useState<string>("Web Application");
 
-  const budgets = ["<$5,000", "$5,000 - $10,000", "$10,000 - $25,000", "$25,000 - $50,000", "$50,000+"];
+  const budgets = ["< ₹1 Lakh", "₹1 Lakh - ₹5 Lakh", "₹5 Lakh - ₹10 Lakh", "₹10 Lakh - ₹25 Lakh", "₹25 Lakh+"];
 
   const handleQuoteRequest = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,34 +28,55 @@ export default function RequestQuotePage() {
 
   return (
     <PublicLayout>
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh" />
-        <div className="container mx-auto px-4 relative">
+      <section className="py-24 relative overflow-hidden bg-gradient-to-b from-background via-muted/10 to-background">
+        {/* Decorative background blobs */}
+        <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal>
             <SectionHeader
-              title="Request a Custom Project Quote"
-              subtitle="Fill in your project requirements and expected metrics to get a detailed breakdown from our development estimators."
+              title="Start a Project"
+              subtitle="Tell us about your project requirements to get a detailed proposal and estimate from our development team."
             />
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-5xl mx-auto mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-5xl mx-auto mt-12">
             {/* Sidebar Guidelines */}
             <div className="lg:col-span-4 space-y-6">
               <ScrollReveal animation="fade-right">
-                <div className="p-6 rounded-2xl border bg-card space-y-6">
-                  <h3 className="text-lg font-heading font-bold">Why XpertBite:</h3>
-                  <ul className="space-y-4">
+                <div className="p-6 rounded-2xl border border-primary/10 bg-gradient-to-b from-primary/5 via-accent/5 to-transparent backdrop-blur-sm shadow-lg shadow-primary/5 space-y-6">
+                  <h3 className="text-lg font-heading font-bold text-foreground flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    Why XpertBite:
+                  </h3>
+                  <ul className="space-y-5">
                     <li className="flex gap-3 text-sm leading-relaxed">
-                      <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                      <span><strong>No Hidden Expenses:</strong> Detailed itemized breakdown of hours, licenses, and resource rates.</span>
+                      <div className="h-6 w-6 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <CheckCircle2 className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>
+                        <strong className="text-foreground block font-semibold">No Hidden Charges</strong>
+                        <span className="text-muted-foreground text-xs block mt-0.5">Transparent pricing. You will get complete details of project cost, timeline, and resources with zero hidden costs.</span>
+                      </span>
                     </li>
                     <li className="flex gap-3 text-sm leading-relaxed">
-                      <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                      <span><strong>Dedicated Team:</strong> Senior solution architects assigned to design and test your prototype.</span>
+                      <div className="h-6 w-6 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <CheckCircle2 className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>
+                        <strong className="text-foreground block font-semibold">Dedicated Team</strong>
+                        <span className="text-muted-foreground text-xs block mt-0.5">Experienced developers and UI/UX designers will work directly on your project from start to finish.</span>
+                      </span>
                     </li>
                     <li className="flex gap-3 text-sm leading-relaxed">
-                      <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
-                      <span><strong>Scalable Approach:</strong> We suggest MVP structures to build incrementally without high upfront costs.</span>
+                      <div className="h-6 w-6 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <CheckCircle2 className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>
+                        <strong className="text-foreground block font-semibold">Start Small (MVP)</strong>
+                        <span className="text-muted-foreground text-xs block mt-0.5">We help you launch a basic version of your product first to save budget, and then scale it as your business grows.</span>
+                      </span>
                     </li>
                   </ul>
                 </div>
@@ -64,71 +86,97 @@ export default function RequestQuotePage() {
             {/* Form card */}
             <div className="lg:col-span-8">
               <ScrollReveal animation="fade-left">
-                <div className="p-6 md:p-8 rounded-2xl border bg-card shadow-sm">
-                  <h3 className="text-xl font-heading font-bold mb-6">Project Specifications</h3>
+                <div className="p-6 md:p-8 rounded-2xl border border-border/60 bg-card/40 backdrop-blur-md shadow-xl shadow-muted-foreground/5">
+                  <h3 className="text-xl font-heading font-bold mb-1 text-foreground">Project Specifications</h3>
+                  <p className="text-xs text-muted-foreground mb-6">Please fill in the fields below to start your engagement.</p>
+                  
                   <form onSubmit={handleQuoteRequest} className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block">Full Name</label>
-                        <Input placeholder="Anil Kumar" required />
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Full Name</label>
+                        <Input 
+                          placeholder="Anil Kumar" 
+                          required 
+                          className="bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl h-10" 
+                        />
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block">Company Name</label>
-                        <Input placeholder="Company Inc." required />
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Company Name</label>
+                        <Input 
+                          placeholder="Company Inc." 
+                          required 
+                          className="bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl h-10" 
+                        />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block">Business Email</label>
-                        <Input type="email" placeholder="amit@company.com" required />
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Business Email</label>
+                        <Input 
+                          type="email" 
+                          placeholder="amit@company.com" 
+                          required 
+                          className="bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl h-10" 
+                        />
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block">Project Category</label>
-                        <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Project Category</label>
+                        <select 
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          className="flex h-10 w-full rounded-xl border border-border/60 bg-background/50 backdrop-blur-sm px-3 py-2 text-sm focus-visible:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+                        >
                           <option>Web Application</option>
                           <option>Mobile App (iOS/Android)</option>
+                          <option>E-Commerce Website & Store</option>
+                          <option>Delivery & Logistics App</option>
                           <option>SaaS Platform</option>
                           <option>Enterprise ERP/CRM</option>
-                          <option>AI/ML Solution</option>
-                          <option>Custom Software</option>
+                          <option>AI/ML & Automation Solution</option>
+                          <option>Corporate & Business Website</option>
+                          <option>Custom Software Development</option>
+                          <option>Other</option>
                         </select>
+                        {category === "Other" && (
+                          <Input 
+                            placeholder="Enter your custom project category (e.g., IoT, Blockchain, etc.)" 
+                            required 
+                            className="bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl h-10 mt-3 animate-fade-in" 
+                          />
+                        )}
                       </div>
                     </div>
 
                     {/* Budget selector */}
                     <div>
-                      <label className="text-sm font-medium mb-2.5 block">Estimated Budget Range (USD)</label>
-                      <div className="flex flex-wrap gap-2">
+                      <label className="text-sm font-medium mb-1.5 block text-foreground/90">Estimated Budget Range (INR)</label>
+                      <select 
+                        value={budget}
+                        onChange={(e) => setBudget(e.target.value)}
+                        className="flex h-10 w-full rounded-xl border border-border/60 bg-background/50 backdrop-blur-sm px-3 py-2 text-sm focus-visible:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+                      >
                         {budgets.map((b) => (
-                          <button
-                            key={b}
-                            type="button"
-                            onClick={() => setBudget(b)}
-                            className={`px-4 py-2 text-xs font-semibold rounded-lg border transition-all ${
-                              budget === b
-                                ? "bg-primary text-white border-primary"
-                                : "bg-muted text-muted-foreground hover:bg-muted/80"
-                            }`}
-                          >
+                          <option key={b} value={b} className="bg-card text-foreground">
                             {b}
-                          </button>
+                          </option>
                         ))}
-                      </div>
+                      </select>
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Project Description & Requirements</label>
+                      <label className="text-sm font-medium mb-1.5 block text-foreground/90">Project Description & Requirements</label>
                       <Textarea
                         placeholder="Detail key feature requests, integration requirements (like Stripe, OAuth), design guidelines, or target timeline..."
                         rows={5}
                         required
+                        className="bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl resize-none"
                       />
                     </div>
 
-                    <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={loading}>
-                      {loading ? "Submitting details..." : "Request Proposal & Estimate"}
-                      <Send className="h-4 w-4 ml-2" />
+                    <Button type="submit" variant="gradient" size="lg" className="w-full h-11 rounded-xl shadow-lg shadow-primary/10 group" disabled={loading}>
+                      {loading ? "Submitting details..." : "Start Project with Us"}
+                      <Send className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </form>
                 </div>

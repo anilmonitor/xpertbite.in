@@ -6,7 +6,7 @@ import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/scr
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { products } from "@/data/mock-data";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight, ExternalLink, Play } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -22,38 +22,58 @@ const statusColors: Record<string, string> = {
 export default function ProductsPage() {
   return (
     <PublicLayout>
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh" />
-        <div className="container mx-auto px-4 relative">
+      <section className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-background via-muted/5 to-background">
+        {/* Decorative background blobs */}
+        <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/10 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal>
-            <SectionHeader title="Our Product Suite" subtitle="Powerful SaaS products built with the same quality and care we bring to every client project." />
+            <SectionHeader 
+              title="Our Product Suite" 
+              subtitle="We build powerful, ready-to-deploy software products to accelerate your business growth." 
+            />
           </ScrollReveal>
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+
+          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
             {products.map((product) => (
               <StaggerItem key={product.slug}>
-                <div className="h-full p-8 rounded-2xl border bg-card hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-accent/[0.03] opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <Badge className={statusColors[product.status]}>{product.status}</Badge>
-                        <h3 className="text-2xl font-heading font-bold mt-3">{product.name}</h3>
-                        <p className="text-sm text-primary font-medium mt-1">{product.tagline}</p>
-                      </div>
-                      <span className="text-sm font-semibold text-muted-foreground bg-muted px-3 py-1 rounded-full">{product.price}</span>
+                <div className="h-full p-5 rounded-2xl border border-border/60 bg-card/40 backdrop-blur-md hover:shadow-xl hover:shadow-primary/5 hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-accent/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  
+                  <div className="relative z-10 flex-grow">
+                    <div className="flex items-center justify-between mb-3">
+                      <Badge className={`text-[10px] px-2 py-0.5 ${statusColors[product.status]}`}>{product.status}</Badge>
                     </div>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-6">{product.description}</p>
-                    <div className="grid grid-cols-2 gap-2 mb-6">
-                      {product.features.map((f) => (
-                        <div key={f} className="flex items-center gap-2 text-sm">
-                          <div className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" /><span className="text-muted-foreground">{f}</span>
+
+                    <h3 className="text-lg font-heading font-bold text-foreground group-hover:text-primary transition-colors">{product.name}</h3>
+                    <p className="text-xs text-muted-foreground font-medium mt-0.5">{product.category}</p>
+                    
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-3 line-clamp-3 min-h-[48px]">{product.description}</p>
+                    
+                    <div className="space-y-1.5 my-4 pt-3 border-t border-border/40">
+                      {product.features.slice(0, 4).map((f) => (
+                        <div key={f} className="flex items-center gap-2 text-[11px]">
+                          <div className="h-1 w-1 rounded-full bg-primary/70 shrink-0" />
+                          <span className="text-muted-foreground line-clamp-1">{f}</span>
                         </div>
                       ))}
                     </div>
-                    <div className="flex gap-3">
-                      <Button variant="default" size="sm" asChild><Link href={`/products/${product.slug}`}>Details <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
-                      {product.demoUrl && (<Button variant="outline" size="sm" asChild><a href={product.demoUrl} target="_blank" rel="noopener noreferrer">Demo <ExternalLink className="h-3.5 w-3.5 ml-1" /></a></Button>)}
-                    </div>
+                  </div>
+
+                  <div className="relative z-10 flex gap-2 mt-2 pt-3 border-t border-border/40">
+                    <Button variant="default" size="sm" className="flex-1 text-xs h-8 rounded-lg" asChild>
+                      <Link href={`/products/${product.slug}`}>
+                        Details <ArrowRight className="h-3 w-3 ml-1" />
+                      </Link>
+                    </Button>
+                    {product.demoUrl && (
+                      <Button variant="outline" size="sm" className="flex-1 text-xs h-8 rounded-lg" asChild>
+                        <a href={product.demoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5">
+                          <Play className="h-2.5 w-2.5 text-primary fill-current" /> Demo
+                        </a>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </StaggerItem>

@@ -3,9 +3,9 @@
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { STATS } from "@/lib/constants";
-import { Award, Globe2, Users, Briefcase, Code2, Trophy } from "lucide-react";
+import { Users, Briefcase, Code2, ShieldCheck } from "lucide-react";
 
-const icons = [Briefcase, Code2, Users, Globe2, Award, Trophy];
+const icons = [Briefcase, Code2, Users, ShieldCheck];
 
 export function Stats() {
   return (
@@ -13,9 +13,9 @@ export function Stats() {
       <div className="absolute inset-0 gradient-mesh opacity-50" />
       <div className="container mx-auto px-4 relative">
         <ScrollReveal>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 lg:gap-6 max-w-4xl mx-auto">
             {STATS.map((stat, index) => {
-              const Icon = icons[index] || Award;
+              const Icon = icons[index] || ShieldCheck;
               return (
                 <div
                   key={stat.label}

@@ -38,9 +38,7 @@ export const STATS = [
   { label: "Years Experience", value: 8, suffix: "+" },
   { label: "Projects Completed", value: 500, suffix: "+" },
   { label: "Happy Clients", value: 300, suffix: "+" },
-  { label: "Countries Served", value: 15, suffix: "+" },
-  { label: "Team Members", value: 50, suffix: "+" },
-  { label: "Awards Won", value: 25, suffix: "+" },
+  { label: "Secure & Encrypted", value: 100, suffix: "%" },
 ] as const;
 
 // ─── Navigation ──────────────────────────────────────────────
@@ -66,7 +64,6 @@ export const NAV_ITEMS = [
     href: "/about",
     children: [
       { label: "About Us", href: "/about", description: "Our story, mission, and values" },
-      { label: "Portfolio", href: "/portfolio", description: "Showcasing our best work" },
       { label: "Case Studies", href: "/case-studies", description: "In-depth project breakdowns" },
       { label: "Technologies", href: "/technologies", description: "Our tech stack expertise" },
       { label: "Our Process", href: "/process", description: "How we deliver excellence" },
@@ -83,10 +80,6 @@ export const NAV_ITEMS = [
       { label: "FAQ", href: "/faq", description: "Frequently asked questions" },
       { label: "Support", href: "/support", description: "Get help when you need it" },
     ],
-  },
-  {
-    label: "Pricing",
-    href: "/pricing",
   },
   {
     label: "Contact",
@@ -107,7 +100,6 @@ export const FOOTER_LINKS = {
   resources: [
     { label: "Blog", href: "/blog" },
     { label: "Case Studies", href: "/case-studies" },
-    { label: "Portfolio", href: "/portfolio" },
     { label: "Industries", href: "/industries" },
     { label: "Career", href: "/careers" },
     { label: "Internships", href: "/internships" },

@@ -114,7 +114,7 @@ export function Header() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <Button variant="gradient" size="sm" className="hidden sm:inline-flex" asChild>
-              <Link href="/contact">Get a Quote</Link>
+              <Link href="/request-quote">Start a Project</Link>
             </Button>
 
             {/* Mobile Menu */}
@@ -201,8 +201,8 @@ export function Header() {
                 {/* Drawer Footer CTA */}
                 <div className="mt-8 pt-4 border-t border-border">
                   <Button variant="gradient" className="w-full h-10 shadow-lg shadow-primary/20" asChild>
-                    <Link href="/contact" onClick={() => setMobileOpen(false)}>
-                      Get a Quote <ArrowRight className="h-4 w-4 ml-1.5" />
+                    <Link href="/request-quote" onClick={() => setMobileOpen(false)}>
+                      Start a Project <ArrowRight className="h-4 w-4 ml-1.5" />
                     </Link>
                   </Button>
                 </div>
