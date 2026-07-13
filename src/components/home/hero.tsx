@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-fit lg:min-h-screen flex items-center justify-center overflow-hidden pt-28 pb-10 lg:py-0">
       {/* Animated Background */}
       <div className="absolute inset-0 gradient-mesh" />
       <div className="absolute inset-0 bg-grid opacity-30 dark:opacity-10" />
@@ -26,7 +26,7 @@ export function Hero() {
         <div className="absolute top-0 bottom-0 right-[20%] w-px bg-gradient-to-b from-transparent via-accent/10 to-transparent" />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10 py-12 md:py-24">
+      <div className="container mx-auto px-4 relative z-10 py-6 lg:py-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
           {/* Left Column: Heading and CTAs */}

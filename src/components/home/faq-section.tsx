@@ -9,7 +9,7 @@ export function FAQSection() {
   const homeFaqs = faqs.slice(0, 6);
 
   return (
-    <section className="py-24 relative bg-muted/30">
+    <section className="py-16 md:py-24 relative bg-muted/30">
       <div className="container mx-auto px-4">
         <ScrollReveal>
           <SectionHeader

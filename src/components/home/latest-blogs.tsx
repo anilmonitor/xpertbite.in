@@ -11,7 +11,7 @@ export function LatestBlogs() {
   const latest = blogPosts.slice(0, 3);
 
   return (
-    <section className="py-24 relative">
+    <section className="py-16 md:py-24 relative">
       <div className="container mx-auto px-4">
         <ScrollReveal>
           <SectionHeader

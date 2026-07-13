@@ -17,7 +17,7 @@ export function Testimonials() {
   const next = () => setCurrent((c) => Math.min(maxIndex, c + 1));
 
   return (
-    <section className="py-24 relative">
+    <section className="py-16 md:py-24 relative">
       <div className="container mx-auto px-4">
         <ScrollReveal>
           <div className="flex items-end justify-between mb-12">

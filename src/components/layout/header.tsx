@@ -2,17 +2,27 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Menu, ChevronDown, ArrowRight } from "lucide-react";
+import { Menu, ChevronDown, ArrowRight, Code2, Database, Users, BookOpen, CreditCard, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { NAV_ITEMS, COMPANY } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
+const itemIcons: Record<string, any> = {
+  "Services": Code2,
+  "Products": Database,
+  "Company": Users,
+  "Resources": BookOpen,
+  "Pricing": CreditCard,
+  "Contact": Mail,
+};
+
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [expandedSection, setExpandedSection] = useState<string | null>("Services");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -110,47 +120,91 @@ export function Header() {
             {/* Mobile Menu */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="hover:bg-primary/10 rounded-xl">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] overflow-y-auto">
+              <SheetContent side="right" className="w-[300px] bg-background/95 dark:bg-slate-950/95 backdrop-blur-xl border-l border-border p-5 overflow-y-auto flex flex-col justify-between">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <SheetDescription className="sr-only">Main navigation links</SheetDescription>
-                <div className="flex flex-col gap-1 mt-8">
-                  {NAV_ITEMS.map((item) => (
-                    <div key={item.label}>
-                      <Link
-                        href={item.href}
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-muted/50 transition-colors"
-                      >
-                        {item.label}
-                      </Link>
-                      {"children" in item && item.children && (
-                        <div className="pl-4 space-y-0.5">
-                          {item.children.map((child) => (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              onClick={() => setMobileOpen(false)}
-                              className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-colors"
-                            >
-                              {child.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                  <div className="mt-4 px-3">
-                    <Button variant="gradient" className="w-full" asChild>
-                      <Link href="/contact" onClick={() => setMobileOpen(false)}>
-                        Get a Quote
-                      </Link>
-                    </Button>
+                
+                <div className="flex-1 flex flex-col justify-start">
+                  {/* Brand Header inside drawer */}
+                  <div className="flex items-center gap-2 mb-8 border-b pb-4">
+                    <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center text-white font-bold text-sm">X</div>
+                    <span className="font-heading font-bold text-base">
+                      <span className="text-primary">Xpert</span>Bite
+                    </span>
                   </div>
+
+                  <div className="space-y-3">
+                    {NAV_ITEMS.map((item) => {
+                      const Icon = itemIcons[item.label] || Code2;
+                      const hasChildren = "children" in item && item.children;
+                      const isExpanded = expandedSection === item.label;
+
+                      return (
+                        <div key={item.label} className="rounded-xl overflow-hidden">
+                          {hasChildren ? (
+                            <div>
+                              {/* Collapsible Trigger */}
+                              <button
+                                onClick={() => setExpandedSection(isExpanded ? null : item.label)}
+                                className={cn(
+                                  "w-full flex items-center justify-between px-3.5 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300",
+                                  isExpanded 
+                                    ? "bg-primary/5 text-primary" 
+                                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                                )}
+                              >
+                                <div className="flex items-center gap-2.5">
+                                  <Icon className="h-4.5 w-4.5" />
+                                  <span>{item.label}</span>
+                                </div>
+                                <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", isExpanded && "rotate-180")} />
+                              </button>
+
+                              {/* Collapsible Content */}
+                              {isExpanded && (
+                                <div className="mt-1 ml-4 pl-4 border-l-2 border-primary/20 space-y-1.5 py-1">
+                                  {item.children.map((child) => (
+                                    <Link
+                                      key={child.href}
+                                      href={child.href}
+                                      onClick={() => setMobileOpen(false)}
+                                      className="block py-1.5 text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
+                                    >
+                                      {child.label}
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            /* Simple Link */
+                            <Link
+                              href={item.href}
+                              onClick={() => setMobileOpen(false)}
+                              className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/40 rounded-xl transition-all duration-300"
+                            >
+                              <Icon className="h-4.5 w-4.5" />
+                              <span>{item.label}</span>
+                            </Link>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Drawer Footer CTA */}
+                <div className="mt-8 pt-4 border-t border-border">
+                  <Button variant="gradient" className="w-full h-10 shadow-lg shadow-primary/20" asChild>
+                    <Link href="/contact" onClick={() => setMobileOpen(false)}>
+                      Get a Quote <ArrowRight className="h-4 w-4 ml-1.5" />
+                    </Link>
+                  </Button>
                 </div>
               </SheetContent>
             </Sheet>
