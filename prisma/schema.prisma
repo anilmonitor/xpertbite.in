@@ -1,0 +1,441 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─── Authentication & User Roles ─────────────────────────────
+
+model User {
+  id            String        @id @default(cuid())
+  name          String?
+  email         String        @unique
+  password      String
+  emailVerified DateTime?
+  image         String?
+  roleId        String
+  role          Role          @relation(fields: [roleId], references: [id])
+  sessions      Session[]
+  accounts      Account[]
+  activityLogs  ActivityLog[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([roleId])
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique // e.g. "Super Admin", "Admin", "Editor"
+  permissions RolePermission[]
+  users       User[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Permission {
+  id        String           @id @default(cuid())
+  action    String           @unique // e.g. "manage_products", "manage_blogs"
+  roles     RolePermission[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+// ─── Business Components ─────────────────────────────────────
+
+model Category {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  slug      String      @unique
+  services  Service[]
+  products  Product[]
+  portfolio Portfolio[]
+  blogs     Blog[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Service {
+  id               String           @id @default(cuid())
+  title            String
+  slug             String           @unique
+  shortDescription String
+  description      String
+  icon             String?
+  features         ServiceFeature[]
+  technologies     Technology[]
+  categoryId       String
+  category         Category         @relation(fields: [categoryId], references: [id])
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([categoryId])
+}
+
+model ServiceFeature {
+  id        String   @id @default(cuid())
+  feature   String
+  serviceId String
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId])
+}
+
+model Technology {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  category    String // e.g. "Frontend", "Backend", "Cloud"
+  description String?
+  proficiency Int         @default(90)
+  services    Service[]
+  products    Product[]
+  portfolio   Portfolio[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Product {
+  id           String              @id @default(cuid())
+  name         String
+  slug         String              @unique
+  tagline      String
+  description  String
+  price        String
+  status       String // e.g. "Live", "Beta", "Coming Soon"
+  demoUrl      String?
+  githubUrl    String?
+  docUrl       String?
+  version      String              @default("1.0.0")
+  releaseNotes String?
+  videoUrl     String?
+  categoryId   String
+  category     Category            @relation(fields: [categoryId], references: [id])
+  features     ProductFeature[]
+  screenshots  ProductScreenshot[]
+  technologies Technology[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@index([categoryId])
+}
+
+model ProductFeature {
+  id        String  @id @default(cuid())
+  feature   String
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+model ProductScreenshot {
+  id        String  @id @default(cuid())
+  url       String
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+// ─── Portfolio & Case Studies ────────────────────────────────
+
+model Portfolio {
+  id           String           @id @default(cuid())
+  title        String
+  slug         String           @unique
+  description  String
+  client       String
+  duration     String
+  challenge    String
+  solution     String
+  liveUrl      String?
+  categoryId   String
+  category     Category         @relation(fields: [categoryId], references: [id])
+  images       PortfolioImage[]
+  technologies Technology[]
+  results      String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([categoryId])
+}
+
+model PortfolioImage {
+  id          String    @id @default(cuid())
+  url         String
+  portfolioId String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+}
+
+model CaseStudy {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  challenge    String
+  solution     String
+  result       String
+  technologies String // Comma separated list of tech
+  imageUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ─── Blog System ─────────────────────────────────────────────
+
+model Blog {
+  id        String    @id @default(cuid())
+  title     String
+  slug      String    @unique
+  excerpt   String
+  content   String
+  featured  Boolean   @default(false)
+  published Boolean   @default(true)
+  author    String
+  authorRole String
+  readTime  String
+  categoryId String
+  category  Category  @relation(fields: [categoryId], references: [id])
+  tags      Tag[]
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([categoryId])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  blogs     Blog[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  author    String
+  email     String
+  content   String
+  approved  Boolean  @default(false)
+  blogId    String
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([blogId])
+}
+
+// ─── Leads & Submissions ─────────────────────────────────────
+
+model Booking {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  type        String // "Video Call" or "Voice Call"
+  date        String
+  time        String
+  description String
+  status      String   @default("Pending") // Pending, Confirmed, Cancelled
+  createdAt   DateTime @default(now())
+}
+
+model Quote {
+  id          String   @id @default(cuid())
+  name        String
+  company     String
+  email       String
+  category    String
+  budget      String
+  description String
+  status      String   @default("New") // New, Reviewed, Responded
+  createdAt   DateTime @default(now())
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    String   @default("Unread") // Unread, Read, Replied
+  createdAt DateTime @default(now())
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+// ─── Careers & Internships ───────────────────────────────────
+
+model Career {
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  department      String
+  location        String
+  type            String
+  experience      String
+  description     String
+  responsibilities String
+  requirements    String
+  benefits        String
+  applications    Application[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Application {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  linkedin  String?
+  resumeUrl String
+  cover     String?
+  status    String   @default("Applied") // Applied, Reviewing, Shortlisted, Rejected
+  careerId  String
+  career    Career   @relation(fields: [careerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([careerId])
+}
+
+model Internship {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  duration    String
+  stipend     String
+  skills      String // Comma separated list of tech
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Testimonials & Client Logos ─────────────────────────────
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  company   String
+  content   String
+  rating    Int      @default(5)
+  avatar    String?
+  createdAt DateTime @default(now())
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  logoUrl   String?
+  createdAt DateTime @default(now())
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Infrastructure Models ───────────────────────────────────
+
+model Media {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  mimeType  String
+  size      Int
+  createdAt DateTime @default(now())
+}
+
+model Settings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SEO {
+  id          String   @id @default(cuid())
+  path        String   @unique // e.g. "/services/web-development"
+  title       String
+  description String
+  keywords    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Navigation {
+  id        String   @id @default(cuid())
+  label     String
+  href      String
+  parentId  String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

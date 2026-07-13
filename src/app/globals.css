@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 243.4 75.4% 58.6%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 10% 4%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 243.4 75.4% 96.5%;
+    --accent-foreground: 243.4 75.4% 20%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 243.4 75.4% 58.6%;
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 243.4 89.2% 66.1%;
+    --primary-foreground: 240 19% 16%;
+    --secondary: 240 5.9% 10%;
+    --secondary-foreground: 240 5.9% 90%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 243.4 89.2% 16%;
+    --accent-foreground: 243.4 89.2% 90%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 243.4 89.2% 66.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+/* ─── Glassmorphism ──────────────────────────────────────────── */
+@layer utilities {
+  .glass {
+    @apply bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10;
+  }
+
+  .glass-card {
+    @apply bg-white/60 dark:bg-white/5 backdrop-blur-lg border border-white/30 dark:border-white/10 shadow-lg;
+  }
+
+  .glass-nav {
+    @apply bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-white/20 dark:border-white/5;
+  }
+}
+
+/* ─── Gradient Utilities ─────────────────────────────────────── */
+@layer utilities {
+  .gradient-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/95 transition-colors;
+  }
+
+  .gradient-text {
+    @apply text-primary;
+  }
+
+  .gradient-text-alt {
+    @apply text-muted-foreground;
+  }
+
+  .gradient-border {
+    position: relative;
+  }
+
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--primary)), #f97316, #fdba74);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .gradient-mesh {
+    background:
+      radial-gradient(at 20% 80%, hsla(240, 5%, 50%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 80% 20%, hsla(240, 5%, 80%, 0.05) 0px, transparent 50%);
+  }
+
+  .dark .gradient-mesh {
+    background:
+      radial-gradient(at 20% 80%, hsla(240, 5%, 20%, 0.03) 0px, transparent 50%),
+      radial-gradient(at 80% 20%, hsla(240, 5%, 30%, 0.03) 0px, transparent 50%);
+  }
+}
+
+/* ─── Spotlight Effect ───────────────────────────────────────── */
+@layer utilities {
+  .spotlight {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(37, 99, 235, 0.06),
+      transparent 40%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .dark .spotlight::after {
+    background: radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(37, 99, 235, 0.1),
+      transparent 40%
+    );
+  }
+}
+
+/* ─── Grid Pattern Background ────────────────────────────────── */
+@layer utilities {
+  .bg-grid {
+    background-size: 60px 60px;
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.3) 1px, transparent 1px);
+  }
+
+  .bg-dot {
+    background-image: radial-gradient(circle, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────── */
+@layer base {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/40;
+  }
+}
+
+/* ─── Selection ──────────────────────────────────────────────── */
+::selection {
+  @apply bg-primary/20 text-primary;
+}
+
+/* ─── Focus Ring ─────────────────────────────────────────────── */
+@layer base {
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
+  }
+}
+
+/* ─── Animated Gradient Background ───────────────────────────── */
+@layer utilities {
+  .animated-gradient-bg {
+    background: linear-gradient(-45deg, #2563eb, #06b6d4, #8b5cf6, #2563eb);
+    background-size: 400% 400%;
+    animation: gradient-shift 8s ease infinite;
+  }
+}
+
+/* ─── Text Balance ───────────────────────────────────────────── */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
