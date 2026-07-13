@@ -15,7 +15,7 @@ export default function PrivacyPolicyPage() {
         <div className="absolute inset-0 gradient-mesh" />
         <div className="container mx-auto px-4 relative max-w-4xl">
           <ScrollReveal>
-            <SectionHeader title="Privacy Policy" subtitle="Last Updated: July 13, 2026" />
+            <SectionHeader title="Privacy Policy" subtitle="Last Updated: February 18, 2026" />
           </ScrollReveal>
           
           <ScrollReveal animation="fade-up">

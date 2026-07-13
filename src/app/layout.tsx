@@ -3,6 +3,7 @@ import { Inter, Outfit, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "sonner";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import "./globals.css";
 
 const inter = Inter({
@@ -115,6 +116,7 @@ export default function RootLayout({
         >
           {children}
           <WhatsAppButton />
+          <ScrollToTop />
           <Toaster
             position="top-right"
             toastOptions={{
