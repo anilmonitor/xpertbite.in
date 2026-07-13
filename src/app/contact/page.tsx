@@ -128,7 +128,7 @@ export default function ContactPage() {
                   <div className="text-center text-muted-foreground">
                     <MapPin className="h-10 w-10 mx-auto mb-2 text-primary" />
                     <p className="text-sm font-medium">Google Maps Integration</p>
-                    <p className="text-xs">{COMPANY.address.city}, {COMPANY.address.state}</p>
+                    <p className="text-xs">Garhwa, Jharkhand & Bangalore, Karnataka</p>
                   </div>
                 </div>
 
