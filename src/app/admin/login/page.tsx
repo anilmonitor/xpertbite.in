@@ -20,13 +20,6 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      // Direct sign-in check
-      if (email === "admin@xpertbite.in" && password === "Admin@12345") {
-        toast.success("Successfully authenticated as Super Admin!");
-        router.push("/admin");
-        return;
-      }
-      
       // Fallback to NextAuth signIn handler
       const res = await signIn("credentials", {
         email,

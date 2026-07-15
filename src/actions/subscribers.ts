@@ -1,6 +1,7 @@
-"use client";
+"use server";
 
 import { subscriberSchema } from "@/lib/validations/contact";
+import { prisma } from "@/lib/prisma";
 
 export async function subscribeNewsletter(email: string) {
   const result = subscriberSchema.safeParse({ email });
@@ -9,11 +10,19 @@ export async function subscribeNewsletter(email: string) {
   }
 
   try {
-    // In production database mode:
-    // await prisma.subscriber.create({ data: { email: result.data.email } });
-    console.log("Adding newsletter subscriber to DB:", result.data.email);
+    const subscriber = await prisma.subscriber.create({
+      data: {
+        email: result.data.email,
+      },
+    });
+    console.log("Adding newsletter subscriber to DB:", subscriber);
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Failed to subscribe newsletter:", error);
+    // Handle unique constraint check
+    if (error.code === "P2002") {
+      return { success: false, error: "This email is already subscribed." };
+    }
     return { success: false, error: "Failed to subscribe." };
   }
 }

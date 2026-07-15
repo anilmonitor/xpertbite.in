@@ -104,21 +104,36 @@ async function main() {
   }
 
   // 2. Default Users
-  // Super Admin: admin@xpertbite.in / Admin@12345
-  // We don't want to use sync bcrypt in seed if it's too slow but we install bcrypt and configure it
+  // Super Admin: admin@xpertbite.in / Admin@12345 (or from env)
+  const adminEmail = process.env.ADMIN_EMAIL || "anilarangi6@gmail.com";
+  const adminPassword = process.env.ADMIN_PASSWORD || "123456";
+
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash("Admin@12345", salt);
+  const hashedPassword = await bcrypt.hash(adminPassword, salt);
 
   await prisma.user.upsert({
-    where: { email: "admin@xpertbite.in" },
-    update: {},
+    where: { email: adminEmail },
+    update: {
+      password: hashedPassword,
+      roleId: superAdminRole.id,
+    },
     create: {
       name: "Super Admin",
-      email: "admin@xpertbite.in",
+      email: adminEmail,
       password: hashedPassword,
       roleId: superAdminRole.id,
     },
   });
+
+  // Delete all other user accounts so that only the configured email can log in
+  await prisma.user.deleteMany({
+    where: {
+      email: {
+        not: adminEmail,
+      },
+    },
+  });
+
 
   // 3. Categories
   const categoryNames = ["FinTech", "Healthcare", "E-Commerce", "Education", "Logistics", "SaaS", "Development", "Design", "Infrastructure", "AI & Data"];
