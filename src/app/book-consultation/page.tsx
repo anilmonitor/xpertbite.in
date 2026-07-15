@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Calendar as CalendarIcon, Clock, Video, Laptop, Users, CheckCircle2 } from "lucide-react";
+import { submitBookingForm } from "@/actions/contacts";
 
 export default function BookConsultationPage() {
   const [loading, setLoading] = useState(false);
@@ -25,12 +26,44 @@ export default function BookConsultationPage() {
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    toast.success("Consultation session booked! Check your inbox for the calendar invite.");
-    setLoading(false);
-    (e.target as HTMLFormElement).reset();
-    setSelectedDate("");
-    setSelectedTime("");
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      type: selectedType,
+      date: selectedDate,
+      time: selectedTime,
+      description: formData.get("description") as string,
+    };
+
+    try {
+      const res = await submitBookingForm(data);
+      if (res.success) {
+        toast.success("Consultation session booked! Check your inbox for the calendar invite.");
+        (e.target as HTMLFormElement).reset();
+        setSelectedDate("");
+        setSelectedTime("");
+      } else {
+        let errorMsg = "Failed to book consultation session. Please check inputs.";
+        if (res.error && typeof res.error === "object") {
+          const errors = Object.entries(res.error)
+            .filter(([key]) => key !== "_errors")
+            .map(([key, val]: [string, any]) => {
+              const fieldName = key.charAt(0).toUpperCase() + key.slice(1);
+              return `${fieldName}: ${val._errors?.join(", ")}`;
+            });
+          if (errors.length > 0) {
+            errorMsg = errors.join(" | ");
+          }
+        }
+        toast.error(errorMsg);
+      }
+    } catch (err) {
+      toast.error("An error occurred during booking.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -91,18 +124,18 @@ export default function BookConsultationPage() {
                   <form onSubmit={handleBooking} className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block">Full Name</label>
-                        <Input placeholder="Anil Kumar" required />
+                        <label className="text-sm font-medium mb-1.5 block">Full Name <span className="text-red-500 ml-0.5">*</span></label>
+                        <Input name="name" placeholder="Anil Kumar" required />
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block">Email Address</label>
-                        <Input type="email" placeholder="amit@example.com" required />
+                        <label className="text-sm font-medium mb-1.5 block">Email Address <span className="text-red-500 ml-0.5">*</span></label>
+                        <Input name="email" type="email" placeholder="amit@example.com" required />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block">Choose Meeting Type</label>
+                        <label className="text-sm font-medium mb-1.5 block">Choose Meeting Type <span className="text-red-500 ml-0.5">*</span></label>
                         <div className="flex gap-2">
                           {["Video Call", "Voice Call"].map((type) => (
                             <button
@@ -121,7 +154,7 @@ export default function BookConsultationPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block">Preferred Date</label>
+                        <label className="text-sm font-medium mb-1.5 block">Preferred Date <span className="text-red-500 ml-0.5">*</span></label>
                         <Input
                           type="date"
                           value={selectedDate}
@@ -133,7 +166,7 @@ export default function BookConsultationPage() {
 
                     {/* Time Slots selector */}
                     <div>
-                      <label className="text-sm font-medium mb-2.5 block">Preferred Time Slot (IST)</label>
+                      <label className="text-sm font-medium mb-2.5 block">Preferred Time Slot (IST) <span className="text-red-500 ml-0.5">*</span></label>
                       <div className="flex flex-wrap gap-2">
                         {timeSlots.map((time) => (
                           <button
@@ -153,8 +186,9 @@ export default function BookConsultationPage() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block">Brief Project Description</label>
+                      <label className="text-sm font-medium mb-1.5 block">Brief Project Description <span className="text-red-500 ml-0.5">*</span></label>
                       <Textarea
+                        name="description"
                         placeholder="Tell us about your business goals, targets, features list, or stack queries..."
                         rows={4}
                         required

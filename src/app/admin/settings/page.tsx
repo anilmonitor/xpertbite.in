@@ -9,7 +9,7 @@ import { Save, Shield, Settings, Info } from "lucide-react";
 
 export default function AdminSettingsPage() {
   const [siteName, setSiteName] = useState("XpertBite Technologies");
-  const [supportEmail, setSupportEmail] = useState("support@xpertbite.in");
+  const [supportEmail, setSupportEmail] = useState("xpertbite@gmail.com");
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();

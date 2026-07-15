@@ -66,7 +66,7 @@ export async function submitQuoteForm(data: any) {
         email: result.data.email,
         category: result.data.category,
         budget: result.data.budget,
-        description: result.data.description,
+        description: `Phone: ${result.data.phone}\n\n${result.data.description}`,
       },
     });
     console.log("Saved quote request to DB:", quote);
@@ -120,23 +120,34 @@ export async function getLeads() {
       }
     }));
 
-    const formattedQuotes = quotes.map(q => ({
-      id: q.id,
-      name: q.name,
-      email: q.email,
-      phone: null,
-      subject: `Project Estimate Request`,
-      message: q.description,
-      date: new Date(q.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-      rawDate: q.createdAt,
-      type: "Quote",
-      status: q.status,
-      quoteDetails: {
-        company: q.company,
-        category: q.category,
-        budget: q.budget,
+    const formattedQuotes = quotes.map(q => {
+      let phone = null;
+      let description = q.description;
+      if (q.description.startsWith("Phone: ")) {
+        const match = q.description.match(/^Phone: ([^\n]+)\n\n([\s\S]*)$/);
+        if (match) {
+          phone = match[1];
+          description = match[2];
+        }
       }
-    }));
+      return {
+        id: q.id,
+        name: q.name,
+        email: q.email,
+        phone: phone,
+        subject: `Project Estimate Request`,
+        message: description,
+        date: new Date(q.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        rawDate: q.createdAt,
+        type: "Quote",
+        status: q.status,
+        quoteDetails: {
+          company: q.company,
+          category: q.category,
+          budget: q.budget,
+        }
+      };
+    });
 
     const allLeads = [
       ...formattedContacts,

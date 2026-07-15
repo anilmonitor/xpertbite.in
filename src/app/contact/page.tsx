@@ -10,6 +10,7 @@ import { COMPANY } from "@/lib/constants";
 import { MapPin, Mail, Phone, Clock, MessageCircle, PhoneCall, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { submitContactForm } from "@/actions/contacts";
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false);
@@ -17,11 +18,41 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate submission
-    await new Promise((r) => setTimeout(r, 1000));
-    toast.success("Message sent successfully! We'll get back to you within 24 hours.");
-    setLoading(false);
-    (e.target as HTMLFormElement).reset();
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string || undefined,
+      subject: formData.get("subject") as string,
+      message: formData.get("message") as string,
+    };
+
+    try {
+      const res = await submitContactForm(data);
+      if (res.success) {
+        toast.success("Message sent successfully! We'll get back to you within 24 hours.");
+        (e.target as HTMLFormElement).reset();
+      } else {
+        let errorMsg = "Failed to send message. Please check the inputs.";
+        if (res.error && typeof res.error === "object") {
+          const errors = Object.entries(res.error)
+            .filter(([key]) => key !== "_errors")
+            .map(([key, val]: [string, any]) => {
+              const fieldName = key.charAt(0).toUpperCase() + key.slice(1);
+              return `${fieldName}: ${val._errors?.join(", ")}`;
+            });
+          if (errors.length > 0) {
+            errorMsg = errors.join(" | ");
+          }
+        }
+        toast.error(errorMsg);
+      }
+    } catch (err) {
+      toast.error("An error occurred while sending your message.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,9 +92,9 @@ export default function ContactPage() {
                 title: "Email Us", 
                 info: (
                   <span className="block text-xs leading-relaxed space-y-1.5 mt-2 w-full">
-                    <span className="block"><strong className="text-foreground">General Info:</strong> hello@xpertbite.in</span>
+                    <span className="block"><strong className="text-foreground">General Info:</strong> xpertbite@gmail.com</span>
                     <span className="block border-t border-border/50 my-1" />
-                    <span className="block"><strong className="text-foreground">Client Support:</strong> support@xpertbite.in</span>
+                    <span className="block"><strong className="text-foreground">Client Support:</strong> xpertbite@gmail.com</span>
                   </span>
                 ), 
                 action: `mailto:${COMPANY.email}` 
@@ -123,27 +154,34 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block text-foreground">Full Name</label>
-                      <Input placeholder="Anil Kumar" required className="bg-background/50" />
+                      <label className="text-sm font-medium mb-1.5 block text-foreground">Full Name <span className="text-red-500 ml-0.5">*</span></label>
+                      <Input name="name" placeholder="Anil Kumar" required className="bg-background/50" />
                     </div>
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block text-foreground">Email Address</label>
-                      <Input type="email" placeholder="amit@example.com" required className="bg-background/50" />
+                      <label className="text-sm font-medium mb-1.5 block text-foreground">Email Address <span className="text-red-500 ml-0.5">*</span></label>
+                      <Input name="email" type="email" placeholder="amit@example.com" required className="bg-background/50" />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm font-medium mb-1.5 block text-foreground">Phone Number</label>
-                      <Input type="tel" placeholder="+91 9876 543 210" className="bg-background/50" />
+                      <Input 
+                        name="phone" 
+                        type="tel" 
+                        placeholder="10 digit mobile number" 
+                        maxLength={10}
+                        minLength={10}
+                        className="bg-background/50" 
+                      />
                     </div>
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block text-foreground">Subject</label>
-                      <Input placeholder="Project Inquiry" required className="bg-background/50" />
+                      <label className="text-sm font-medium mb-1.5 block text-foreground">Subject <span className="text-red-500 ml-0.5">*</span></label>
+                      <Input name="subject" placeholder="Project Inquiry" required className="bg-background/50" />
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1.5 block text-foreground">Message</label>
-                    <Textarea placeholder="Tell us about your project..." rows={5} required className="bg-background/50" />
+                    <label className="text-sm font-medium mb-1.5 block text-foreground">Message <span className="text-red-500 ml-0.5">*</span></label>
+                    <Textarea name="message" placeholder="Tell us about your project..." rows={5} required className="bg-background/50" />
                   </div>
                   <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={loading}>
                     {loading ? "Sending..." : "Send Message"}

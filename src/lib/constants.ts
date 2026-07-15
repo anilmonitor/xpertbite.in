@@ -7,7 +7,7 @@ export const COMPANY = {
     "We are a leading software development company specializing in building world-class web applications, mobile apps, and enterprise solutions that drive business growth.",
   url: "https://xpertbite.in",
   email: "xpertbite@gmail.com",
-  supportEmail: "support@xpertbite.in",
+  supportEmail: "xpertbite@gmail.com",
   phone: "+91 74881 68228",
   alternatePhone: "+91 74881 68228",
   addresses: {

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 
 export default function SupportPage() {
   const supportFaqs = [
-    { q: "How do I report system errors or bugs?", a: "Please send system logs, screenshots, and exact replication steps to support@xpertbite.in. Our support team will create a ticket and respond within 2 hours for SLA clients." },
+    { q: "How do I report system errors or bugs?", a: "Please send system logs, screenshots, and exact replication steps to xpertbite@gmail.com. Our support team will create a ticket and respond within 2 hours for SLA clients." },
     { q: "What is your ticket resolution SLA?", a: "For critical production issues, we guarantee a response within 2 hours. High-severity issues are resolved within 8 hours, and normal updates are scheduled during sprint cycles." },
     { q: "Do you offer developer training for custom applications?", a: "Yes, we schedule comprehensive walkthroughs, code walkthrough recordings, and hand over deployment guides upon shipping any client project." },
   ];
@@ -35,8 +35,8 @@ export default function SupportPage() {
                 </div>
                 <h3 className="font-heading font-bold">Email Support</h3>
                 <p className="text-sm text-muted-foreground">Open tickets with our helpdesk agents directly.</p>
-                <a href="mailto:support@xpertbite.in" className="text-sm font-semibold text-primary block hover:underline">
-                  support@xpertbite.in
+                <a href="mailto:xpertbite@gmail.com" className="text-sm font-semibold text-primary block hover:underline">
+                  xpertbite@gmail.com
                 </a>
               </div>
             </ScrollReveal>

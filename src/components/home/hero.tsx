@@ -88,7 +88,7 @@ export function Hero() {
               className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3.5 mb-10"
             >
               <Button variant="gradient" size="xl" asChild>
-                <Link href="/contact" className="group justify-center">
+                <Link href="/request-quote" className="group justify-center">
                   Start Your Project
                   <ArrowRight className="h-5 w-5 ml-1 group-hover:translate-x-1 transition-transform" />
                 </Link>

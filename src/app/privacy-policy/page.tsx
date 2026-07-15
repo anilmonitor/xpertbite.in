@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
 
               <h2 className="text-xl font-heading font-bold text-foreground">4. Contact Us</h2>
               <p>
-                If you have any questions about this Privacy Policy, please reach out to us at legal@xpertbite.in.
+                If you have any questions about this Privacy Policy, please reach out to us at xpertbite@gmail.com.
               </p>
             </div>
           </ScrollReveal>

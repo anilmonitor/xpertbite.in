@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Send, FileText, CheckCircle2 } from "lucide-react";
+import { submitQuoteForm } from "@/actions/contacts";
 
 export default function RequestQuotePage() {
   const [loading, setLoading] = useState(false);
@@ -20,10 +21,47 @@ export default function RequestQuotePage() {
   const handleQuoteRequest = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    toast.success("Quote request submitted! Our solutions team will review and contact you with an estimate.");
-    setLoading(false);
-    (e.target as HTMLFormElement).reset();
+
+    const formData = new FormData(e.currentTarget);
+    const selectedCategory = category === "Other" ? (formData.get("customCategory") as string) : category;
+
+    const data = {
+      name: formData.get("name") as string,
+      company: formData.get("company") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      category: selectedCategory || "Other",
+      budget: budget,
+      description: formData.get("description") as string,
+    };
+
+    try {
+      const res = await submitQuoteForm(data);
+      if (res.success) {
+        toast.success("Quote request submitted! Our solutions team will review and contact you with an estimate.");
+        (e.target as HTMLFormElement).reset();
+        setBudget("₹1 Lakh - ₹5 Lakh");
+        setCategory("Web Application");
+      } else {
+        let errorMsg = "Failed to submit quote request. Please check inputs.";
+        if (res.error && typeof res.error === "object") {
+          const errors = Object.entries(res.error)
+            .filter(([key]) => key !== "_errors")
+            .map(([key, val]: [string, any]) => {
+              const fieldName = key.charAt(0).toUpperCase() + key.slice(1);
+              return `${fieldName}: ${val._errors?.join(", ")}`;
+            });
+          if (errors.length > 0) {
+            errorMsg = errors.join(" | ");
+          }
+        }
+        toast.error(errorMsg);
+      }
+    } catch (err) {
+      toast.error("An error occurred during submission.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -93,16 +131,18 @@ export default function RequestQuotePage() {
                   <form onSubmit={handleQuoteRequest} className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Full Name</label>
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Full Name <span className="text-red-500 ml-0.5">*</span></label>
                         <Input 
+                          name="name"
                           placeholder="Anil Kumar" 
                           required 
                           className="bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl h-10" 
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Company Name</label>
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Company Name <span className="text-red-500 ml-0.5">*</span></label>
                         <Input 
+                          name="company"
                           placeholder="Company Inc." 
                           required 
                           className="bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl h-10" 
@@ -112,8 +152,9 @@ export default function RequestQuotePage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Business Email</label>
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Business Email <span className="text-red-500 ml-0.5">*</span></label>
                         <Input 
+                          name="email"
                           type="email" 
                           placeholder="amit@company.com" 
                           required 
@@ -121,52 +162,67 @@ export default function RequestQuotePage() {
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Project Category</label>
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Phone Number <span className="text-red-500 ml-0.5">*</span></label>
+                        <Input 
+                          name="phone"
+                          type="tel" 
+                          placeholder="10 digit mobile number" 
+                          required 
+                          maxLength={10}
+                          minLength={10}
+                          className="bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl h-10" 
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Project Category <span className="text-red-500 ml-0.5">*</span></label>
                         <select 
                           value={category}
                           onChange={(e) => setCategory(e.target.value)}
-                          className="flex h-10 w-full rounded-xl border border-border/60 bg-background/50 backdrop-blur-sm px-3 py-2 text-sm focus-visible:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+                          className="flex h-10 w-full rounded-xl border border-border/60 bg-background/50 backdrop-blur-sm px-3 py-2 text-sm focus-visible:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer text-foreground"
                         >
-                          <option>Web Application</option>
-                          <option>Mobile App (iOS/Android)</option>
-                          <option>E-Commerce Website & Store</option>
-                          <option>Delivery & Logistics App</option>
-                          <option>SaaS Platform</option>
-                          <option>Enterprise ERP/CRM</option>
-                          <option>AI/ML & Automation Solution</option>
-                          <option>Corporate & Business Website</option>
-                          <option>Custom Software Development</option>
-                          <option>Other</option>
+                          <option className="bg-card text-foreground">Web Application</option>
+                          <option className="bg-card text-foreground">Mobile App (iOS/Android)</option>
+                          <option className="bg-card text-foreground">E-Commerce Website & Store</option>
+                          <option className="bg-card text-foreground">Delivery & Logistics App</option>
+                          <option className="bg-card text-foreground">SaaS Platform</option>
+                          <option className="bg-card text-foreground">Enterprise ERP/CRM</option>
+                          <option className="bg-card text-foreground">AI/ML & Automation Solution</option>
+                          <option className="bg-card text-foreground">Corporate & Business Website</option>
+                          <option className="bg-card text-foreground">Custom Software Development</option>
+                          <option className="bg-card text-foreground">Other</option>
                         </select>
                         {category === "Other" && (
                           <Input 
+                            name="customCategory"
                             placeholder="Enter your custom project category (e.g., IoT, Blockchain, etc.)" 
                             required 
                             className="bg-background/50 border-border/60 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-xl h-10 mt-3 animate-fade-in" 
                           />
                         )}
                       </div>
-                    </div>
-
-                    {/* Budget selector */}
-                    <div>
-                      <label className="text-sm font-medium mb-1.5 block text-foreground/90">Estimated Budget Range (INR)</label>
-                      <select 
-                        value={budget}
-                        onChange={(e) => setBudget(e.target.value)}
-                        className="flex h-10 w-full rounded-xl border border-border/60 bg-background/50 backdrop-blur-sm px-3 py-2 text-sm focus-visible:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
-                      >
-                        {budgets.map((b) => (
-                          <option key={b} value={b} className="bg-card text-foreground">
-                            {b}
-                          </option>
-                        ))}
-                      </select>
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block text-foreground/90">Estimated Budget Range (INR) <span className="text-red-500 ml-0.5">*</span></label>
+                        <select 
+                          value={budget}
+                          onChange={(e) => setBudget(e.target.value)}
+                          className="flex h-10 w-full rounded-xl border border-border/60 bg-background/50 backdrop-blur-sm px-3 py-2 text-sm focus-visible:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer text-foreground"
+                        >
+                          {budgets.map((b) => (
+                            <option key={b} value={b} className="bg-card text-foreground">
+                              {b}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium mb-1.5 block text-foreground/90">Project Description & Requirements</label>
+                      <label className="text-sm font-medium mb-1.5 block text-foreground/90">Project Description & Requirements <span className="text-red-500 ml-0.5">*</span></label>
                       <Textarea
+                        name="description"
                         placeholder="Detail key feature requests, integration requirements (like Stripe, OAuth), design guidelines, or target timeline..."
                         rows={5}
                         required

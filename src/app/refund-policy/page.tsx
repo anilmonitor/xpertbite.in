@@ -27,7 +27,7 @@ export default function RefundPolicyPage() {
 
               <h2 className="text-xl font-heading font-bold text-foreground">2. SaaS Product Subscriptions</h2>
               <p>
-                For subscriptions purchased under our products (such as SwiftDeliver or DukaanCraft), we offer a 14-day money-back guarantee. If you are unsatisfied with the SaaS platform, you can email billing@xpertbite.in to request a full refund within 14 days of purchase.
+                For subscriptions purchased under our products (such as SwiftDeliver or DukaanCraft), we offer a 14-day money-back guarantee. If you are unsatisfied with the SaaS platform, you can email xpertbite@gmail.com to request a full refund within 14 days of purchase.
               </p>
 
               <h2 className="text-xl font-heading font-bold text-foreground">3. Processing Refunds</h2>
