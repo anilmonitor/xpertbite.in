@@ -4,7 +4,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Marquee } from "@/components/ui/marquee";
 
 export function Hero() {
   return (
@@ -31,33 +30,7 @@ export function Hero() {
           
           {/* Left Column: Heading and CTAs */}
           <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100/50 dark:bg-slate-900/30 border border-slate-200 dark:border-primary/20 mb-6 max-w-[280px] sm:max-w-md mx-auto lg:mx-0 overflow-hidden relative shadow-sm"
-            >
-              <div className="flex items-center gap-1.5 shrink-0 z-10 bg-slate-100/95 dark:bg-slate-900/95 pr-2 border-r border-border/40 font-semibold text-[10px] text-emerald-600 dark:text-emerald-500 uppercase tracking-wider">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                Live
-              </div>
-              <div className="w-[180px] sm:w-[300px] overflow-hidden whitespace-nowrap text-[11px] font-medium text-muted-foreground select-none">
-                <Marquee duration="25s" pauseOnHover={false} repeat={2} gap="2rem">
-                  <span className="inline-flex items-center gap-1.5">
-                    Someone from Mumbai is consulting for a new project...
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    A client from Bangalore scheduled a call...
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    Someone from Delhi is reviewing GharTak Delivery App...
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    A business owner from Hyderabad is estimating budget...
-                  </span>
-                </Marquee>
-              </div>
-            </motion.div>
+
 
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
