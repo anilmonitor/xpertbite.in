@@ -8,6 +8,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // 1. Static Routes
   const staticRoutes = [
     "",
+    "/idcard",
+    "/search",
     "/services",
     "/products",
     "/portfolio",
@@ -30,7 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${baseUrl}${route}`,
     lastModified: currentDate,
     changeFrequency: "weekly" as const,
-    priority: route === "" ? 1.0 : 0.8,
+    priority: route === "" ? 1.0 : route === "/idcard" ? 0.9 : 0.8,
   }));
 
   // 2. Dynamic Service Routes

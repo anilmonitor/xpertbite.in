@@ -30,7 +30,24 @@ export function Hero() {
           
           {/* Left Column: Heading and CTAs */}
           <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
-
+            {/* Tiranga ID Card Pill Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-5 inline-block"
+            >
+              <Link
+                href="/idcard"
+                className="group inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-orange-500/30 bg-gradient-to-r from-orange-500/10 via-card to-emerald-500/10 hover:border-orange-500/60 hover:shadow-md transition-all duration-300 shadow-sm"
+              >
+                <span className="text-sm">🇮🇳</span>
+                <span className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                  Make Tiranga ID Card (Free)
+                </span>
+                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+              </Link>
+            </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
