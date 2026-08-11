@@ -90,17 +90,22 @@ export function TirangaCardSimulator() {
               <svg viewBox="0 0 100 100" className="w-full h-full text-blue-900 dark:text-blue-400">
                 <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="3" fill="none" />
                 <circle cx="50" cy="50" r="10" fill="currentColor" />
-                {Array.from({ length: 24 }).map((_, i) => (
-                  <line
-                    key={i}
-                    x1="50"
-                    y1="50"
-                    x2={50 + 40 * Math.cos((i * 15 * Math.PI) / 180)}
-                    y2={50 + 40 * Math.sin((i * 15 * Math.PI) / 180)}
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                ))}
+                {Array.from({ length: 24 }).map((_, i) => {
+                  const angle = (i * 15 * Math.PI) / 180;
+                  const x2 = Number((50 + 40 * Math.cos(angle)).toFixed(2));
+                  const y2 = Number((50 + 40 * Math.sin(angle)).toFixed(2));
+                  return (
+                    <line
+                      key={i}
+                      x1="50"
+                      y1="50"
+                      x2={x2}
+                      y2={y2}
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  );
+                })}
               </svg>
             </div>
 
