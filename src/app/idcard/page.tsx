@@ -16,6 +16,8 @@ import {
 import { TirangaCardSimulator } from "./tiranga-simulator";
 import { TirangaFaqAccordion } from "./tiranga-faq";
 import { TirangaCountdownLauncher } from "./tiranga-countdown-button";
+import { TirangaSiteLink } from "./tiranga-site-link";
+import { TirangaSocialBanner } from "./tiranga-social-banner";
 
 export const metadata: Metadata = {
   title: "How to Make Tiranga ID Card Online 2026 (Free) | तिरंगा आईडी कार्ड कैसे बनाएं - Step by Step Guide",
@@ -525,8 +527,16 @@ export default function TirangaIdCardPage() {
               {/* The Interactive Countdown Launcher (10s timer with fast ms count) */}
               <TirangaCountdownLauncher generatorUrl={EXTERNAL_GENERATOR_URL} />
 
-              <div className="mt-4 text-xs text-muted-foreground">
-                Official Site: <code className="font-mono text-primary font-semibold">tiranga-idcard2026.vercel.app</code> • 100% Free & Safe
+              <div className="mt-4">
+                <TirangaSiteLink
+                  url={EXTERNAL_GENERATOR_URL}
+                  displayUrl="tiranga-idcard2026.vercel.app"
+                />
+              </div>
+
+              {/* ─── Social Media Followers Banner (EasyLike) ─────────── */}
+              <div className="mt-8 pt-6 border-t border-border/60">
+                <TirangaSocialBanner url="https://easylike.in/" />
               </div>
             </div>
           </div>
