@@ -59,8 +59,6 @@ export function TirangaSiteLink({
           )}
         </button>
       </div>
-      <span>•</span>
-      <span className="font-medium text-foreground/80">100% Free &amp; Safe</span>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ExternalLink, Sparkles, Zap, ShieldCheck } from "lucide-react";
+import { ExternalLink, Zap, ShieldCheck } from "lucide-react";
 
 interface TirangaSocialBannerProps {
   url?: string;
@@ -25,16 +25,8 @@ export function TirangaSocialBanner({
           {/* Shimmer Light Reflection Sweep on Hover */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
 
-          {/* Top Pill Badges & Social Icons */}
-          <div className="flex flex-col items-center justify-center gap-3 mb-3">
-            {/* Trending Tag */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-semibold text-yellow-300 tracking-wide shadow-sm">
-              <Sparkles className="w-3 h-3 text-yellow-400 animate-pulse" />
-              <span>Trending Service • 100% Real &amp; Active</span>
-            </div>
-
-            {/* Social Logos Badges */}
-            <div className="flex items-center justify-center gap-3">
+          {/* Social Logos Badges */}
+          <div className="flex items-center justify-center gap-3 mb-3">
               {/* Instagram Icon Badge */}
               <div className="w-10 h-10 rounded-2xl p-0.5 bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] shadow-lg shadow-pink-500/30 ring-2 ring-white/20 group-hover:rotate-3 transition-transform">
                 <div className="w-full h-full rounded-[14px] flex items-center justify-center text-white">
