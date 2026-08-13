@@ -28,6 +28,7 @@ import { TirangaFaqAccordion } from "@/app/idcard/tiranga-faq";
 import { TirangaCountdownLauncher } from "@/app/idcard/tiranga-countdown-button";
 import { TirangaSiteLink } from "@/app/idcard/tiranga-site-link";
 import { TirangaSocialBanner } from "@/app/idcard/tiranga-social-banner";
+import { TirangaVideoGuide } from "@/app/idcard/tiranga-video-guide";
 
 export const metadata: Metadata = {
   title: "Tiranga ID Card Maker Online 2026 (Free HD) | तिरंगा आईडी कार्ड ऑनलाइन बनाएं - Har Ghar Tiranga Generator",
@@ -273,6 +274,18 @@ export default function TirangaIdCardVersionPage() {
     ],
   };
 
+  const jsonLdVideo = {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: "How to Make Tiranga ID Card Online (Step by Step Video Tutorial)",
+    description:
+      "Watch this step-by-step video guide on how to create, personalize with photo & name, and download your Har Ghar Tiranga ID Card online for free.",
+    thumbnailUrl: "https://img.youtube.com/vi/zUFkhp1J0QI/hqdefault.jpg",
+    uploadDate: "2026-08-01T08:00:00+05:30",
+    embedUrl: "https://www.youtube.com/embed/zUFkhp1J0QI",
+    contentUrl: "https://youtu.be/zUFkhp1J0QI",
+  };
+
   return (
     <PublicLayout>
       {/* Inject Structured Data for Google Rich Results */}
@@ -292,6 +305,10 @@ export default function TirangaIdCardVersionPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdVideo) }}
+      />
 
       <article className="min-h-screen">
         {/* ─── Hero Section ───────────────────────────────────── */}
@@ -300,15 +317,21 @@ export default function TirangaIdCardVersionPage() {
             <div className="max-w-4xl mx-auto text-center">
               {/* Version Switcher Badge */}
               <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+                <Link
+                  href="/idcard"
+                  className="px-3 py-1 rounded-full text-xs font-medium bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground border border-border transition-all flex items-center gap-1"
+                >
+                  <span>🇮🇳 Version 1 Guide</span>
+                </Link>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
                   <Sparkles className="h-3.5 w-3.5" />
                   <span>Version 2 • Online Maker Tool</span>
                 </div>
                 <Link
-                  href="/idcard"
-                  className="px-3 py-1 rounded-full text-xs font-medium bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground border border-border transition-all flex items-center gap-1"
+                  href="/har-ghar-tiranga"
+                  className="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-orange-500/10 to-emerald-500/10 text-foreground border border-border hover:border-primary/40 transition-all flex items-center gap-1"
                 >
-                  <span>🇮🇳 View Version 1 Guide</span>
+                  <span>🔥 Version 3 (Har Ghar Tiranga)</span>
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
@@ -363,6 +386,9 @@ export default function TirangaIdCardVersionPage() {
             </div>
           </div>
         </header>
+
+        {/* ─── Video Guide Section (YouTube Video Tutorial) ────────── */}
+        <TirangaVideoGuide videoId="zUFkhp1J0QI" />
 
         {/* ─── Interactive Preview Simulator ───────────────────── */}
         <section className="py-14 bg-muted/20 border-b border-border/40">

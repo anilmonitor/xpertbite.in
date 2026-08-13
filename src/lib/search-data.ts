@@ -39,6 +39,19 @@ export const SEARCH_ITEMS: SearchItem[] = [
     ],
     badge: "Free Tool",
   },
+  {
+    id: "tool-har-ghar-tiranga-v3",
+    title: "Har Ghar Tiranga Kaise Banaye (2026) | How to Make Tiranga ID Card Online",
+    description: "Complete guide on how to make Tiranga ID card online and Har Ghar Tiranga photo ID badge for free in 2026.",
+    category: "Tools & Guides",
+    href: "/har-ghar-tiranga",
+    keywords: [
+      "how to make tiranga id", "har ghar tiranga kaise banaye", "tiranga id card kaise banaye",
+      "har ghar tiranga", "tiranga id card v3", "tiranga-idcard2026.vercel.app", "how to make tiranga id card",
+      "15 august id card", "har ghar tiranga certificate", "tiranga badge online"
+    ],
+    badge: "Special Edition V3",
+  },
 
   // ─── Services ────────────────────────────────────────────────
   {
