@@ -244,6 +244,20 @@ export default function TirangaIdCardPage() {
         <header className="pt-24 pb-12 lg:pt-32 lg:pb-16 border-b border-border/40">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
+              {/* Version Switcher Badge */}
+              <div className="flex items-center justify-center gap-2 mb-5">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                  Version 1 Guide
+                </span>
+                <Link
+                  href="/tiranga-idcard"
+                  className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all flex items-center gap-1"
+                >
+                  <span>✨ Try Version 2 (Maker Tool)</span>
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+
               {/* Main Title (H1) */}
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-heading font-extrabold tracking-tight text-foreground leading-[1.15] mb-5">
                 How to Make <span className="gradient-text">Tiranga ID Card</span> Online (2026)

@@ -26,6 +26,19 @@ export const SEARCH_ITEMS: SearchItem[] = [
     ],
     badge: "Featured Guide",
   },
+  {
+    id: "tool-tiranga-idcard-online-maker",
+    title: "Tiranga ID Card Maker Online 2026 (Free Photo Badge Generator)",
+    description: "Official online tool to create and download high-resolution Har Ghar Tiranga photo ID badge instantly.",
+    category: "Tools & Guides",
+    href: "/tiranga-idcard",
+    keywords: [
+      "tiranga id card online maker", "tiranga-idcard", "tiranga id card v2", "tiranga id maker",
+      "har ghar tiranga generator", "tiranga-idcard2026.vercel.app", "tiranga badge online",
+      "15 august id card maker", "26 january id badge", "indian flag photo card maker"
+    ],
+    badge: "Free Tool",
+  },
 
   // ─── Services ────────────────────────────────────────────────
   {

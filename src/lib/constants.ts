@@ -75,7 +75,8 @@ export const NAV_ITEMS = [
     href: "/blog",
     children: [
       { label: "Blog", href: "/blog", description: "Insights, tutorials, and updates" },
-      { label: "Tiranga ID Card 🇮🇳", href: "/idcard", description: "Create & download your Har Ghar Tiranga ID Card" },
+      { label: "Tiranga ID Card (V1) 🇮🇳", href: "/idcard", description: "Step-by-step Har Ghar Tiranga ID Card Guide" },
+      { label: "Tiranga ID Card (V2) ✨", href: "/tiranga-idcard", description: "Online Photo ID Card Maker 2026" },
       { label: "Industries", href: "/industries", description: "Sectors we serve" },
       { label: "Testimonials", href: "/testimonials", description: "What our clients say" },
       { label: "FAQ", href: "/faq", description: "Frequently asked questions" },
@@ -100,7 +101,8 @@ export const FOOTER_LINKS = {
   ],
   resources: [
     { label: "Blog", href: "/blog" },
-    { label: "Tiranga ID Card 🇮🇳", href: "/idcard" },
+    { label: "Tiranga ID Card (V1) 🇮🇳", href: "/idcard" },
+    { label: "Tiranga ID Card (V2) ✨", href: "/tiranga-idcard" },
     { label: "Case Studies", href: "/case-studies" },
     { label: "Industries", href: "/industries" },
     { label: "Career", href: "/careers" },

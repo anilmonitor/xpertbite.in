@@ -30,22 +30,38 @@ export function Hero() {
           
           {/* Left Column: Heading and CTAs */}
           <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
-            {/* Tiranga ID Card Pill Button */}
+            {/* Tiranga ID Card Pills (Version 1 & Version 2) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="mb-5 inline-block"
+              className="mb-6 flex flex-wrap items-center justify-center lg:justify-start gap-3"
             >
+              {/* Version 1 */}
               <Link
                 href="/idcard"
                 className="group inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-orange-500/30 bg-gradient-to-r from-orange-500/10 via-card to-emerald-500/10 hover:border-orange-500/60 hover:shadow-md transition-all duration-300 shadow-sm"
               >
                 <span className="text-sm">🇮🇳</span>
                 <span className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                  Make Tiranga ID Card (Free)
+                  Tiranga ID Card (V1)
                 </span>
                 <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+              </Link>
+
+              {/* Version 2 */}
+              <Link
+                href="/tiranga-idcard"
+                className="group inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-card to-primary/10 hover:border-emerald-500/60 hover:shadow-md transition-all duration-300 shadow-sm"
+              >
+                <span className="text-sm">✨</span>
+                <span className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  Tiranga ID Card (V2)
+                </span>
+                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                  NEW
+                </span>
+                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
               </Link>
             </motion.div>
 
