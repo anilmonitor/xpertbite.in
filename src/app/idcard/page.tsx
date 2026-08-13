@@ -226,10 +226,10 @@ export default function TirangaIdCardPage() {
     name: "How to Make Tiranga ID Card Online (Step by Step Video Tutorial)",
     description:
       "Watch this step-by-step video guide on how to create, personalize with photo & name, and download your Har Ghar Tiranga ID Card online for free.",
-    thumbnailUrl: "https://img.youtube.com/vi/zUFkhp1J0QI/hqdefault.jpg",
+    thumbnailUrl: "https://img.youtube.com/vi/crOoAgGmmAc/hqdefault.jpg",
     uploadDate: "2026-08-01T08:00:00+05:30",
-    embedUrl: "https://www.youtube.com/embed/zUFkhp1J0QI",
-    contentUrl: "https://youtu.be/zUFkhp1J0QI",
+    embedUrl: "https://www.youtube.com/embed/crOoAgGmmAc",
+    contentUrl: "https://youtu.be/crOoAgGmmAc",
   };
 
   return (
@@ -319,7 +319,7 @@ export default function TirangaIdCardPage() {
         </header>
 
         {/* ─── Video Guide Section (YouTube Video Tutorial) ────────── */}
-        <TirangaVideoGuide videoId="zUFkhp1J0QI" />
+        <TirangaVideoGuide videoId="crOoAgGmmAc" />
 
         {/* ─── Interactive Card Preview Section ────────────────────── */}
         <section className="py-14 bg-muted/20 border-b border-border/40">
