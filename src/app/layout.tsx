@@ -111,6 +111,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      {/* AdSense ad code temporarily removed during limited ad serving period
       <head>
         <script
           async
@@ -118,6 +119,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
+      */}
       <body
         className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} font-sans overflow-x-hidden`}
       >
