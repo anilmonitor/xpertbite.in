@@ -37,43 +37,31 @@ export function Hero() {
               transition={{ duration: 0.5 }}
               className="mb-6 flex flex-wrap items-center justify-center lg:justify-start gap-2.5"
             >
-              {/* Version 1 */}
+              {/* Tiranga ID Card */}
               <Link
                 href="/idcard"
                 className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-orange-500/30 bg-gradient-to-r from-orange-500/10 via-card to-emerald-500/10 hover:border-orange-500/60 hover:shadow-md transition-all duration-300 shadow-sm"
               >
                 <span className="text-sm">🇮🇳</span>
                 <span className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                  Tiranga ID (V1)
+                  Tiranga ID Card
                 </span>
                 <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
               </Link>
 
-              {/* Version 2 */}
+              {/* Raksha Bandhan Card */}
               <Link
-                href="/tiranga-idcard"
-                className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-card to-primary/10 hover:border-emerald-500/60 hover:shadow-md transition-all duration-300 shadow-sm"
+                href="/raksha-bandhan"
+                className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-pink-500/30 bg-gradient-to-r from-pink-500/10 via-card to-red-500/10 hover:border-pink-500/60 hover:shadow-md transition-all duration-300 shadow-sm"
               >
-                <span className="text-sm">✨</span>
-                <span className="text-xs sm:text-sm font-semibold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                  Online Maker (V2)
+                <span className="text-sm">🎀</span>
+                <span className="text-xs sm:text-sm font-bold text-foreground group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                  Raksha Bandhan Card
                 </span>
-                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
-              </Link>
-
-              {/* Version 3 */}
-              <Link
-                href="/har-ghar-tiranga"
-                className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-primary/30 bg-gradient-to-r from-primary/10 via-card to-orange-500/10 hover:border-primary/60 hover:shadow-md transition-all duration-300 shadow-sm"
-              >
-                <span className="text-sm">🔥</span>
-                <span className="text-xs sm:text-sm font-bold text-foreground group-hover:text-primary transition-colors">
-                  Har Ghar Tiranga (V3)
-                </span>
-                <span className="px-1.5 py-0.5 text-[9px] font-extrabold rounded-full bg-primary/20 text-primary">
+                <span className="px-1.5 py-0.5 text-[9px] font-extrabold rounded-full bg-pink-500/20 text-pink-600 dark:text-pink-400">
                   NEW
                 </span>
-                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-pink-600 dark:group-hover:text-pink-400 group-hover:translate-x-0.5 transition-all" />
               </Link>
             </motion.div>
 

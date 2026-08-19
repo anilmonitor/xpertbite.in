@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/idcard/v2",
     "/har-ghar-tiranga",
     "/idcard-v3",
+    "/raksha-bandhan",
     "/search",
     "/services",
     "/products",
@@ -37,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${baseUrl}${route}`,
     lastModified: currentDate,
     changeFrequency: "weekly" as const,
-    priority: route === "" ? 1.0 : ["/idcard", "/tiranga-idcard", "/idcard-v2", "/idcard/v2", "/har-ghar-tiranga", "/idcard-v3"].includes(route) ? 0.9 : 0.8,
+    priority: route === "" ? 1.0 : ["/idcard", "/tiranga-idcard", "/idcard-v2", "/idcard/v2", "/har-ghar-tiranga", "/idcard-v3", "/raksha-bandhan"].includes(route) ? 0.9 : 0.8,
   }));
 
   // 2. Dynamic Service Routes
