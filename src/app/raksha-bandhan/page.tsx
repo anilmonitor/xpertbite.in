@@ -23,7 +23,7 @@ import { TirangaSocialBanner } from "@/app/idcard/tiranga-social-banner";
 export const metadata: Metadata = {
   title: "Raksha Bandhan Card Maker Online 2026 (Free HD) | रक्षा बंधन कार्ड ऑनलाइन बनाएं - Happy Rakhi Card Generator",
   description:
-    "Free Raksha Bandhan Card Maker 2026 online tool. Upload your photo, add your name & download beautiful HD Rakhi greeting cards instantly at rakchhabandhan.vercel.app for Raksha Bandhan celebration.",
+    "Free Raksha Bandhan Card Maker 2026 online tool. Upload your photo, add your name & download beautiful HD Rakhi greeting cards instantly at rakchhabandhan-beryl.vercel.app for Raksha Bandhan celebration.",
   keywords: [
     "raksha bandhan card maker online",
     "raksha bandhan card online 2026",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     "raksha bandhan card 2026 free download",
     "rakhi card maker online",
     "raksha bandhan greeting card maker",
-    "rakchhabandhan.vercel.app",
+    "rakchhabandhan-beryl.vercel.app",
     "rakhi photo card maker online",
     "raksha bandhan wishes card maker",
     "happy raksha bandhan card with photo",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     siteName: "XpertBite Technologies",
     title: "Raksha Bandhan Card Maker Online 2026 | रक्षा बंधन कार्ड ऑनलाइन बनाएं (Free HD Tool)",
     description:
-      "Create and download your customized Happy Raksha Bandhan Card 2026 in HD resolution for free at rakchhabandhan.vercel.app. Add your photo, enter name and share on WhatsApp!",
+      "Create and download your customized Happy Raksha Bandhan Card 2026 in HD resolution for free at rakchhabandhan-beryl.vercel.app. Add your photo, enter name and share on WhatsApp!",
     images: [
       {
         url: "https://xpertbite.in/og-image.png",
@@ -66,13 +66,13 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Raksha Bandhan Card Maker Online 2026 (Free HD) | रक्षा बंधन कार्ड",
     description:
-      "Generate your Happy Raksha Bandhan greeting card online in seconds. Free download link: rakchhabandhan.vercel.app.",
+      "Generate your Happy Raksha Bandhan greeting card online in seconds. Free download link: rakchhabandhan-beryl.vercel.app.",
     images: ["https://xpertbite.in/og-image.png"],
   },
 };
 
 export default function RakshaBandhanPage() {
-  const EXTERNAL_GENERATOR_URL = "https://rakchhabandhan.vercel.app";
+  const EXTERNAL_GENERATOR_URL = "https://rakchhabandhan-beryl.vercel.app";
 
   // Structured Data (JSON-LD) for Rich Google Search Results
   const jsonLdWebApplication = {
@@ -80,7 +80,7 @@ export default function RakshaBandhanPage() {
     "@type": "WebApplication",
     name: "Raksha Bandhan Card Maker Online 2026",
     alternateName: "Happy Rakhi Card Generator",
-    url: "https://rakchhabandhan.vercel.app",
+    url: "https://rakchhabandhan-beryl.vercel.app",
     applicationCategory: "MultimediaApplication",
     operatingSystem: "All (Android, iOS, Windows, macOS, Linux)",
     browserRequirements: "Requires JavaScript. Requires HTML5.",
@@ -135,7 +135,7 @@ export default function RakshaBandhanPage() {
     tool: [
       {
         "@type": "HowToTool",
-        name: "Raksha Bandhan Card Online Generator (rakchhabandhan.vercel.app)",
+        name: "Raksha Bandhan Card Online Generator (rakchhabandhan-beryl.vercel.app)",
       },
       {
         "@type": "HowToTool",
@@ -147,7 +147,7 @@ export default function RakshaBandhanPage() {
         "@type": "HowToStep",
         position: 1,
         name: "Visit Raksha Bandhan Card Generator Portal",
-        text: "Open https://rakchhabandhan.vercel.app on your mobile or PC browser.",
+        text: "Open https://rakchhabandhan-beryl.vercel.app on your mobile or PC browser.",
         url: "https://xpertbite.in/raksha-bandhan#step-1",
       },
       {
@@ -191,7 +191,7 @@ export default function RakshaBandhanPage() {
         name: "How can I make my Raksha Bandhan card online with photo?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "You can make your Raksha Bandhan card in 4 easy steps: (1) Go to rakchhabandhan.vercel.app, (2) Enter your Name and wishes, (3) Upload your photo, and (4) Click Generate & Download to save your card in HD.",
+          text: "You can make your Raksha Bandhan card in 4 easy steps: (1) Go to rakchhabandhan-beryl.vercel.app, (2) Enter your Name and wishes, (3) Upload your photo, and (4) Click Generate & Download to save your card in HD.",
         },
       },
       {
@@ -373,7 +373,7 @@ export default function RakshaBandhanPage() {
                       Sisters tie a sacred thread called <strong>Rakhi</strong> on their brother&apos;s wrist, symbolizing their love and prayers for their well-being, while brothers pledge to protect and support their sisters.
                     </p>
                     <p>
-                      Using the free tool at <strong className="text-foreground">rakchhabandhan.vercel.app</strong>, you can create beautiful personalized Rakhi greeting cards to share with your siblings.
+                      Using the free tool at <strong className="text-foreground">rakchhabandhan-beryl.vercel.app</strong>, you can create beautiful personalized Rakhi greeting cards to share with your siblings.
                     </p>
                   </div>
                 </div>
@@ -486,7 +486,7 @@ export default function RakshaBandhanPage() {
                   {
                     num: 1,
                     title: "Open the Raksha Bandhan Card Maker",
-                    desc: "Click the generator button at the bottom of this page or navigate to rakchhabandhan.vercel.app on any web browser.",
+                    desc: "Click the generator button at the bottom of this page or navigate to rakchhabandhan-beryl.vercel.app on any web browser.",
                   },
                   {
                     num: 2,
@@ -550,7 +550,7 @@ export default function RakshaBandhanPage() {
                   <tbody className="divide-y divide-border">
                     {[
                       { key: "Tool Name", value: "Raksha Bandhan Card Maker Online 2026" },
-                      { key: "Official Generator Link", value: "https://rakchhabandhan.vercel.app" },
+                      { key: "Official Generator Link", value: "https://rakchhabandhan-beryl.vercel.app" },
                       { key: "Generation Cost", value: "100% Free (No payment / subscription)" },
                       { key: "Output Resolution", value: "HD Quality (Print Ready)" },
                       { key: "File Format", value: "High Quality PNG / JPG Image" },
@@ -596,7 +596,7 @@ export default function RakshaBandhanPage() {
                   },
                   {
                     q: "How can I make my Raksha Bandhan card online with photo?",
-                    a: "You can make your Raksha Bandhan card in 4 easy steps: (1) Go to rakchhabandhan.vercel.app, (2) Enter your Name and wishes, (3) Upload your photo, and (4) Click Generate & Download to save your card in HD quality.",
+                    a: "You can make your Raksha Bandhan card in 4 easy steps: (1) Go to rakchhabandhan-beryl.vercel.app, (2) Enter your Name and wishes, (3) Upload your photo, and (4) Click Generate & Download to save your card in HD quality.",
                   },
                   {
                     q: "Is this Raksha Bandhan Card Generator free?",
@@ -655,7 +655,7 @@ export default function RakshaBandhanPage() {
               <div className="mt-4">
                 <RakhiSiteLink
                   url={EXTERNAL_GENERATOR_URL}
-                  displayUrl="rakchhabandhan.vercel.app"
+                  displayUrl="rakchhabandhan-beryl.vercel.app"
                 />
               </div>
 

@@ -9,8 +9,8 @@ interface RakhiSiteLinkProps {
 }
 
 export function RakhiSiteLink({
-  url = "https://rakchhabandhan.vercel.app",
-  displayUrl = "rakchhabandhan.vercel.app",
+  url = "https://rakchhabandhan-beryl.vercel.app",
+  displayUrl = "rakchhabandhan-beryl.vercel.app",
 }: RakhiSiteLinkProps) {
   const [copied, setCopied] = React.useState(false);
 
