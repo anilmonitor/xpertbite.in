@@ -30,7 +30,7 @@ export function TirangaFaqAccordion({ generatorUrl }: TirangaFaqAccordionProps) 
             rel="noopener noreferrer"
             className="text-primary font-semibold underline inline-flex items-center gap-0.5"
           >
-            tiranga-idcard2026.vercel.app <ExternalLink className="h-3 w-3 inline" />
+            tiranga-indol.vercel.app <ExternalLink className="h-3 w-3 inline" />
           </a>
           . 2. Type your name and location. 3. Upload your photo from mobile gallery or computer. 4. Choose your preferred patriotic frame and click &ldquo;Generate ID Card&rdquo; to download in ultra-HD.
         </span>
@@ -45,7 +45,7 @@ export function TirangaFaqAccordion({ generatorUrl }: TirangaFaqAccordionProps) 
       a: "No! No login, email registration, or phone OTP is required. The tool gives you instant one-click access directly in your browser.",
     },
     {
-      q: "Is it safe to upload my photo on tiranga-idcard2026.vercel.app?",
+      q: "Is it safe to upload my photo on tiranga-indol.vercel.app?",
       a: "Yes. The card rendering is performed securely directly in your browser using modern client-side HTML5 canvas technology. Your personal photos and details are not stored on any public database.",
     },
     {

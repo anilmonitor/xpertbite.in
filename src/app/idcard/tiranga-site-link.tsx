@@ -9,8 +9,8 @@ interface TirangaSiteLinkProps {
 }
 
 export function TirangaSiteLink({
-  url = "https://tiranga-idcard2026.vercel.app",
-  displayUrl = "tiranga-idcard2026.vercel.app",
+  url = "https://tiranga-indol.vercel.app",
+  displayUrl = "tiranga-indol.vercel.app",
 }: TirangaSiteLinkProps) {
   const [copied, setCopied] = React.useState(false);
 

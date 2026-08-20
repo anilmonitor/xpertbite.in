@@ -176,7 +176,7 @@ export function TirangaCardSimulator() {
                 <QrCode className="h-5 w-5 text-foreground/80" />
                 <div>
                   <div className="font-bold text-foreground leading-tight">VERIFIED BADGE</div>
-                  <div className="text-[9px]">tiranga-idcard2026.vercel.app</div>
+                  <div className="text-[9px]">tiranga-indol.vercel.app</div>
                 </div>
               </div>
               <div className="text-right font-mono font-bold text-orange-600 dark:text-orange-400">

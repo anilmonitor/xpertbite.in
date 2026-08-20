@@ -19,7 +19,7 @@ export const SEARCH_ITEMS: SearchItem[] = [
     href: "/idcard",
     keywords: [
       "tiranga", "idcard", "id card", "tiranga id card", "tiranga id", "har ghar tiranga", 
-      "tiranga-idcard2026.vercel.app", "tiranga card download", "15 august", 
+      "tiranga-indol.vercel.app", "tiranga card download", "15 august", 
       "26 january", "patriotic badge", "flag card", "tiranga card kaise banaye", 
       "photo id card maker", "tiranga generator", "card", "online id card", "tiranga photo",
       "tiranga id card maker", "how to make tiranga id card", "tiranga card", "make tiranga id card"
@@ -34,7 +34,7 @@ export const SEARCH_ITEMS: SearchItem[] = [
     href: "/tiranga-idcard",
     keywords: [
       "tiranga id card online maker", "tiranga-idcard", "tiranga id card v2", "tiranga id maker",
-      "har ghar tiranga generator", "tiranga-idcard2026.vercel.app", "tiranga badge online",
+      "har ghar tiranga generator", "tiranga-indol.vercel.app", "tiranga badge online",
       "15 august id card maker", "26 january id badge", "indian flag photo card maker"
     ],
     badge: "Free Tool",
@@ -47,7 +47,7 @@ export const SEARCH_ITEMS: SearchItem[] = [
     href: "/har-ghar-tiranga",
     keywords: [
       "how to make tiranga id", "har ghar tiranga kaise banaye", "tiranga id card kaise banaye",
-      "har ghar tiranga", "tiranga id card v3", "tiranga-idcard2026.vercel.app", "how to make tiranga id card",
+      "har ghar tiranga", "tiranga id card v3", "tiranga-indol.vercel.app", "how to make tiranga id card",
       "15 august id card", "har ghar tiranga certificate", "tiranga badge online"
     ],
     badge: "Special Edition V3",

@@ -35,7 +35,7 @@ import { TirangaVideoGuide } from "@/app/idcard/tiranga-video-guide";
 export const metadata: Metadata = {
   title: "Har Ghar Tiranga Kaise Banaye (2026) | How to Make Tiranga ID Card Online Free",
   description:
-    "Har Ghar Tiranga ID Card kaise banaye? Complete step-by-step guide on how to make Tiranga ID card online for free in 2026. Add your photo, enter your name & download ultra-HD patriotic ID badge instantly at tiranga-idcard2026.vercel.app for 15th August Independence Day.",
+    "Har Ghar Tiranga ID Card kaise banaye? Complete step-by-step guide on how to make Tiranga ID card online for free in 2026. Add your photo, enter your name & download ultra-HD patriotic ID badge instantly at tiranga-indol.vercel.app for 15th August Independence Day.",
   keywords: [
     "how to make tiranga id",
     "har ghar tiranga kaise banaye",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     "tiranga id card download with photo",
     "15 august har ghar tiranga photo badge",
     "tiranga id card online maker free",
-    "tiranga-idcard2026.vercel.app",
+    "tiranga-indol.vercel.app",
     "har ghar tiranga certificate generator",
     "26 january tiranga id card maker",
     "indian flag photo id card maker",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     siteName: "XpertBite Technologies",
     title: "Har Ghar Tiranga Kaise Banaye (2026) | How to Make Tiranga ID Card Online",
     description:
-      "Tiranga ID Card kaise banaye? Step-by-step Hindi & English tutorial to create and download Har Ghar Tiranga photo ID badge in ultra-HD resolution for free at tiranga-idcard2026.vercel.app.",
+      "Tiranga ID Card kaise banaye? Step-by-step Hindi & English tutorial to create and download Har Ghar Tiranga photo ID badge in ultra-HD resolution for free at tiranga-indol.vercel.app.",
     images: [
       {
         url: "https://xpertbite.in/og-image.png",
@@ -78,13 +78,13 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Har Ghar Tiranga Kaise Banaye | How to Make Tiranga ID Card Online (2026)",
     description:
-      "Create and download your customized Har Ghar Tiranga ID Card for free in 10 seconds. Direct maker tool link: tiranga-idcard2026.vercel.app.",
+      "Create and download your customized Har Ghar Tiranga ID Card for free in 10 seconds. Direct maker tool link: tiranga-indol.vercel.app.",
     images: ["https://xpertbite.in/og-image.png"],
   },
 };
 
 export default function HarGharTirangaV3Page() {
-  const EXTERNAL_GENERATOR_URL = "https://tiranga-idcard2026.vercel.app";
+  const EXTERNAL_GENERATOR_URL = "https://tiranga-indol.vercel.app";
 
   // Comprehensive Structured Data (JSON-LD) for Search Engine Rich Snippets
   const jsonLdWebApplication = {
@@ -92,7 +92,7 @@ export default function HarGharTirangaV3Page() {
     "@type": "WebApplication",
     name: "Har Ghar Tiranga ID Card Maker 2026 (V3 Edition)",
     alternateName: "How to Make Tiranga ID Card Online Free Tool",
-    url: "https://tiranga-idcard2026.vercel.app",
+    url: "https://tiranga-indol.vercel.app",
     applicationCategory: "DesignApplication",
     operatingSystem: "All (Android, iOS, Windows, macOS, Linux)",
     softwareVersion: "3.0 (2026 Special Edition)",
@@ -138,7 +138,7 @@ export default function HarGharTirangaV3Page() {
     tool: [
       {
         "@type": "HowToTool",
-        name: "Har Ghar Tiranga ID Maker (tiranga-idcard2026.vercel.app)",
+        name: "Har Ghar Tiranga ID Maker (tiranga-indol.vercel.app)",
       },
       {
         "@type": "HowToTool",
@@ -150,7 +150,7 @@ export default function HarGharTirangaV3Page() {
         "@type": "HowToStep",
         position: 1,
         name: "Open the Official Har Ghar Tiranga Generator",
-        text: "Navigate to https://tiranga-idcard2026.vercel.app on your mobile or laptop browser.",
+        text: "Navigate to https://tiranga-indol.vercel.app on your mobile or laptop browser.",
         url: "https://xpertbite.in/har-ghar-tiranga#step-1",
       },
       {
@@ -198,7 +198,7 @@ export default function HarGharTirangaV3Page() {
         name: "Har Ghar Tiranga ID Card kaise banaye?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "हर घर तिरंगा आईडी कार्ड बनाने के लिए: (1) tiranga-idcard2026.vercel.app वेबसाइट खोलें, (2) अपना नाम और राज्य लिखें, (3) अपनी फोटो अपलोड करें, और (4) 'Generate Tiranga ID Card' पर क्लिक करके HD इमेज डाउनलोड कर लें।",
+          text: "हर घर तिरंगा आईडी कार्ड बनाने के लिए: (1) tiranga-indol.vercel.app वेबसाइट खोलें, (2) अपना नाम और राज्य लिखें, (3) अपनी फोटो अपलोड करें, और (4) 'Generate Tiranga ID Card' पर क्लिक करके HD इमेज डाउनलोड कर लें।",
         },
       },
       {
@@ -206,7 +206,7 @@ export default function HarGharTirangaV3Page() {
         name: "How to make Tiranga ID card online with my photo?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "To make a Tiranga ID Card with your photo, visit tiranga-idcard2026.vercel.app, upload any photo from your gallery, type your name, and download the card in 10 seconds for free.",
+          text: "To make a Tiranga ID Card with your photo, visit tiranga-indol.vercel.app, upload any photo from your gallery, type your name, and download the card in 10 seconds for free.",
         },
       },
       {
@@ -390,7 +390,7 @@ export default function HarGharTirangaV3Page() {
                   Tiranga ID Card Kaise Banaye? (3 Simple Steps)
                 </h2>
                 <p className="text-xs sm:text-sm text-muted-foreground">
-                  How to make your Tiranga ID card online using the free maker tool at tiranga-idcard2026.vercel.app.
+                  How to make your Tiranga ID card online using the free maker tool at tiranga-indol.vercel.app.
                 </p>
               </div>
 
@@ -476,7 +476,7 @@ export default function HarGharTirangaV3Page() {
                     {[
                       "Ideal WhatsApp Profile Picture (DP) for 15th August & 26th January",
                       "Printable on PVC Plastic Card for school, college, or corporate badge",
-                      "100% Free instant tool with direct download: tiranga-idcard2026.vercel.app",
+                      "100% Free instant tool with direct download: tiranga-indol.vercel.app",
                       "Safe browser-side processing keeping your photo 100% private",
                       "Share with family, friends, and colleagues across India",
                     ].map((benefit, i) => (
@@ -510,7 +510,7 @@ export default function HarGharTirangaV3Page() {
                   <tbody className="divide-y divide-border">
                     {[
                       { key: "Guide / Tool Title", value: "Har Ghar Tiranga ID Card Maker 2026 (V3)" },
-                      { key: "Official Generator Link", value: "https://tiranga-idcard2026.vercel.app" },
+                      { key: "Official Generator Link", value: "https://tiranga-indol.vercel.app" },
                       { key: "Price / Charges", value: "100% Free (Zero hidden charges)" },
                       { key: "Resolution Quality", value: "300 DPI High-Resolution Ultra-HD" },
                       { key: "Export Image Format", value: "PNG / JPG Image" },
@@ -569,7 +569,7 @@ export default function HarGharTirangaV3Page() {
               <div className="mt-4">
                 <TirangaSiteLink
                   url={EXTERNAL_GENERATOR_URL}
-                  displayUrl="tiranga-idcard2026.vercel.app"
+                  displayUrl="tiranga-indol.vercel.app"
                 />
               </div>
 
