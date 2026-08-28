@@ -12,6 +12,24 @@ export interface SearchItem {
 export const SEARCH_ITEMS: SearchItem[] = [
   // ─── Featured Tools & Guides ──────────────────────────────────
   {
+    id: "tool-college-id-card",
+    title: "College ID Card Maker (CSMU & Student AI Discount Free Generator)",
+    description: "Make free 300 DPI student ID cards online with photo, name, roll no, dates & barcode. Claim Gemini AI and Claude student offers.",
+    category: "Tools & Guides",
+    href: "/collegeid",
+    keywords: [
+      "coll", "colle", "colleg", "college", "college id", "college id card", "collegeid", "college card",
+      "student id", "student id card", "student id card maker", "student card", "student badge",
+      "gemini", "gemini ai", "gemini ai student id maker free", "student id card maker gemini", 
+      "student claim gemini id card free", "gemini student", "gemini free",
+      "claude", "claude premium", "how to take cloude premiu free", "how to take claude premium free", "claude pro student",
+      "make free id card", "free id card", "id card maker", "id card generator", "id card", "idcard",
+      "csmu", "csmu id card", "csmu navi mumbai", "chhatrapati shivaji maharaj university", "chhatrapati shivaji maharaj",
+      "pvc id card", "300 dpi id card", "printable id card", "student identity card"
+    ],
+    badge: "New Free Tool",
+  },
+  {
     id: "tool-tiranga-idcard",
     title: "Tiranga ID Card (तिरंगा आईडी कार्ड) - Step by Step Guide",
     description: "Create, customize with your photo & name, and download your Har Ghar Tiranga ID Card online.",
