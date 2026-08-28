@@ -29,7 +29,7 @@ import {
 import { toast } from "sonner";
 
 const DEMO_STUDENT: StudentIdData = {
-  name: "Aarav S. Patil",
+  name: "Mohit Kumar",
   studentId: "CSMU2024CS1089",
   rollNo: "24CS1089",
   academicYear: "2024 - 2025",
@@ -41,9 +41,10 @@ const DEMO_STUDENT: StudentIdData = {
   phone: "+91 98765 43210",
   issueDate: "01/08/2024",
   expiryDate: "31/07/2028",
-  photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80",
+  photoUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=500&auto=format&fit=crop&q=80",
   logoUrl: "/logos/CSMU-Logo.jpg",
-  address: "Sector 14, Kharghar, Navi Mumbai, MH",
+  signatureUrl: "/signature.png",
+  address: "Sector 14, Kharghar, Navi Mumbai, Maharashtra - 410210",
   theme: "navy",
   orientation: "vertical",
   showHologram: true,

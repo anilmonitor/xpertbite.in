@@ -670,7 +670,7 @@ async function renderVerticalBack(
 
   ctx.font = "13px 'Inter', sans-serif";
   ctx.fillStyle = "#475569";
-  ctx.fillText(`Student Full Name : ${data.name || "Aarav S. Patil"}`, 55, emgY + 62);
+  ctx.fillText(`Student Full Name : ${data.name || "Mohit Kumar"}`, 55, emgY + 62);
   ctx.fillText(`Enrollment / PRN  : ${data.studentId || "CSMU2024CS1089"}`, 55, emgY + 88);
   ctx.fillText(`Emergency Phone   : ${data.phone || "+91 98765 43210"}`, 55, emgY + 114);
   ctx.fillText(`Blood Group / DOB : ${data.bloodGroup || "B+"}  |  DOB: ${data.dob || "15/08/2004"}`, 55, emgY + 140);
@@ -1007,7 +1007,7 @@ async function renderHorizontalBack(
 
   ctx.font = "12px 'Inter', sans-serif";
   ctx.fillStyle = "#475569";
-  ctx.fillText(`Student Name    : ${data.name || "Aarav S. Patil"}`, 70, 348);
+  ctx.fillText(`Student Name    : ${data.name || "Mohit Kumar"}`, 70, 348);
   ctx.fillText(`Emergency Phone : ${data.phone || "+91 98765 43210"}`, 70, 372);
   ctx.fillText(`Blood Group     : ${data.bloodGroup || "B+"}  |  DOB: ${data.dob || "15/08/2004"}`, 70, 396);
   ctx.fillText(`Permanent Addr  : ${data.address || "Navi Mumbai, Maharashtra, India"}`, 70, 420);
