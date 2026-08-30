@@ -6,7 +6,11 @@ import { cn } from "@/lib/utils";
 export function WhatsAppButton() {
   const pathname = usePathname();
 
-  if (pathname?.startsWith("/durgapuja2026")) {
+  if (
+    pathname?.startsWith("/durgapuja2026") ||
+    pathname?.startsWith("/diwaliPuja2026") ||
+    pathname?.startsWith("/chhathPuja2026")
+  ) {
     return null;
   }
   return (

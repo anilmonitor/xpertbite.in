@@ -11,7 +11,11 @@ export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (pathname?.startsWith("/durgapuja2026")) return;
+    if (
+      pathname?.startsWith("/durgapuja2026") ||
+      pathname?.startsWith("/diwaliPuja2026") ||
+      pathname?.startsWith("/chhathPuja2026")
+    ) return;
     const toggleVisibility = () => {
       if (window.scrollY > 400) {
         setIsVisible(true);

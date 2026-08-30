@@ -17,6 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/idcard-v3",
     "/raksha-bandhan",
     "/durgapuja2026",
+    "/diwaliPuja2026",
+    "/chhathPuja2026",
     "/search",
     "/services",
     "/products",
@@ -36,27 +38,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/refund-policy",
     "/shipping-policy",
     "/cookie-policy",
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: currentDate,
-    changeFrequency: "weekly" as const,
-    priority:
-      route === ""
-        ? 1.0
-        : [
-            "/collegeid",
-            "/idcard",
-            "/tiranga-idcard",
-            "/idcard-v2",
-            "/idcard/v2",
-            "/har-ghar-tiranga",
-            "/idcard-v3",
-            "/raksha-bandhan",
-            "/durgapuja2026",
-          ].includes(route)
-        ? 0.9
-        : 0.8,
-  }));
+  ].map((route) => {
+    const isFestiveRoute = ["/durgapuja2026", "/diwaliPuja2026", "/chhathPuja2026"].includes(route);
+    return {
+      url: `${baseUrl}${route}`,
+      lastModified: currentDate,
+      changeFrequency: isFestiveRoute ? ("daily" as const) : ("weekly" as const),
+      priority:
+        route === ""
+          ? 1.0
+          : isFestiveRoute
+          ? 0.95
+          : [
+              "/collegeid",
+              "/idcard",
+              "/tiranga-idcard",
+              "/idcard-v2",
+              "/idcard/v2",
+              "/har-ghar-tiranga",
+              "/idcard-v3",
+              "/raksha-bandhan",
+            ].includes(route)
+          ? 0.9
+          : 0.8,
+    };
+  });
 
   // 2. Dynamic Service Routes
   const serviceRoutes = services.map((service) => ({

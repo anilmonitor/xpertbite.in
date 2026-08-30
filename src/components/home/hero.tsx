@@ -54,14 +54,38 @@ export function Hero() {
                 href="/durgapuja2026"
                 className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-red-600/15 via-amber-500/10 to-yellow-500/15 hover:border-amber-500/80 hover:shadow-md transition-all duration-300 shadow-sm"
               >
-                <span className="text-sm">🚩</span>
                 <span className="text-xs sm:text-sm font-bold text-foreground group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors">
-                  दुर्गा पूजा 2026 ग्रीटिंग
+                  दुर्गा पूजा 2026
                 </span>
                 <span className="px-1.5 py-0.5 text-[9px] font-extrabold rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400">
                   NEW
                 </span>
-                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-amber-500 dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
+              </Link>
+
+              {/* Diwali 2026 Card */}
+              <Link
+                href="/diwaliPuja2026"
+                className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-yellow-500/40 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-yellow-500/15 hover:border-yellow-500/80 hover:shadow-md transition-all duration-300 shadow-sm"
+              >
+                <span className="text-xs sm:text-sm font-bold text-foreground group-hover:text-yellow-500 dark:group-hover:text-yellow-400 transition-colors">
+                  दीपावली 2026
+                </span>
+                <span className="px-1.5 py-0.5 text-[9px] font-extrabold rounded-full bg-yellow-500/20 text-yellow-600 dark:text-yellow-400">
+                  NEW
+                </span>
+              </Link>
+
+              {/* Chhath Puja 2026 Card */}
+              <Link
+                href="/chhathPuja2026"
+                className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-orange-500/40 bg-gradient-to-r from-red-500/15 via-orange-500/10 to-amber-500/15 hover:border-orange-500/80 hover:shadow-md transition-all duration-300 shadow-sm"
+              >
+                <span className="text-xs sm:text-sm font-bold text-foreground group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors">
+                  छठ पूजा 2026
+                </span>
+                <span className="px-1.5 py-0.5 text-[9px] font-extrabold rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400">
+                  NEW
+                </span>
               </Link>
             </motion.div>
 

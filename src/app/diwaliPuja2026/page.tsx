@@ -1,0 +1,153 @@
+import React, { Suspense } from "react";
+import type { Metadata } from "next";
+import { DiwaliPujaClient } from "./diwali-puja-client";
+
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ name?: string; u?: string; id?: string }>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const senderName = params.name ? decodeURIComponent(params.name) : "";
+
+  const title = senderName
+    ? `${senderName} की तरफ से दीपावली 2026 की हार्दिक शुभकामनाएं | Happy Diwali Greeting Card`
+    : "दीपावली 2026 की हार्दिक शुभकामनाएं | Diwali 2026 Greeting Card Generator with Photo & Music - XpertBite";
+
+  const description = senderName
+    ? `${senderName} ने आपके और आपके परिवार के लिए दीपावली 2026 की पावन शुभकामनाएं भेजी हैं। माँ लक्ष्मी व भगवान गणेश का आशीर्वाद प्राप्त करें।`
+    : "दीपावली 2026 की हार्दिक शुभकामनाएं! अपने नाम और फोटो के साथ खूबसूरत हैप्पी दिवाली ग्रीटिंग कार्ड बनाएं, लाइव टाइमर और भक्ति संगीत के साथ WhatsApp पर शेयर करें।";
+
+  return {
+    title,
+    description,
+    keywords: [
+      "diwali 2026",
+      "deepawali 2026",
+      "happy diwali 2026 wishes",
+      "दीपावली की हार्दिक शुभकामनाएं",
+      "दिवाली विशेस 2026",
+      "diwali greeting card maker online",
+      "happy diwali greeting with photo",
+      "diwali photo editor online",
+      "diwali whatsapp status maker 2026",
+      "diwali wishes with name and photo",
+      "lakshmi ganesh puja 2026",
+      "shubh deepawali 2026 wishes",
+      "diwali countdown 2026",
+      "free diwali greeting card generator",
+      "दिवाली कार्ड ऑनलाइन बनाएं",
+      "लक्ष्मी गणेश पूजा ग्रीटिंग कार्ड",
+    ],
+    alternates: {
+      canonical: "https://xpertbite.in/diwaliPuja2026",
+    },
+    openGraph: {
+      type: "website",
+      locale: "hi_IN",
+      url: "https://xpertbite.in/diwaliPuja2026",
+      siteName: "XpertBite Technologies",
+      title,
+      description,
+      images: [
+        {
+          url: "https://xpertbite.in/diwali/diwali_portrait.jpg",
+          width: 1080,
+          height: 1080,
+          alt: "Shubh Deepawali 2026 Greetings",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["https://xpertbite.in/diwali/diwali_portrait.jpg"],
+    },
+  };
+}
+
+export default function DiwaliPujaPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        name: "Diwali 2026 Greeting Card Maker",
+        alternateName: "दीपावली की हार्दिक शुभकामनाएं कार्ड मेकर",
+        url: "https://xpertbite.in/diwaliPuja2026",
+        applicationCategory: "MultimediaApplication",
+        operatingSystem: "All (Android, iOS, Windows, macOS)",
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "INR",
+        },
+        featureList: [
+          "Interactive Square 1:1 Image Cropper",
+          "Fast Milliseconds WhatsApp Share Timer",
+          "Sequential Custom Share Link",
+          "Devotional Background Audio Player",
+          "100% Free & Mobile Friendly",
+        ],
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://xpertbite.in",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Diwali 2026 Greeting",
+            item: "https://xpertbite.in/diwaliPuja2026",
+          },
+        ],
+      },
+    ],
+  };
+
+  return (
+    <main className="min-h-screen bg-[#FCF8F3]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* Semantic SEO & Keyword Indexing (Hidden for accessibility bots & search crawlers) */}
+      <section className="sr-only" aria-label="Diwali 2026 Information and Greetings">
+        <h1>दीपावली 2026 की हार्दिक शुभकामनाएं - Happy Deepawali Greeting Card Generator</h1>
+        <p>
+          Celebrate Diwali 2026 (Shubh Deepawali) with joyful lights and devotion. Create and share personalized 
+          Diwali wishes, Lakshmi Ganesh blessings, and festive cards with your custom name and photo.
+          Features include live countdown timers, 1:1 image cropping, devotional music, and direct 1-tap WhatsApp sharing.
+        </p>
+        <h2>Most Searched Diwali Keywords</h2>
+        <ul>
+          <li>Diwali 2026 Date and Lakshmi Puja Muhurat</li>
+          <li>दीपावली की हार्दिक शुभकामनाएं संदेश एवं फोटो कार्ड</li>
+          <li>Happy Deepawali WhatsApp Greeting Link Generator</li>
+          <li>Maa Lakshmi & Lord Ganesha Divine Blessings Photo Frame 2026</li>
+        </ul>
+      </section>
+
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-[#FCF8F3] flex items-center justify-center text-amber-900">
+            <div className="flex flex-col items-center gap-3">
+              <p className="font-bold text-sm">लोड हो रहा है...</p>
+            </div>
+          </div>
+        }
+      >
+        <DiwaliPujaClient />
+      </Suspense>
+    </main>
+  );
+}

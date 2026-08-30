@@ -14,14 +14,14 @@ import {
   Crop,
 } from "lucide-react";
 import { toast } from "sonner";
-import { DurgaAudioPlayer } from "./durga-audio-player";
+import { DiwaliAudioPlayer } from "./diwali-audio-player";
 
 function generateClientSlug(name: string): string {
   const clean = name.trim().toLowerCase().replace(/[^a-z0-9]/g, "") || "anil";
   return `${clean}-1`;
 }
 
-export function DurgaPujaClient() {
+export function DiwaliPujaClient() {
   const searchParams = useSearchParams();
 
   const userSlugParam = searchParams.get("u") || searchParams.get("id") || searchParams.get("slug") || "";
@@ -54,7 +54,7 @@ export function DurgaPujaClient() {
   const targetWhatsappUrlRef = useRef<string | null>(null);
   const shareEndTimestampRef = useRef<number | null>(null);
 
-  // Countdown Timer to Durga Puja 2026 (Target: 16 October 2026)
+  // Countdown Timer to Diwali 2026 (Target: 8 November 2026)
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -85,7 +85,7 @@ export function DurgaPujaClient() {
   }, [shareMsLeft]);
 
   useEffect(() => {
-    const targetDate = new Date("2026-10-16T00:00:00+05:30").getTime();
+    const targetDate = new Date("2026-11-08T00:00:00+05:30").getTime();
 
     const updateCountdown = () => {
       const now = new Date().getTime();
@@ -111,7 +111,7 @@ export function DurgaPujaClient() {
   // Fetch greeting from DB if ?u=... is in URL
   useEffect(() => {
     if (userSlugParam) {
-      fetch(`/api/durgapuja?u=${encodeURIComponent(userSlugParam)}`)
+      fetch(`/api/diwali?u=${encodeURIComponent(userSlugParam)}`)
         .then((res) => res.json())
         .then((data) => {
           if (data?.success && data?.greeting) {
@@ -131,11 +131,11 @@ export function DurgaPujaClient() {
   // Check localStorage for saved photo or name
   useEffect(() => {
     try {
-      const savedPhoto = localStorage.getItem("durga_puja_user_photo");
+      const savedPhoto = localStorage.getItem("diwali_user_photo");
       if (savedPhoto && !photoPreview && !userSlugParam) {
         setPhotoPreview(savedPhoto);
       }
-      const savedName = localStorage.getItem("durga_puja_user_name");
+      const savedName = localStorage.getItem("diwali_user_name");
       if (savedName && !userName && !nameParam) {
         setUserName(savedName);
       }
@@ -162,7 +162,6 @@ export function DurgaPujaClient() {
       setIsCropModalOpen(true);
     };
     reader.readAsDataURL(file);
-    // Reset file input value so same file can be re-selected if needed
     e.target.value = "";
   };
 
@@ -173,7 +172,7 @@ export function DurgaPujaClient() {
     const img = new window.Image();
     img.src = rawImageSrc;
     img.onload = () => {
-      const cropBoxSize = 600; // High resolution 1:1 square
+      const cropBoxSize = 600;
       const canvas = document.createElement("canvas");
       canvas.width = cropBoxSize;
       canvas.height = cropBoxSize;
@@ -181,7 +180,6 @@ export function DurgaPujaClient() {
 
       if (!ctx) return;
 
-      // Fill white background
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(0, 0, cropBoxSize, cropBoxSize);
 
@@ -189,11 +187,6 @@ export function DurgaPujaClient() {
       ctx.translate(cropBoxSize / 2, cropBoxSize / 2);
       ctx.rotate((cropRotation * Math.PI) / 180);
 
-      // Render image centered with scale and offset
-      const drawWidth = img.width * cropScale;
-      const drawHeight = img.height * cropScale;
-      
-      // Calculate normalized scaling to cover the square preview
       const baseScale = Math.max(cropBoxSize / img.width, cropBoxSize / img.height);
       const finalW = img.width * baseScale * cropScale;
       const finalH = img.height * baseScale * cropScale;
@@ -210,7 +203,7 @@ export function DurgaPujaClient() {
       const croppedDataUrl = canvas.toDataURL("image/jpeg", 0.92);
       setPhotoPreview(croppedDataUrl);
       try {
-        localStorage.setItem("durga_puja_user_photo", croppedDataUrl);
+        localStorage.setItem("diwali_user_photo", croppedDataUrl);
       } catch {}
 
       setIsCropModalOpen(false);
@@ -256,7 +249,7 @@ export function DurgaPujaClient() {
   const handleRemovePhoto = () => {
     setPhotoPreview(null);
     try {
-      localStorage.removeItem("durga_puja_user_photo");
+      localStorage.removeItem("diwali_user_photo");
     } catch {}
   };
 
@@ -265,12 +258,12 @@ export function DurgaPujaClient() {
     const nameToSave = userName.trim() || (recipientGreeting?.name ? recipientGreeting.name : "Anil");
     try {
       setIsSavingDb(true);
-      const res = await fetch("/api/durgapuja", {
+      const res = await fetch("/api/diwali", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: nameToSave,
-          message: "दुर्गा पूजा की हार्दिक शुभकामनाएं",
+          message: "दीपावली की हार्दिक शुभकामनाएं",
           imageBase64: photoPreview,
         }),
       });
@@ -292,22 +285,19 @@ export function DurgaPujaClient() {
     return null;
   };
 
-  // Generate fallback or active short English URL
   const getShortShareUrl = (customSlug?: string) => {
-    if (typeof window === "undefined") return "https://xpertbite.in/durgapuja2026";
+    if (typeof window === "undefined") return "https://xpertbite.in/diwaliPuja2026";
     const origin = window.location.origin;
     const nameToUse = userName.trim() || (recipientGreeting?.name ? recipientGreeting.name : "anil");
     const slug = customSlug || activeSlug || generateClientSlug(nameToUse);
-    return `${origin}/durgapuja2026?u=${slug}`;
+    return `${origin}/diwaliPuja2026?u=${slug}`;
   };
 
-  // Short WhatsApp message text (with 1 emoji)
   const getWhatsAppMessage = (shareUrl: string) => {
     const nameToShare = userName.trim() || (recipientGreeting?.name ? recipientGreeting.name : "Anil");
-    return `${nameToShare} ने दुर्गा पूजा को लेकर आपके लिए कुछ भेजा है ✨\n\nदेखने के लिए लिंक खोलें:\n${shareUrl}`;
+    return `${nameToShare} ने दीपावली को लेकर आपके लिए कुछ भेजा है ✨\n\nदेखने के लिए लिंक खोलें:\n${shareUrl}`;
   };
 
-  // WhatsApp Share Intent with 30-Second Fast Milliseconds Live Countdown
   const handleWhatsAppShare = async () => {
     if (shareMsLeft !== null) return;
 
@@ -326,7 +316,6 @@ export function DurgaPujaClient() {
     const whatsappUrl = `https://api.whatsapp.com/send?text=${text}`;
     targetWhatsappUrlRef.current = whatsappUrl;
 
-    // Start 30 seconds fast milliseconds countdown
     shareEndTimestampRef.current = Date.now() + 30000;
     setShareMsLeft(30000);
     toast.info("WhatsApp शेयर 30 सेकंड में शुरू होगा...");
@@ -337,13 +326,11 @@ export function DurgaPujaClient() {
 
   return (
     <div className="relative min-h-screen bg-[#FFFDF9] text-gray-900 overflow-x-hidden font-hindi-heading flex flex-col items-center justify-start pt-16 sm:pt-20 pb-12 px-4 sm:px-6">
-      {/* Background Devotional Audio Player */}
-      <DurgaAudioPlayer />
+      <DiwaliAudioPlayer />
 
-      {/* Main Clean Page Layout */}
       <div className="relative z-10 w-full max-w-lg sm:max-w-xl text-center text-gray-900 my-auto space-y-6">
         
-        {/* Large Flowing Countdown & Sender Header (Clean: Milliseconds removed from top) */}
+        {/* Large Flowing Countdown & Sender Header */}
         <div className="text-center space-y-2 pt-2">
           <div className="text-xl sm:text-2xl md:text-3xl font-black text-[#991B1B] font-mono tracking-tight leading-tight">
             <div>
@@ -359,16 +346,16 @@ export function DurgaPujaClient() {
           </h2>
 
           <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-900 font-hindi-festive pt-1 tracking-wide leading-relaxed">
-            की तरफ से दुर्गा पूजा की हार्दिक शुभकामनाएं
+            की तरफ से दीपावली की हार्दिक शुभकामनाएं
           </p>
         </div>
 
-        {/* Grand Maa Durga Divine Portrait (Large & High Definition) */}
+        {/* Grand Maa Lakshmi & Lord Ganesha Divine Portrait */}
         <div className="relative w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 mx-auto rounded-full p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500">
           <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md">
             <Image
-              src="/durgapuja/durga_mata_portrait.jpg"
-              alt="Maa Durga"
+              src="/diwali/diwali_portrait.jpg"
+              alt="Shubh Deepawali"
               fill
               priority
               className="object-cover"
@@ -376,9 +363,9 @@ export function DurgaPujaClient() {
           </div>
         </div>
 
-        {/* Grand Title (Royal & Ultra-Bold Typography) */}
+        {/* Grand Title */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-hindi-royal font-black text-[#991B1B] leading-tight tracking-tight">
-          दुर्गा पूजा की हार्दिक शुभकामनाएं
+          दीपावली की हार्दिक शुभकामनाएं
         </h1>
 
         {/* Square Framed User Photo */}
@@ -416,7 +403,7 @@ export function DurgaPujaClient() {
             onChange={(e) => {
               setUserName(e.target.value);
               try {
-                localStorage.setItem("durga_puja_user_name", e.target.value);
+                localStorage.setItem("diwali_user_name", e.target.value);
               } catch {}
             }}
             placeholder="अपना नाम यहाँ लिखें..."
@@ -472,10 +459,10 @@ export function DurgaPujaClient() {
         {/* Other Festive Greetings Quick Links */}
         <div className="pt-3 flex flex-wrap items-center justify-center gap-2">
           <Link
-            href="/diwaliPuja2026"
-            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-amber-50/80 hover:bg-amber-100/90 border border-amber-300 rounded-full text-xs font-bold text-amber-950 transition-all shadow-xs"
+            href="/durgapuja2026"
+            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-red-50/80 hover:bg-red-100/90 border border-red-300 rounded-full text-xs font-bold text-red-950 transition-all shadow-xs"
           >
-            <span>दीपावली 2026</span>
+            <span>दुर्गा पूजा 2026</span>
           </Link>
           <Link
             href="/chhathPuja2026"
@@ -529,7 +516,6 @@ export function DurgaPujaClient() {
                 />
               </div>
 
-              {/* Grid guide overlay */}
               <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none border border-white/30">
                 <div className="border-r border-b border-white/20" />
                 <div className="border-r border-b border-white/20" />
@@ -547,7 +533,6 @@ export function DurgaPujaClient() {
               फोटो को खींचकर (Drag) बीच में सेट करें
             </p>
 
-            {/* Zoom & Rotation Controls */}
             <div className="flex items-center justify-center gap-4 bg-gray-50 py-2.5 px-4 rounded-xl">
               <button
                 type="button"
@@ -587,7 +572,6 @@ export function DurgaPujaClient() {
               </button>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex gap-2 pt-2">
               <button
                 type="button"

@@ -457,3 +457,37 @@ model DurgaGreeting {
   @@index([slug])
 }
 
+// ─── Diwali 2026 Greetings ───────────────────────────────────
+
+model DiwaliGreeting {
+  id                  String   @id @default(cuid())
+  slug                String   @unique @default(cuid())
+  name                String
+  message             String?
+  imageUrl            String?
+  cloudinaryPublicId  String?
+  views               Int      @default(0)
+  blessings           Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([slug])
+}
+
+// ─── Chhath Puja 2026 Greetings ──────────────────────────────
+
+model ChhathGreeting {
+  id                  String   @id @default(cuid())
+  slug                String   @unique @default(cuid())
+  name                String
+  message             String?
+  imageUrl            String?
+  cloudinaryPublicId  String?
+  views               Int      @default(0)
+  blessings           Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([slug])
+}
+
