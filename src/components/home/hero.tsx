@@ -49,19 +49,19 @@ export function Hero() {
                 <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
               </Link>
 
-              {/* Raksha Bandhan Card */}
+              {/* Durga Puja 2026 Card */}
               <Link
-                href="/raksha-bandhan"
-                className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-pink-500/30 bg-gradient-to-r from-pink-500/10 via-card to-red-500/10 hover:border-pink-500/60 hover:shadow-md transition-all duration-300 shadow-sm"
+                href="/durgapuja2026"
+                className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-red-600/15 via-amber-500/10 to-yellow-500/15 hover:border-amber-500/80 hover:shadow-md transition-all duration-300 shadow-sm"
               >
-                <span className="text-sm">🎀</span>
-                <span className="text-xs sm:text-sm font-bold text-foreground group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                  Raksha Bandhan Card
+                <span className="text-sm">🚩</span>
+                <span className="text-xs sm:text-sm font-bold text-foreground group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors">
+                  दुर्गा पूजा 2026 ग्रीटिंग
                 </span>
-                <span className="px-1.5 py-0.5 text-[9px] font-extrabold rounded-full bg-pink-500/20 text-pink-600 dark:text-pink-400">
+                <span className="px-1.5 py-0.5 text-[9px] font-extrabold rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400">
                   NEW
                 </span>
-                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-pink-600 dark:group-hover:text-pink-400 group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-amber-500 dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
               </Link>
             </motion.div>
 

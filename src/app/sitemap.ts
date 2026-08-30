@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/har-ghar-tiranga",
     "/idcard-v3",
     "/raksha-bandhan",
+    "/durgapuja2026",
     "/search",
     "/services",
     "/products",
@@ -51,6 +52,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             "/har-ghar-tiranga",
             "/idcard-v3",
             "/raksha-bandhan",
+            "/durgapuja2026",
           ].includes(route)
         ? 0.9
         : 0.8,

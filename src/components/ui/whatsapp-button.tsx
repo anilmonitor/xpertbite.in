@@ -1,8 +1,14 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export function WhatsAppButton() {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/durgapuja2026")) {
+    return null;
+  }
   return (
     <a
       href="https://wa.me/917488168228?text=Hello%20XpertBite%20Technologies,%20I'd%20like%20to%20discuss%20a%20project!"

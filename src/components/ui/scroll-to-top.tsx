@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 
 export function ScrollToTop() {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    if (pathname?.startsWith("/durgapuja2026")) return;
     const toggleVisibility = () => {
       if (window.scrollY > 400) {
         setIsVisible(true);
@@ -27,6 +30,10 @@ export function ScrollToTop() {
       behavior: "smooth",
     });
   };
+
+  if (pathname?.startsWith("/durgapuja2026")) {
+    return null;
+  }
 
   return (
     <Button

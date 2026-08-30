@@ -1,6 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@600;700;800;900&family=Rozha+One&family=Tiro+Devanagari+Hindi:ital,wght@0,400;0,700;1,400&family=Yatra+One&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .font-hindi-royal {
+    font-family: 'Rozha One', 'Mukta', serif;
+  }
+  .font-hindi-heading {
+    font-family: 'Mukta', sans-serif;
+    font-weight: 900;
+  }
+  .font-hindi-shloka {
+    font-family: 'Tiro Devanagari Hindi', serif;
+  }
+}
 
 @layer base {
   :root {
@@ -218,3 +233,100 @@
     text-wrap: pretty;
   }
 }
+
+/* ─── Durga Puja 2026 Festive Keyframe Animations ────────────── */
+@keyframes fall {
+  0% {
+    transform: translateY(-20px) rotate(0deg) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(105vh) rotate(360deg) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes spinVerySlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounceGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulseSlow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.88;
+    transform: scale(1.02);
+  }
+}
+
+.animate-fall {
+  animation: fall 8s linear infinite;
+}
+
+.animate-spin-veryslow {
+  animation: spinVerySlow 24s linear infinite;
+}
+
+.animate-bounce-gentle {
+  animation: bounceGentle 3s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 3s ease-in-out infinite;
+}
+
+/* ─── Colorful Dynamic Fairy Lights & Box Shadow ─────────────── */
+@keyframes festiveColorGlow {
+  0% {
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.65), 0 0 50px rgba(239, 68, 68, 0.35), 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #F59E0B;
+  }
+  20% {
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.65), 0 0 55px rgba(168, 85, 247, 0.35), 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #EC4899;
+  }
+  40% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.65), 0 0 55px rgba(16, 185, 129, 0.35), 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #3B82F6;
+  }
+  60% {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.65), 0 0 55px rgba(245, 158, 11, 0.35), 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #10B981;
+  }
+  80% {
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.65), 0 0 55px rgba(245, 158, 11, 0.35), 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #EF4444;
+  }
+  100% {
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.65), 0 0 50px rgba(239, 68, 68, 0.35), 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #F59E0B;
+  }
+}
+
+.festive-colorful-glow {
+  animation: festiveColorGlow 6s ease-in-out infinite;
+}
+
+
