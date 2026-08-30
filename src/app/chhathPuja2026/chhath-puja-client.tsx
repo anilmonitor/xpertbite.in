@@ -478,7 +478,13 @@ export function ChhathPujaClient() {
             href="/durgapuja2026"
             className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-red-50/80 hover:bg-red-100/90 border border-red-300 rounded-full text-xs font-bold text-red-950 transition-all shadow-xs"
           >
-            <span>दुर्गा पूजा 2026</span>
+            <span>दुर्गा पूजा (हिंदी)</span>
+          </Link>
+          <Link
+            href="/durgapujabengali2026"
+            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-rose-50/80 hover:bg-rose-100/90 border border-rose-300 rounded-full text-xs font-bold text-rose-950 transition-all shadow-xs"
+          >
+            <span>দুর্গাপূজা ২০২৬ (বাংলা)</span>
           </Link>
           <Link
             href="/diwaliPuja2026"

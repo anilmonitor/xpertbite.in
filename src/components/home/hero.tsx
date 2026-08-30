@@ -49,7 +49,7 @@ export function Hero() {
                 <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
               </Link>
 
-              {/* Durga Puja 2026 Card */}
+              {/* Durga Puja 2026 Card (Hindi) */}
               <Link
                 href="/durgapuja2026"
                 className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-red-600/15 via-amber-500/10 to-yellow-500/15 hover:border-amber-500/80 hover:shadow-md transition-all duration-300 shadow-sm"
@@ -58,6 +58,19 @@ export function Hero() {
                   दुर्गा पूजा 2026
                 </span>
                 <span className="px-1.5 py-0.5 text-[9px] font-extrabold rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                  NEW
+                </span>
+              </Link>
+
+              {/* Durga Puja 2026 Bengali Theme */}
+              <Link
+                href="/durgapujabengali2026"
+                className="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-rose-500/40 bg-gradient-to-r from-red-600/20 via-rose-500/10 to-amber-500/15 hover:border-rose-500/80 hover:shadow-md transition-all duration-300 shadow-sm"
+              >
+                <span className="text-xs sm:text-sm font-bold text-foreground group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                  দুর্গাপূজা ২০২৬ (বাংলা)
+                </span>
+                <span className="px-1.5 py-0.5 text-[9px] font-extrabold rounded-full bg-rose-500/20 text-rose-600 dark:text-rose-400">
                   NEW
                 </span>
               </Link>

@@ -487,6 +487,12 @@ export function DurgaPujaClient() {
         {/* Other Festive Greetings Quick Links */}
         <div className="pt-3 flex flex-wrap items-center justify-center gap-2">
           <Link
+            href="/durgapujabengali2026"
+            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-rose-50/80 hover:bg-rose-100/90 border border-rose-300 rounded-full text-xs font-bold text-rose-950 transition-all shadow-xs"
+          >
+            <span>দুর্গাপূজা ২০২৬ (বাংলা)</span>
+          </Link>
+          <Link
             href="/diwaliPuja2026"
             className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-amber-50/80 hover:bg-amber-100/90 border border-amber-300 rounded-full text-xs font-bold text-amber-950 transition-all shadow-xs"
           >

@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/idcard-v3",
     "/raksha-bandhan",
     "/durgapuja2026",
+    "/durgapujabengali2026",
     "/diwaliPuja2026",
     "/chhathPuja2026",
     "/search",
@@ -39,7 +40,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/shipping-policy",
     "/cookie-policy",
   ].map((route) => {
-    const isFestiveRoute = ["/durgapuja2026", "/diwaliPuja2026", "/chhathPuja2026"].includes(route);
+    const isFestiveRoute = [
+      "/durgapuja2026",
+      "/durgapujabengali2026",
+      "/diwaliPuja2026",
+      "/chhathPuja2026",
+    ].includes(route);
     return {
       url: `${baseUrl}${route}`,
       lastModified: currentDate,
