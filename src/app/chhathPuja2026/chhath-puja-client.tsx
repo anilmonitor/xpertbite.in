@@ -62,18 +62,30 @@ export function ChhathPujaClient() {
     seconds: 0,
   });
 
-  // Fast 30-Second + Milliseconds WhatsApp Share Countdown Effect
+  // Fast 5-Second + Milliseconds WhatsApp Share Countdown Effect
   useEffect(() => {
     if (shareMsLeft === null || !shareEndTimestampRef.current) return;
 
     const interval = setInterval(() => {
-      const remaining = shareEndTimestampRef.current! - Date.now();
+      if (!shareEndTimestampRef.current) {
+        clearInterval(interval);
+        return;
+      }
+      const remaining = shareEndTimestampRef.current - Date.now();
       if (remaining <= 0) {
         setShareMsLeft(null);
+        const targetUrl = targetWhatsappUrlRef.current;
         shareEndTimestampRef.current = null;
         clearInterval(interval);
-        if (targetWhatsappUrlRef.current) {
-          window.open(targetWhatsappUrlRef.current, "_blank");
+        if (targetUrl) {
+          try {
+            const newWindow = window.open(targetUrl, "_blank");
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
+              window.location.href = targetUrl;
+            }
+          } catch {
+            window.location.href = targetUrl;
+          }
           toast.success("WhatsApp खुल गया!");
         }
       } else {
@@ -82,7 +94,7 @@ export function ChhathPujaClient() {
     }, 25);
 
     return () => clearInterval(interval);
-  }, [shareMsLeft]);
+  }, [shareMsLeft !== null]);
 
   useEffect(() => {
     const targetDate = new Date("2026-11-15T00:00:00+05:30").getTime();
@@ -298,27 +310,31 @@ export function ChhathPujaClient() {
     return `${nameToShare} ने छठ पूजा को लेकर आपके लिए कुछ भेजा है ✨\n\nदेखने के लिए लिंक खोलें:\n${shareUrl}`;
   };
 
-  const handleWhatsAppShare = async () => {
+  const handleWhatsAppShare = () => {
     if (shareMsLeft !== null) return;
 
-    toast.loading("कार्ड तैयार हो रहा है...");
-    let shareUrl = getShortShareUrl();
+    const initialShareUrl = getShortShareUrl();
+    const text = encodeURIComponent(getWhatsAppMessage(initialShareUrl));
+    targetWhatsappUrlRef.current = `https://api.whatsapp.com/send?text=${text}`;
 
-    const serverResult = await saveGreetingToServer();
-    if (serverResult?.shareUrl) {
-      shareUrl = serverResult.shareUrl;
-    } else if (serverResult?.slug) {
-      shareUrl = getShortShareUrl(serverResult.slug);
-    }
+    // Start 5 seconds fast milliseconds countdown immediately
+    shareEndTimestampRef.current = Date.now() + 5000;
+    setShareMsLeft(5000);
+    toast.info("WhatsApp शेयर 5 सेकंड में शुरू होगा...");
 
-    toast.dismiss();
-    const text = encodeURIComponent(getWhatsAppMessage(shareUrl));
-    const whatsappUrl = `https://api.whatsapp.com/send?text=${text}`;
-    targetWhatsappUrlRef.current = whatsappUrl;
-
-    shareEndTimestampRef.current = Date.now() + 30000;
-    setShareMsLeft(30000);
-    toast.info("WhatsApp शेयर 30 सेकंड में शुरू होगा...");
+    // Save to server in background during the 5s timer
+    saveGreetingToServer()
+      .then((serverResult) => {
+        let finalShareUrl = initialShareUrl;
+        if (serverResult?.shareUrl) {
+          finalShareUrl = serverResult.shareUrl;
+        } else if (serverResult?.slug) {
+          finalShareUrl = getShortShareUrl(serverResult.slug);
+        }
+        const updatedText = encodeURIComponent(getWhatsAppMessage(finalShareUrl));
+        targetWhatsappUrlRef.current = `https://api.whatsapp.com/send?text=${updatedText}`;
+      })
+      .catch(() => {});
   };
 
   const displaySender = recipientGreeting?.name || (userName.trim() ? userName.trim() : (nameParam ? nameParam : "Anil"));
@@ -431,7 +447,7 @@ export function ChhathPujaClient() {
           )}
         </div>
 
-        {/* Big Grand 1-Tap WhatsApp Share Button with 30s Live Countdown & Milliseconds */}
+        {/* Big Grand 1-Tap WhatsApp Share Button with 5s Live Countdown & Milliseconds */}
         <div className="pt-2">
           <button
             type="button"
@@ -442,7 +458,7 @@ export function ChhathPujaClient() {
             {shareMsLeft !== null && (
               <div
                 className="absolute left-0 bottom-0 top-0 bg-black/25 pointer-events-none transition-all duration-75 ease-linear"
-                style={{ width: `${((30000 - shareMsLeft) / 30000) * 100}%` }}
+                style={{ width: `${((5000 - shareMsLeft) / 5000) * 100}%` }}
               />
             )}
             <svg className="relative z-10 w-6 h-6 sm:w-7 sm:h-7 fill-current shrink-0" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
