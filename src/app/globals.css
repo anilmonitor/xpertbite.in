@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@600;700;800;900&family=Rozha+One&family=Tiro+Devanagari+Hindi:ital,wght@0,400;0,700;1,400&family=Yatra+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@600;700;800;900&family=Rozha+One&family=Tiro+Devanagari+Hindi:ital,wght@0,400;0,700;1,400&family=Yatra+One&family=Gotu&family=Kalam:wght@700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,10 @@
 
 @layer utilities {
   .font-hindi-royal {
-    font-family: 'Rozha One', 'Mukta', serif;
+    font-family: 'Rozha One', 'Yatra One', 'Mukta', serif;
+  }
+  .font-hindi-festive {
+    font-family: 'Yatra One', 'Rozha One', 'Mukta', cursive, serif;
   }
   .font-hindi-heading {
     font-family: 'Mukta', sans-serif;
@@ -14,6 +17,33 @@
   }
   .font-hindi-shloka {
     font-family: 'Tiro Devanagari Hindi', serif;
+  }
+  .festive-name-vibe {
+    animation: nameShimmerGlow 3s ease-in-out infinite;
+    font-family: 'Rozha One', 'Yatra One', 'Mukta', serif;
+  }
+}
+
+@keyframes nameShimmerGlow {
+  0% {
+    color: #991B1B;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.5), 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+  25% {
+    color: #D97706;
+    text-shadow: 0 0 14px rgba(236, 72, 153, 0.6), 0 0 25px rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    color: #BE185D;
+    text-shadow: 0 0 16px rgba(245, 158, 11, 0.7), 0 0 28px rgba(168, 85, 247, 0.4);
+  }
+  75% {
+    color: #047857;
+    text-shadow: 0 0 14px rgba(52, 211, 153, 0.6), 0 0 25px rgba(245, 158, 11, 0.3);
+  }
+  100% {
+    color: #991B1B;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.5), 0 0 20px rgba(239, 68, 68, 0.3);
   }
 }
 

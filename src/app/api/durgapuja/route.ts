@@ -2,22 +2,46 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 
-function createEnglishSlug(name: string): string {
-  // Convert basic Hindi common names / sounds or clean latin characters
+async function generateSequentialSlug(name: string): Promise<string> {
   let clean = name
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]/g, "");
 
   if (!clean || clean.length < 2) {
-    clean = "greeting";
+    clean = "anil";
   } else if (clean.length > 15) {
     clean = clean.substring(0, 15);
   }
 
-  // 5-digit random number (e.g. 27327)
-  const randomId = Math.floor(10000 + Math.random() * 90000);
-  return `${clean}-${randomId}`;
+  let nextNumber = 1;
+  try {
+    if ("durgaGreeting" in prisma) {
+      const count = await (prisma as any).durgaGreeting.count();
+      nextNumber = count + 1;
+    }
+  } catch {}
+
+  let candidateSlug = `${clean}-${nextNumber}`;
+
+  try {
+    if ("durgaGreeting" in prisma) {
+      let exists = await (prisma as any).durgaGreeting.findFirst({
+        where: { slug: candidateSlug },
+      });
+      let attempts = 0;
+      while (exists && attempts < 50) {
+        nextNumber++;
+        candidateSlug = `${clean}-${nextNumber}`;
+        exists = await (prisma as any).durgaGreeting.findFirst({
+          where: { slug: candidateSlug },
+        });
+        attempts++;
+      }
+    }
+  } catch {}
+
+  return candidateSlug;
 }
 
 export async function POST(req: NextRequest) {
@@ -46,8 +70,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Generate short English unique slug like "anil-27327"
-    const slug = createEnglishSlug(name);
+    // 2. Generate sequential unique slug starting from 1 (e.g. anil-1, rahul-2, anil-3)
+    const slug = await generateSequentialSlug(name);
 
     // 3. Save into Database via Prisma
     let savedGreeting;

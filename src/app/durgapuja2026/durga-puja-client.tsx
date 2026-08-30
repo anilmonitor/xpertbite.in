@@ -5,17 +5,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
-  MessageCircle,
   Upload,
   X,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
+  Check,
+  Crop,
 } from "lucide-react";
 import { toast } from "sonner";
 import { DurgaAudioPlayer } from "./durga-audio-player";
 
 function generateClientSlug(name: string): string {
   const clean = name.trim().toLowerCase().replace(/[^a-z0-9]/g, "") || "anil";
-  const randomNum = Math.floor(10000 + Math.random() * 90000);
-  return `${clean}-${randomNum}`;
+  return `${clean}-1`;
 }
 
 export function DurgaPujaClient() {
@@ -29,6 +32,15 @@ export function DurgaPujaClient() {
   const [activeSlug, setActiveSlug] = useState<string | null>(userSlugParam || null);
   const [isSavingDb, setIsSavingDb] = useState<boolean>(false);
 
+  // Image Cropper States
+  const [isCropModalOpen, setIsCropModalOpen] = useState<boolean>(false);
+  const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
+  const [cropScale, setCropScale] = useState<number>(1);
+  const [cropRotation, setCropRotation] = useState<number>(0);
+  const [cropPosition, setCropPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
   // Recipient greeting data fetched from server
   const [recipientGreeting, setRecipientGreeting] = useState<{
     name: string;
@@ -36,6 +48,11 @@ export function DurgaPujaClient() {
   } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cropImageRef = useRef<HTMLImageElement | null>(null);
+
+  const [shareMsLeft, setShareMsLeft] = useState<number | null>(null);
+  const targetWhatsappUrlRef = useRef<string | null>(null);
+  const shareEndTimestampRef = useRef<number | null>(null);
 
   // Countdown Timer to Durga Puja 2026 (Target: 16 October 2026)
   const [timeLeft, setTimeLeft] = useState({
@@ -44,6 +61,28 @@ export function DurgaPujaClient() {
     minutes: 0,
     seconds: 0,
   });
+
+  // Fast 30-Second + Milliseconds WhatsApp Share Countdown Effect
+  useEffect(() => {
+    if (shareMsLeft === null || !shareEndTimestampRef.current) return;
+
+    const interval = setInterval(() => {
+      const remaining = shareEndTimestampRef.current! - Date.now();
+      if (remaining <= 0) {
+        setShareMsLeft(null);
+        shareEndTimestampRef.current = null;
+        clearInterval(interval);
+        if (targetWhatsappUrlRef.current) {
+          window.open(targetWhatsappUrlRef.current, "_blank");
+          toast.success("WhatsApp खुल गया!");
+        }
+      } else {
+        setShareMsLeft(remaining);
+      }
+    }, 25);
+
+    return () => clearInterval(interval);
+  }, [shareMsLeft]);
 
   useEffect(() => {
     const targetDate = new Date("2026-10-16T00:00:00+05:30").getTime();
@@ -103,26 +142,115 @@ export function DurgaPujaClient() {
     } catch {}
   }, [userSlugParam, photoPreview, nameParam, userName]);
 
-  // Handle Photo Upload
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle Photo Selection (Opens Crop Modal)
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("कृपया 10MB से छोटी फोटो चुनें");
+    if (file.size > 15 * 1024 * 1024) {
+      toast.error("कृपया 15MB से छोटी फोटो चुनें");
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (event) => {
       const result = event.target?.result as string;
-      setPhotoPreview(result);
-      try {
-        localStorage.setItem("durga_puja_user_photo", result);
-      } catch {}
-      toast.success("आपकी फोटो लग गई है");
+      setRawImageSrc(result);
+      setCropScale(1);
+      setCropRotation(0);
+      setCropPosition({ x: 0, y: 0 });
+      setIsCropModalOpen(true);
     };
     reader.readAsDataURL(file);
+    // Reset file input value so same file can be re-selected if needed
+    e.target.value = "";
+  };
+
+  // Perform Canvas Square Crop
+  const handleApplyCrop = () => {
+    if (!rawImageSrc) return;
+
+    const img = new window.Image();
+    img.src = rawImageSrc;
+    img.onload = () => {
+      const cropBoxSize = 600; // High resolution 1:1 square
+      const canvas = document.createElement("canvas");
+      canvas.width = cropBoxSize;
+      canvas.height = cropBoxSize;
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) return;
+
+      // Fill white background
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, cropBoxSize, cropBoxSize);
+
+      ctx.save();
+      ctx.translate(cropBoxSize / 2, cropBoxSize / 2);
+      ctx.rotate((cropRotation * Math.PI) / 180);
+
+      // Render image centered with scale and offset
+      const drawWidth = img.width * cropScale;
+      const drawHeight = img.height * cropScale;
+      
+      // Calculate normalized scaling to cover the square preview
+      const baseScale = Math.max(cropBoxSize / img.width, cropBoxSize / img.height);
+      const finalW = img.width * baseScale * cropScale;
+      const finalH = img.height * baseScale * cropScale;
+
+      ctx.drawImage(
+        img,
+        -finalW / 2 + cropPosition.x * 2,
+        -finalH / 2 + cropPosition.y * 2,
+        finalW,
+        finalH
+      );
+      ctx.restore();
+
+      const croppedDataUrl = canvas.toDataURL("image/jpeg", 0.92);
+      setPhotoPreview(croppedDataUrl);
+      try {
+        localStorage.setItem("durga_puja_user_photo", croppedDataUrl);
+      } catch {}
+
+      setIsCropModalOpen(false);
+      setRawImageSrc(null);
+      toast.success("फोटो स्क्वायर में क्रॉप हो गई है");
+    };
+  };
+
+  // Pan / Drag Handlers for Cropper
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - cropPosition.x, y: e.clientY - cropPosition.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setCropPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y,
+    });
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - cropPosition.x,
+        y: e.touches[0].clientY - cropPosition.y,
+      });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    setCropPosition({
+      x: e.touches[0].clientX - dragStart.x,
+      y: e.touches[0].clientY - dragStart.y,
+    });
   };
 
   const handleRemovePhoto = () => {
@@ -179,9 +307,11 @@ export function DurgaPujaClient() {
     return `${nameToShare} ने दुर्गा पूजा को लेकर आपके लिए कुछ भेजा है ✨\n\nदेखने के लिए लिंक खोलें:\n${shareUrl}`;
   };
 
-  // WhatsApp Share Intent
+  // WhatsApp Share Intent with 30-Second Fast Milliseconds Live Countdown
   const handleWhatsAppShare = async () => {
-    toast.loading("WhatsApp लिंक तैयार हो रहा है...");
+    if (shareMsLeft !== null) return;
+
+    toast.loading("कार्ड तैयार हो रहा है...");
     let shareUrl = getShortShareUrl();
 
     const serverResult = await saveGreetingToServer();
@@ -194,40 +324,42 @@ export function DurgaPujaClient() {
     toast.dismiss();
     const text = encodeURIComponent(getWhatsAppMessage(shareUrl));
     const whatsappUrl = `https://api.whatsapp.com/send?text=${text}`;
-    window.open(whatsappUrl, "_blank");
-    toast.success("WhatsApp खुल रहा है...");
+    targetWhatsappUrlRef.current = whatsappUrl;
+
+    // Start 30 seconds fast milliseconds countdown
+    shareEndTimestampRef.current = Date.now() + 30000;
+    setShareMsLeft(30000);
+    toast.info("WhatsApp शेयर 30 सेकंड में शुरू होगा...");
   };
 
   const displaySender = recipientGreeting?.name || (userName.trim() ? userName.trim() : (nameParam ? nameParam : "Anil"));
   const displayPhoto = photoPreview || recipientGreeting?.imageUrl;
 
   return (
-    <div className="relative min-h-screen bg-[#FFFDF9] text-gray-900 overflow-x-hidden font-hindi-heading flex flex-col items-center justify-start py-8 px-4 sm:px-6">
+    <div className="relative min-h-screen bg-[#FFFDF9] text-gray-900 overflow-x-hidden font-hindi-heading flex flex-col items-center justify-start pt-16 sm:pt-20 pb-12 px-4 sm:px-6">
       {/* Background Devotional Audio Player */}
       <DurgaAudioPlayer />
 
-      {/* Main Clean Page Layout (No Box Shadows) */}
+      {/* Main Clean Page Layout */}
       <div className="relative z-10 w-full max-w-lg sm:max-w-xl text-center text-gray-900 my-auto space-y-6">
         
-        {/* Large Flowing Countdown & Sender Header */}
+        {/* Large Flowing Countdown & Sender Header (Clean: Milliseconds removed from top) */}
         <div className="text-center space-y-2 pt-2">
-          <div className="text-xl sm:text-2xl md:text-3xl font-black text-[#991B1B] font-mono tracking-tight">
-            {timeLeft.days} दिन {timeLeft.hours} घंटा {timeLeft.minutes} मिनट {timeLeft.seconds} सेकंड पहले
+          <div className="text-xl sm:text-2xl md:text-3xl font-black text-[#991B1B] font-mono tracking-tight leading-tight">
+            <div>
+              {timeLeft.days} दिन {timeLeft.hours} घंटा {timeLeft.minutes} मिनट
+            </div>
+            <div className="mt-0.5">
+              {timeLeft.seconds} सेकंड पहले
+            </div>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-hindi-royal text-amber-950 tracking-wide underline decoration-amber-400 decoration-4 underline-offset-8">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-wide festive-name-vibe my-1">
             {displaySender}
           </h2>
 
-          <p className="text-xl sm:text-2xl md:text-3xl font-black text-amber-900 font-hindi-heading pt-1">
+          <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-900 font-hindi-festive pt-1 tracking-wide leading-relaxed">
             की तरफ से दुर्गा पूजा की हार्दिक शुभकामनाएं
-          </p>
-        </div>
-
-        {/* Sacred Sanskrit Shloka */}
-        <div className="py-3 border-y-2 border-amber-200/80">
-          <p className="text-sm sm:text-base md:text-lg text-amber-900 font-hindi-shloka font-bold italic leading-relaxed">
-            ॥ सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके । शरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते ॥
           </p>
         </div>
 
@@ -249,20 +381,29 @@ export function DurgaPujaClient() {
           दुर्गा पूजा की हार्दिक शुभकामनाएं
         </h1>
 
-        {/* Sender Framed Photo (if attached) */}
+        {/* Square Framed User Photo */}
         {displayPhoto && (
           <div className="relative inline-block mx-auto pt-2">
-            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-amber-400 shadow-md">
+            <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border-4 border-amber-400 shadow-lg bg-white">
               <Image src={displayPhoto} alt="User" fill className="object-cover" />
             </div>
             {photoPreview && (
-              <button
-                onClick={handleRemovePhoto}
-                className="absolute top-1 right-0 bg-red-600 text-white rounded-full p-1 shadow hover:bg-red-700 transition-colors"
-                title="हटाएं"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="absolute top-0 right-0 flex gap-1">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-amber-600 text-white rounded-full p-1.5 shadow hover:bg-amber-700 transition-colors"
+                  title="क्रॉप / बदलें"
+                >
+                  <Crop className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={handleRemovePhoto}
+                  className="bg-red-600 text-white rounded-full p-1.5 shadow hover:bg-red-700 transition-colors"
+                  title="हटाएं"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -287,7 +428,7 @@ export function DurgaPujaClient() {
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={handlePhotoUpload}
+            onChange={handlePhotoSelect}
             className="hidden"
           />
 
@@ -303,20 +444,155 @@ export function DurgaPujaClient() {
           )}
         </div>
 
-        {/* Big Grand 1-Tap WhatsApp Share Button */}
+        {/* Big Grand 1-Tap WhatsApp Share Button with 30s Live Countdown & Milliseconds */}
         <div className="pt-2">
           <button
             type="button"
-            disabled={isSavingDb}
+            disabled={isSavingDb || shareMsLeft !== null}
             onClick={handleWhatsAppShare}
-            className="w-full py-4 sm:py-4.5 px-6 bg-[#25D366] hover:bg-[#20ba5a] text-white font-black rounded-2xl text-xl sm:text-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-600/25 active:scale-95 transition-all disabled:opacity-75"
+            className="relative overflow-hidden w-full py-4 sm:py-4.5 px-6 bg-[#25D366] hover:bg-[#20ba5a] text-white font-black rounded-2xl text-xl sm:text-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-600/25 active:scale-95 transition-all disabled:opacity-90"
           >
-            <MessageCircle className="w-7 h-7 fill-current" />
-            <span>WhatsApp पर शेयर करें</span>
+            {shareMsLeft !== null && (
+              <div
+                className="absolute left-0 bottom-0 top-0 bg-black/25 pointer-events-none transition-all duration-75 ease-linear"
+                style={{ width: `${((30000 - shareMsLeft) / 30000) * 100}%` }}
+              />
+            )}
+            <svg className="relative z-10 w-6 h-6 sm:w-7 sm:h-7 fill-current shrink-0" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+              <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L3 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
+            </svg>
+            <span className="relative z-10 font-mono tracking-tight">
+              {shareMsLeft !== null
+                ? `प्रतीक्षा करें... ${Math.floor(shareMsLeft / 1000)}.${String(Math.floor((shareMsLeft % 1000) / 10)).padStart(2, "0")}s`
+                : "WhatsApp पर शेयर करें"}
+            </span>
           </button>
         </div>
 
       </div>
+
+      {/* Interactive Square Photo Crop Modal */}
+      {isCropModalOpen && rawImageSrc && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-5 sm:p-6 w-full max-w-sm sm:max-w-md shadow-2xl text-center space-y-4">
+            
+            <div className="flex justify-between items-center pb-2 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-900">फोटो एडजस्ट और क्रॉप करें</h3>
+              <button
+                onClick={() => setIsCropModalOpen(false)}
+                className="p-1 rounded-full text-gray-500 hover:bg-gray-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Square Viewport Preview Box */}
+            <div
+              className="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto rounded-2xl overflow-hidden bg-gray-950 cursor-grab active:cursor-grabbing border-2 border-amber-400 select-none shadow-inner"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleMouseUp}
+            >
+              <div
+                className="absolute inset-0 flex items-center justify-center pointer-events-none transition-transform duration-75"
+                style={{
+                  transform: `translate(${cropPosition.x}px, ${cropPosition.y}px) rotate(${cropRotation}deg) scale(${cropScale})`,
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  ref={cropImageRef}
+                  src={rawImageSrc}
+                  alt="Crop Preview"
+                  className="max-w-none w-auto h-auto max-h-[300%] object-contain"
+                  draggable={false}
+                />
+              </div>
+
+              {/* Grid guide overlay */}
+              <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none border border-white/30">
+                <div className="border-r border-b border-white/20" />
+                <div className="border-r border-b border-white/20" />
+                <div className="border-b border-white/20" />
+                <div className="border-r border-b border-white/20" />
+                <div className="border-r border-b border-white/20" />
+                <div className="border-b border-white/20" />
+                <div className="border-r border-white/20" />
+                <div className="border-r border-white/20" />
+                <div />
+              </div>
+            </div>
+
+            <p className="text-xs text-gray-500">
+              फोटो को खींचकर (Drag) बीच में सेट करें
+            </p>
+
+            {/* Zoom & Rotation Controls */}
+            <div className="flex items-center justify-center gap-4 bg-gray-50 py-2.5 px-4 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setCropScale((prev) => Math.max(0.6, prev - 0.15))}
+                className="p-2 bg-white rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-100 active:scale-95"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </button>
+
+              <input
+                type="range"
+                min="0.6"
+                max="3"
+                step="0.05"
+                value={cropScale}
+                onChange={(e) => setCropScale(parseFloat(e.target.value))}
+                className="w-32 accent-amber-500 cursor-pointer"
+              />
+
+              <button
+                type="button"
+                onClick={() => setCropScale((prev) => Math.min(3, prev + 0.15))}
+                className="p-2 bg-white rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-100 active:scale-95"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCropRotation((prev) => (prev + 90) % 360)}
+                className="p-2 bg-white rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-100 active:scale-95 ml-1"
+                title="घुमाएं (Rotate)"
+              >
+                <RotateCw className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsCropModalOpen(false)}
+                className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 font-bold rounded-xl text-sm hover:bg-gray-200 transition-colors"
+              >
+                रद्द करें
+              </button>
+              <button
+                type="button"
+                onClick={handleApplyCrop}
+                className="flex-1 py-3 px-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-1.5 shadow-md hover:brightness-105 active:scale-95 transition-all"
+              >
+                <Check className="w-4 h-4" />
+                <span>क्रॉप करें और लगाएं</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* Mini Simple Footer */}
       <footer className="relative z-10 mt-12 pb-4 text-center text-gray-600">
