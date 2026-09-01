@@ -322,9 +322,14 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
             </div>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-wide festive-name-vibe my-1">
-            {displaySender}
-          </h2>
+          {/* Sender Name with Royal Festive Gradient Badge Background (Wider Box) */}
+          <div className="w-full max-w-[300px] sm:max-w-md mx-auto my-2">
+            <div className="relative px-6 sm:px-10 py-2.5 sm:py-3.5 rounded-2xl bg-gradient-to-r from-red-700 via-amber-600 to-red-700 text-white shadow-xl shadow-amber-600/30 border-2 border-amber-300 backdrop-blur-xs flex items-center justify-center">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-wide font-hindi-royal text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] break-words">
+                {displaySender}
+              </h2>
+            </div>
+          </div>
 
           <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-900 font-hindi-festive pt-1 tracking-wide leading-relaxed">
             की तरफ से दीपावली की हार्दिक शुभकामनाएं
