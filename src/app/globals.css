@@ -25,6 +25,23 @@
   .festive-photo-color-blink {
     animation: festiveBlinkColor 3s linear infinite;
   }
+  .festive-name-slim-border {
+    background: linear-gradient(90deg, #ffd700, #ff4500, #ff007f, #00e5ff, #00ff7f, #ffd700);
+    background-size: 300% 300%;
+    animation: smoothBorderColor 4s ease infinite;
+  }
+}
+
+@keyframes smoothBorderColor {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes festiveBlinkColor {
