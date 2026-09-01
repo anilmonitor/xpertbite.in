@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { DiwaliAudioPlayer } from "./diwali-audio-player";
 import { FestiveCelebration } from "@/components/festive/festive-celebration";
@@ -286,6 +286,55 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
     }
   };
 
+  // Fast 100% Reliable Copy Link
+  const [copied, setCopied] = useState<boolean>(false);
+  const handleCopyLink = async () => {
+    if (isSavingDb) return;
+
+    try {
+      setIsSavingDb(true);
+      toast.info("लिंक तैयार हो रहा है...");
+
+      const serverResult = await saveGreetingToServer();
+      let finalShareUrl = getShortShareUrl();
+      if (serverResult?.shareUrl) {
+        finalShareUrl = serverResult.shareUrl;
+      } else if (serverResult?.slug) {
+        finalShareUrl = getShortShareUrl(serverResult.slug);
+      }
+
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(finalShareUrl);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = finalShareUrl;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+
+      setCopied(true);
+      toast.success("✅ आपका पर्सनल लिंक कॉपी हो गया!");
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      console.error("Copy link error:", err);
+      try {
+        await navigator.clipboard.writeText(getShortShareUrl());
+        setCopied(true);
+        toast.success("✅ लिंक कॉपी हो गया!");
+        setTimeout(() => setCopied(false), 3000);
+      } catch {
+        toast.error("लिंक कॉपी नहीं हो सका");
+      }
+    } finally {
+      setIsSavingDb(false);
+    }
+  };
+
   // When user is typing, display the typed name immediately. Otherwise fallback to recipientGreeting or Anil.
   const displaySender = userName.trim()
     ? userName.trim()
@@ -424,8 +473,28 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
           )}
         </div>
 
-        {/* Share Action Buttons (WhatsApp & Facebook) */}
+        {/* Share Action Buttons (Copy Link, WhatsApp & Facebook) */}
         <div className="pt-2 space-y-2.5">
+          {/* Clean & Simple Copy Link Button */}
+          <button
+            type="button"
+            disabled={isSavingDb}
+            onClick={handleCopyLink}
+            className="w-full py-2.5 px-4 bg-amber-50/80 hover:bg-amber-100 border border-amber-300 rounded-xl text-amber-950 text-sm sm:text-base font-bold flex items-center justify-center gap-2 transition-all active:scale-98 disabled:opacity-70 shadow-xs"
+          >
+            {copied ? (
+              <>
+                <Check className="w-4 h-4 text-green-600 shrink-0" />
+                <span className="text-green-700 font-bold">लिंक कॉपी हो गया!</span>
+              </>
+            ) : (
+              <>
+                <Copy className="w-4 h-4 text-amber-700 shrink-0" />
+                <span>अपना लिंक कॉपी करें (Copy Link)</span>
+              </>
+            )}
+          </button>
+
           {/* Big Grand 1-Tap WhatsApp Share Button */}
           <button
             type="button"
