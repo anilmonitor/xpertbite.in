@@ -21,8 +21,8 @@ export function DurgaPujaClient({ initialGreeting }: { initialGreeting?: any }) 
   const userSlugParam = searchParams.get("u") || searchParams.get("id") || searchParams.get("slug") || "";
   const nameParam = searchParams.get("name") || "";
 
-  // If page was opened with a shared link (?u=...), keep input empty so new user can type their own name
-  const [userName, setUserName] = useState<string>(!userSlugParam && !initialGreeting ? nameParam : "");
+  // Input box is always empty initially so placeholder shows clearly
+  const [userName, setUserName] = useState<string>("");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [userHasEditedPhoto, setUserHasEditedPhoto] = useState<boolean>(false);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);

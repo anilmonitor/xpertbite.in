@@ -15,8 +15,8 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
   const nameParam = searchParams.get("name") || "";
   const userSlugParam = searchParams.get("u") || searchParams.get("id") || "";
 
-  // User input states (empty on shared links so user types their own name)
-  const [userName, setUserName] = useState<string>(!userSlugParam && !initialGreeting ? nameParam : "");
+  // Input box is always empty initially so placeholder shows clearly
+  const [userName, setUserName] = useState<string>("");
   const [userHasEditedPhoto, setUserHasEditedPhoto] = useState<boolean>(false);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
 
