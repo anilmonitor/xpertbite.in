@@ -254,6 +254,36 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
     }
   };
 
+  // Fast 100% Reliable Facebook Share
+  const handleFacebookShare = async () => {
+    if (isSavingDb) return;
+
+    try {
+      setIsSavingDb(true);
+      toast.info("Facebook खुल रहा है...");
+
+      const serverResult = await saveGreetingToServer();
+      let finalShareUrl = getShortShareUrl();
+      if (serverResult?.shareUrl) {
+        finalShareUrl = serverResult.shareUrl;
+      } else if (serverResult?.slug) {
+        finalShareUrl = getShortShareUrl(serverResult.slug);
+      }
+
+      const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(finalShareUrl)}`;
+      const win = window.open(fbUrl, "_blank", "width=620,height=580");
+      if (!win) {
+        window.location.href = fbUrl;
+      }
+    } catch (err) {
+      console.error("Facebook share error:", err);
+      const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShortShareUrl())}`;
+      window.open(fbUrl, "_blank");
+    } finally {
+      setIsSavingDb(false);
+    }
+  };
+
   // When user is typing, display the typed name immediately. Otherwise fallback to recipientGreeting or Anil.
   const displaySender = userName.trim()
     ? userName.trim()
@@ -374,8 +404,9 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
           )}
         </div>
 
-        {/* Big Grand 1-Tap WhatsApp Share Button */}
-        <div className="pt-2">
+        {/* Share Action Buttons (WhatsApp & Facebook) */}
+        <div className="pt-2 space-y-2.5">
+          {/* Big Grand 1-Tap WhatsApp Share Button */}
           <button
             type="button"
             disabled={isSavingDb}
@@ -387,6 +418,21 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
             </svg>
             <span className="font-hindi-royal tracking-tight">
               {isSavingDb ? "WhatsApp खुल रहा है..." : "WhatsApp पर शेयर करें"}
+            </span>
+          </button>
+
+          {/* Facebook Share Button */}
+          <button
+            type="button"
+            disabled={isSavingDb}
+            onClick={handleFacebookShare}
+            className="relative overflow-hidden w-full py-3.5 sm:py-4 px-6 bg-[#1877F2] hover:bg-[#166fe5] text-white font-black rounded-2xl text-lg sm:text-xl flex items-center justify-center gap-3 shadow-lg shadow-blue-600/25 active:scale-95 transition-all disabled:opacity-80"
+          >
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-current shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+            <span className="font-hindi-royal tracking-tight">
+              Facebook पर शेयर करें
             </span>
           </button>
         </div>
