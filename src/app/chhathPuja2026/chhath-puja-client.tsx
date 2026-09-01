@@ -326,9 +326,9 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
             </div>
           </div>
 
-          {/* Sender Name with Smooth Colorful Slim Border & Royal Festive Gradient Background */}
-          <div className="w-full max-w-[300px] sm:max-w-md mx-auto my-2 p-[2px] rounded-2xl festive-name-slim-border shadow-lg shadow-amber-600/25">
-            <div className="relative w-full px-6 sm:px-10 py-2.5 sm:py-3.5 rounded-[14px] bg-gradient-to-r from-red-800 via-amber-700 to-red-800 text-white flex items-center justify-center">
+          {/* Sender Name with Black Border + Smooth Colorful Slim Border */}
+          <div className="w-full max-w-[300px] sm:max-w-md mx-auto my-2 rounded-2xl border-2 border-black p-[2px] festive-name-slim-border shadow-xl shadow-black/20">
+            <div className="relative w-full px-6 sm:px-10 py-2.5 sm:py-3.5 rounded-[13px] bg-gradient-to-r from-red-800 via-amber-700 to-red-800 border border-black/30 text-white flex items-center justify-center">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-wide font-hindi-royal text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] break-words">
                 {displaySender}
               </h2>
