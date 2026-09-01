@@ -8,6 +8,7 @@ import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { DurgaAudioPlayer } from "./durga-audio-player";
 import { FestiveCelebration } from "@/components/festive/festive-celebration";
+import { FestiveMagicalEffects } from "@/components/festive/diwali-effects";
 
 function generateClientSlug(name: string): string {
   const clean = name.trim().toLowerCase().replace(/[^a-z0-9]/g, "") || "anil";
@@ -303,6 +304,9 @@ export function DurgaPujaClient({ initialGreeting }: { initialGreeting?: any }) 
 
   return (
     <div className="relative min-h-screen bg-[#FFFDF9] text-gray-900 overflow-x-hidden font-hindi-heading flex flex-col items-center justify-start pt-16 sm:pt-20 pb-12 px-4 sm:px-6">
+      {/* Interactive Festive Touch Phuljhadi & Big Floating Glowing Sparkles */}
+      <FestiveMagicalEffects />
+
       {/* 10 Seconds Live Celebration Fireworks & Confetti Popper on Page Open */}
       <FestiveCelebration durationMs={10000} />
 
@@ -344,9 +348,9 @@ export function DurgaPujaClient({ initialGreeting }: { initialGreeting?: any }) 
           </p>
         </div>
 
-        {/* Main Divine / User Portrait (Complete Full Photo without Forced Cropping) */}
-        <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm mx-auto rounded-3xl p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500 shadow-xl">
-          <div className="relative w-full min-h-[220px] max-h-[380px] rounded-2xl overflow-hidden border-4 border-white shadow-md bg-white flex items-center justify-center p-1">
+        {/* Main Divine / User Portrait (With Sleek Slim Colorful Blinking Background Frame) */}
+        <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm mx-auto rounded-3xl p-1 festive-photo-color-blink transition-all">
+          <div className="relative w-full min-h-[220px] max-h-[380px] rounded-[22px] overflow-hidden border-2 border-white/95 shadow-inner bg-white flex items-center justify-center p-1">
             {displayPhoto ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img

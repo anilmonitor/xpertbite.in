@@ -8,6 +8,7 @@ import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { DiwaliAudioPlayer } from "./diwali-audio-player";
 import { FestiveCelebration } from "@/components/festive/festive-celebration";
+import { DiwaliMagicalEffects } from "@/components/festive/diwali-effects";
 
 function generateClientSlug(name: string): string {
   const clean = name.trim().toLowerCase().replace(/[^a-z0-9]/g, "") || "anil";
@@ -297,6 +298,9 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
 
   return (
     <div className="relative min-h-screen bg-[#FFFDF9] text-gray-900 overflow-x-hidden font-hindi-heading flex flex-col items-center justify-start pt-16 sm:pt-20 pb-12 px-4 sm:px-6">
+      {/* Interactive Diwali Touch Phuljhadi & Ambient Floating Glowing Sparkles */}
+      <DiwaliMagicalEffects />
+
       {/* 10 Seconds Live Celebration Fireworks & Confetti Popper on Page Open */}
       <FestiveCelebration durationMs={10000} />
 
@@ -308,7 +312,7 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
         <div className="text-center space-y-2 pt-2">
           {/* Festive Animated Deepak GIF only on Top of the Timer */}
           <div className="flex justify-center items-center mb-1">
-            <div className="relative w-16 h-16 sm:w-20 sm:h-20 drop-shadow-md">
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 drop-shadow-md hover:scale-110 transition-transform">
               <Image src="/diwali/diwali.gif" alt="Deepak" fill className="object-contain" unoptimized />
             </div>
           </div>
@@ -324,7 +328,7 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
 
           {/* Sender Name with Royal Festive Gradient Badge Background (Wider Box) */}
           <div className="w-full max-w-[300px] sm:max-w-md mx-auto my-2">
-            <div className="relative px-6 sm:px-10 py-2.5 sm:py-3.5 rounded-2xl bg-gradient-to-r from-red-700 via-amber-600 to-red-700 text-white shadow-xl shadow-amber-600/30 border-2 border-amber-300 backdrop-blur-xs flex items-center justify-center">
+            <div className="relative px-6 sm:px-10 py-2.5 sm:py-3.5 rounded-2xl bg-gradient-to-r from-red-700 via-amber-600 to-red-700 text-white shadow-xl shadow-amber-600/30 border-2 border-amber-300 backdrop-blur-xs flex items-center justify-center hover:shadow-amber-500/50 hover:scale-[1.02] transition-all">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-wide font-hindi-royal text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] break-words">
                 {displaySender}
               </h2>
@@ -336,9 +340,9 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
           </p>
         </div>
 
-        {/* Main Divine / User Portrait (Complete Full Photo without Forced Cropping) */}
-        <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm mx-auto rounded-3xl p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500 shadow-xl">
-          <div className="relative w-full min-h-[220px] max-h-[380px] rounded-2xl overflow-hidden border-4 border-white shadow-md bg-white flex items-center justify-center p-1">
+        {/* Main Divine / User Portrait (With Sleek Slim Colorful Blinking Background Frame) */}
+        <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm mx-auto rounded-3xl p-1 festive-photo-color-blink transition-all">
+          <div className="relative w-full min-h-[220px] max-h-[380px] rounded-[22px] overflow-hidden border-2 border-white/95 shadow-inner bg-white flex items-center justify-center p-1">
             {displayPhoto ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -380,7 +384,7 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
         </div>
 
         {/* Grand Title (Royal & Ultra-Bold Typography) */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-hindi-royal font-black text-[#991B1B] leading-tight tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-hindi-royal font-black text-[#991B1B] leading-tight tracking-tight drop-shadow-xs">
           दीपावली की हार्दिक शुभकामनाएं
         </h1>
 
