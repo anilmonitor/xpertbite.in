@@ -306,6 +306,13 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
         
         {/* Large Flowing Countdown & Sender Header */}
         <div className="text-center space-y-2 pt-2">
+          {/* Festive Animated GIF only on Top of the Timer */}
+          <div className="flex justify-center items-center mb-1">
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 drop-shadow-md">
+              <Image src="/durgapuja/durgapuja.gif" alt="Durga Puja" fill className="object-contain" unoptimized />
+            </div>
+          </div>
+
           <div className="text-xl sm:text-2xl md:text-3xl font-black text-[#990012] font-mono tracking-tight leading-tight">
             <div>
               {timeLeft.days} দিন {timeLeft.hours} ঘণ্টা {timeLeft.minutes} মিনিট
@@ -315,24 +322,16 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-2 sm:gap-3 my-1">
-            <div className="relative w-8 h-8 sm:w-10 sm:h-10 shrink-0">
-              <Image src="/durgapuja/durgapuja.gif" alt="Durga Puja" fill className="object-contain" unoptimized />
-            </div>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-wide festive-name-vibe">
-              {displaySender}
-            </h2>
-            <div className="relative w-8 h-8 sm:w-10 sm:h-10 shrink-0 -scale-x-100">
-              <Image src="/durgapuja/durgapuja.gif" alt="Durga Puja" fill className="object-contain" unoptimized />
-            </div>
-          </div>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-wide festive-name-vibe my-1">
+            {displaySender}
+          </h2>
 
           <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-900 pt-1 tracking-wide leading-relaxed">
             এর পক্ষ থেকে দুর্গাপূজার আন্তরিক শুভেচ্ছা
           </p>
         </div>
 
-        {/* Main Divine / User Portrait (Complete Full Photo with Animated Durga Puja GIFs) */}
+        {/* Main Divine / User Portrait (Complete Full Photo without Forced Cropping) */}
         <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm mx-auto rounded-3xl p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500 shadow-xl">
           <div className="relative w-full min-h-[220px] max-h-[380px] rounded-2xl overflow-hidden border-4 border-white shadow-md bg-white flex items-center justify-center p-1">
             {displayPhoto ? (
@@ -350,14 +349,6 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
                 className="w-auto h-auto max-h-[360px] max-w-full object-contain rounded-xl"
               />
             )}
-          </div>
-
-          {/* Animated Durga Puja GIFs at bottom corners of the photo frame */}
-          <div className="absolute -bottom-4 -left-4 w-12 h-12 sm:w-14 sm:h-14 z-20 drop-shadow-md pointer-events-none">
-            <Image src="/durgapuja/durgapuja.gif" alt="Durga Puja GIF" fill className="object-contain" unoptimized />
-          </div>
-          <div className="absolute -bottom-4 -right-4 w-12 h-12 sm:w-14 sm:h-14 z-20 drop-shadow-md pointer-events-none -scale-x-100">
-            <Image src="/durgapuja/durgapuja.gif" alt="Durga Puja GIF" fill className="object-contain" unoptimized />
           </div>
 
           {/* Edit/Remove controls on top right */}
@@ -383,18 +374,10 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
           )}
         </div>
 
-        {/* Grand Bengali Festive Title with GIFs */}
-        <div className="flex items-center justify-center gap-2">
-          <div className="relative w-6 h-6 sm:w-8 sm:h-8 shrink-0">
-            <Image src="/durgapuja/durgapuja.gif" alt="Durga GIF" fill className="object-contain" unoptimized />
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#990012] leading-tight tracking-tight">
-            শুভ শারদীয়া ও দুর্গাপূজা ২০২৬
-          </h1>
-          <div className="relative w-6 h-6 sm:w-8 sm:h-8 shrink-0 -scale-x-100">
-            <Image src="/durgapuja/durgapuja.gif" alt="Durga GIF" fill className="object-contain" unoptimized />
-          </div>
-        </div>
+        {/* Grand Bengali Festive Title */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#990012] leading-tight tracking-tight">
+          শুভ শারদীয়া ও দুর্গাপূজা ২০২৬
+        </h1>
 
         {/* User Input & Action Buttons */}
         <div className="space-y-3 pt-2">
