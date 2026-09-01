@@ -37,10 +37,6 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [shareMsLeft, setShareMsLeft] = useState<number | null>(null);
-  const targetWhatsappUrlRef = useRef<string | null>(null);
-  const shareEndTimestampRef = useRef<number | null>(null);
-
   // Countdown Timer to Diwali 2026 (Target: 8 November 2026)
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -48,40 +44,6 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
     minutes: 0,
     seconds: 0,
   });
-
-  // Fast 5-Second + Milliseconds WhatsApp Share Countdown Effect
-  useEffect(() => {
-    if (shareMsLeft === null || !shareEndTimestampRef.current) return;
-
-    const interval = setInterval(() => {
-      if (!shareEndTimestampRef.current) {
-        clearInterval(interval);
-        return;
-      }
-      const remaining = shareEndTimestampRef.current - Date.now();
-      if (remaining <= 0) {
-        setShareMsLeft(null);
-        const targetUrl = targetWhatsappUrlRef.current;
-        shareEndTimestampRef.current = null;
-        clearInterval(interval);
-        if (targetUrl) {
-          try {
-            const newWindow = window.open(targetUrl, "_blank");
-            if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
-              window.location.href = targetUrl;
-            }
-          } catch {
-            window.location.href = targetUrl;
-          }
-          toast.success("WhatsApp खुल गया!");
-        }
-      } else {
-        setShareMsLeft(remaining);
-      }
-    }, 25);
-
-    return () => clearInterval(interval);
-  }, [shareMsLeft !== null]);
 
   useEffect(() => {
     const targetDate = new Date("2026-11-08T00:00:00+05:30").getTime();
@@ -246,31 +208,50 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
     return `${nameToShare} ने दीपावली को लेकर आपके लिए कुछ भेजा है ✨\n\nदेखने के लिए लिंक खोलें:\n${shareUrl}`;
   };
 
-  const handleWhatsAppShare = () => {
-    if (shareMsLeft !== null) return;
+  // Robust universal WhatsApp opener
+  const triggerWhatsApp = (messageText: string) => {
+    const encoded = encodeURIComponent(messageText);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
 
-    const initialShareUrl = getShortShareUrl();
-    const text = encodeURIComponent(getWhatsAppMessage(initialShareUrl));
-    targetWhatsappUrlRef.current = `https://api.whatsapp.com/send?text=${text}`;
+    if (isMobile) {
+      // Direct intent (opens WhatsApp app instantly)
+      window.location.href = `whatsapp://send?text=${encoded}`;
+      setTimeout(() => {
+        window.location.href = `https://api.whatsapp.com/send?text=${encoded}`;
+      }, 1200);
+    } else {
+      const win = window.open(`https://api.whatsapp.com/send?text=${encoded}`, "_blank");
+      if (!win) {
+        window.location.href = `https://api.whatsapp.com/send?text=${encoded}`;
+      }
+    }
+  };
 
-    // Start 5 seconds fast milliseconds countdown immediately
-    shareEndTimestampRef.current = Date.now() + 5000;
-    setShareMsLeft(5000);
-    toast.info("WhatsApp शेयर 5 सेकंड में शुरू होगा...");
+  const handleWhatsAppShare = async () => {
+    if (isSavingDb) return;
 
-    // Save to server in background during the 5s timer
-    saveGreetingToServer()
-      .then((serverResult) => {
-        let finalShareUrl = initialShareUrl;
-        if (serverResult?.shareUrl) {
-          finalShareUrl = serverResult.shareUrl;
-        } else if (serverResult?.slug) {
-          finalShareUrl = getShortShareUrl(serverResult.slug);
-        }
-        const updatedText = encodeURIComponent(getWhatsAppMessage(finalShareUrl));
-        targetWhatsappUrlRef.current = `https://api.whatsapp.com/send?text=${updatedText}`;
-      })
-      .catch(() => {});
+    try {
+      setIsSavingDb(true);
+      toast.info("WhatsApp खुल रहा है...");
+
+      const serverResult = await saveGreetingToServer();
+      let finalShareUrl = getShortShareUrl();
+      if (serverResult?.shareUrl) {
+        finalShareUrl = serverResult.shareUrl;
+      } else if (serverResult?.slug) {
+        finalShareUrl = getShortShareUrl(serverResult.slug);
+      }
+
+      const messageText = getWhatsAppMessage(finalShareUrl);
+      triggerWhatsApp(messageText);
+    } catch (err) {
+      console.error("WhatsApp share error:", err);
+      triggerWhatsApp(getWhatsAppMessage(getShortShareUrl()));
+    } finally {
+      setIsSavingDb(false);
+    }
   };
 
   // When user is typing, display the typed name immediately. Otherwise fallback to recipientGreeting or Anil.
@@ -393,27 +374,19 @@ export function DiwaliPujaClient({ initialGreeting }: { initialGreeting?: any })
           )}
         </div>
 
-        {/* Big Grand 1-Tap WhatsApp Share Button with 5s Live Countdown */}
+        {/* Big Grand 1-Tap WhatsApp Share Button */}
         <div className="pt-2">
           <button
             type="button"
-            disabled={isSavingDb || shareMsLeft !== null}
+            disabled={isSavingDb}
             onClick={handleWhatsAppShare}
-            className="relative overflow-hidden w-full py-4 sm:py-4.5 px-6 bg-[#25D366] hover:bg-[#20ba5a] text-white font-black rounded-2xl text-xl sm:text-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-600/25 active:scale-95 transition-all disabled:opacity-90"
+            className="relative overflow-hidden w-full py-4 sm:py-4.5 px-6 bg-[#25D366] hover:bg-[#20ba5a] text-white font-black rounded-2xl text-xl sm:text-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-600/25 active:scale-95 transition-all disabled:opacity-80"
           >
-            {shareMsLeft !== null && (
-              <div
-                className="absolute left-0 bottom-0 top-0 bg-black/25 pointer-events-none transition-all duration-75 ease-linear"
-                style={{ width: `${((5000 - shareMsLeft) / 5000) * 100}%` }}
-              />
-            )}
-            <svg className="relative z-10 w-6 h-6 sm:w-7 sm:h-7 fill-current shrink-0" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-6 h-6 sm:w-7 sm:h-7 fill-current shrink-0" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
               <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L3 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
             </svg>
-            <span className="relative z-10 font-mono tracking-tight">
-              {shareMsLeft !== null
-                ? `प्रतीक्षा करें... ${Math.floor(shareMsLeft / 1000)}.${String(Math.floor((shareMsLeft % 1000) / 10)).padStart(2, "0")}s`
-                : "WhatsApp पर शेयर करें"}
+            <span className="font-hindi-royal tracking-tight">
+              {isSavingDb ? "WhatsApp खुल रहा है..." : "WhatsApp पर शेयर करें"}
             </span>
           </button>
         </div>
