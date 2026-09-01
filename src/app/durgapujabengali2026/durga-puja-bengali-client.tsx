@@ -4,16 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
-import {
-  Upload,
-  Crop,
-  X,
-  Sparkles,
-  Heart,
-  Eye,
-  Check,
-} from "lucide-react";
 import { DurgaAudioBengaliPlayer } from "./durga-audio-bengali-player";
 
 export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: any }) {
@@ -21,19 +13,12 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
   const nameParam = searchParams.get("name") || "";
   const userSlugParam = searchParams.get("u") || searchParams.get("id") || "";
 
-  // User input states
-  const [userName, setUserName] = useState<string>(initialGreeting?.name || nameParam || "");
-  const [activeSlug, setActiveSlug] = useState<string | null>(initialGreeting?.slug || userSlugParam || null);
+  // User input states (empty on shared links so user types their own name)
+  const [userName, setUserName] = useState<string>(!userSlugParam && !initialGreeting ? nameParam : "");
+  const [userHasEditedPhoto, setUserHasEditedPhoto] = useState<boolean>(false);
+  const [activeSlug, setActiveSlug] = useState<string | null>(null);
 
-  // Photo upload & 1:1 square crop states
-  const [rawPhoto, setRawPhoto] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [isCropping, setIsCropping] = useState<boolean>(false);
-  const [cropZoom, setCropZoom] = useState<number>(1);
-  const [cropPosition, setCropPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-
   const [isSavingDb, setIsSavingDb] = useState<boolean>(false);
 
   // Saved / Dynamic URL greeting state
@@ -46,7 +31,6 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
   } | null>(initialGreeting || null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const cropImageRef = useRef<HTMLImageElement | null>(null);
 
   const [shareMsLeft, setShareMsLeft] = useState<number | null>(null);
   const targetWhatsappUrlRef = useRef<string | null>(null);
@@ -60,7 +44,7 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
     seconds: 0,
   });
 
-  // Fast 5-Second + Milliseconds WhatsApp Share Countdown Effect
+  // Fast 5-Second WhatsApp Share Countdown with live milliseconds
   useEffect(() => {
     if (shareMsLeft === null || !shareEndTimestampRef.current) return;
 
@@ -84,7 +68,7 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
           } catch {
             window.location.href = targetUrl;
           }
-          toast.success("WhatsApp খুলে গেছে!");
+          toast.success("WhatsApp ওপেন হয়েছে!");
         }
       } else {
         setShareMsLeft(remaining);
@@ -149,100 +133,61 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
     } catch {}
   }, [userName, photoPreview, userSlugParam, initialGreeting]);
 
+  // Handle Direct Photo Selection without crop (Full aspect ratio preserved)
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("ছবির সাইজ ১০MB-এর কম হওয়া প্রয়োজন");
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("ছবির সাইজ ২০MB-এর কম হওয়া প্রয়োজন");
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (event) => {
       const result = event.target?.result as string;
-      setRawPhoto(result);
-      setIsCropping(true);
-      setCropZoom(1);
-      setCropPosition({ x: 0, y: 0 });
+      const img = new window.Image();
+      img.src = result;
+      img.onload = () => {
+        const maxDimension = 1200;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxDimension || h > maxDimension) {
+          if (w > h) {
+            h = Math.round((h * maxDimension) / w);
+            w = maxDimension;
+          } else {
+            w = Math.round((w * maxDimension) / h);
+            h = maxDimension;
+          }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL("image/jpeg", 0.9);
+          setPhotoPreview(compressed);
+          setUserHasEditedPhoto(true);
+          try {
+            localStorage.setItem("durga_bengali_user_photo", compressed);
+          } catch {}
+          toast.success("ছবি সফলভাবে সেট করা হয়েছে!");
+        } else {
+          setPhotoPreview(result);
+          setUserHasEditedPhoto(true);
+          toast.success("ছবি সফলভাবে সেট করা হয়েছে!");
+        }
+      };
     };
     reader.readAsDataURL(file);
-  };
-
-  const applyCrop = () => {
-    if (!rawPhoto) return;
-
-    const img = new (window as any).Image();
-    img.src = rawPhoto;
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const size = 500;
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext("2d");
-
-      if (!ctx) return;
-
-      const minSide = Math.min(img.width, img.height);
-      const cropW = minSide / cropZoom;
-      const cropH = minSide / cropZoom;
-
-      const centerX = img.width / 2 - (cropPosition.x / 150) * (img.width / 2);
-      const centerY = img.height / 2 - (cropPosition.y / 150) * (img.height / 2);
-
-      const sx = Math.max(0, Math.min(img.width - cropW, centerX - cropW / 2));
-      const sy = Math.max(0, Math.min(img.height - cropH, centerY - cropH / 2));
-
-      ctx.drawImage(img, sx, sy, cropW, cropH, 0, 0, size, size);
-
-      const croppedDataUrl = canvas.toDataURL("image/jpeg", 0.9);
-      setPhotoPreview(croppedDataUrl);
-      setIsCropping(false);
-      try {
-        localStorage.setItem("durga_bengali_user_photo", croppedDataUrl);
-      } catch {}
-      toast.success("ছবি সফলভাবে সেট করা হয়েছে!");
-    };
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - cropPosition.x,
-      y: e.clientY - cropPosition.y,
-    });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    setCropPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
-    });
-  };
-
-  const handleMouseUp = () => setIsDragging(false);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length === 1) {
-      setIsDragging(true);
-      setDragStart({
-        x: e.touches[0].clientX - cropPosition.x,
-        y: e.touches[0].clientY - cropPosition.y,
-      });
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    setCropPosition({
-      x: e.touches[0].clientX - dragStart.x,
-      y: e.touches[0].clientY - dragStart.y,
-    });
+    e.target.value = "";
   };
 
   const handleRemovePhoto = () => {
     setPhotoPreview(null);
+    setUserHasEditedPhoto(true);
     try {
       localStorage.removeItem("durga_bengali_user_photo");
     } catch {}
@@ -260,6 +205,7 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
           name: nameToSave,
           message: "শুভ শারদীয়া ও দুর্গাপূজার আন্তরিক প্রীতি ও শুভেচ্ছা",
           imageBase64: photoPreview,
+          referredBy: userSlugParam || null,
         }),
       });
 
@@ -326,8 +272,15 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
       .catch(() => {});
   };
 
-  const displaySender = recipientGreeting?.name || (userName.trim() ? userName.trim() : (nameParam ? nameParam : "Anil"));
-  const displayPhoto = photoPreview || recipientGreeting?.imageUrl;
+  // When user is typing, display the typed name immediately. Otherwise fallback to recipientGreeting or Anil.
+  const displaySender = userName.trim()
+    ? userName.trim()
+    : (recipientGreeting?.name || (nameParam ? nameParam : "Anil"));
+
+  // If user uploaded a photo, show it. If user removed photo, show default. If user hasn't touched photo, show recipient's photo (if any).
+  const displayPhoto = photoPreview
+    ? photoPreview
+    : (userHasEditedPhoto ? null : (recipientGreeting?.imageUrl || null));
 
   return (
     <div className="relative min-h-screen bg-[#FFFDF9] text-gray-900 overflow-x-hidden font-serif flex flex-col items-center justify-start pt-16 sm:pt-20 pb-12 px-4 sm:px-6">
@@ -357,38 +310,36 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
           </p>
         </div>
 
-        {/* Main Divine / User Portrait (Replaced when user uploads photo) */}
-        <div className="relative w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 mx-auto rounded-full p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500 shadow-xl">
-          <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
+        {/* Main Divine / User Portrait (Complete Full Photo without Forced Cropping) */}
+        <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm mx-auto rounded-3xl p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500 shadow-xl">
+          <div className="relative w-full min-h-[220px] max-h-[380px] rounded-2xl overflow-hidden border-4 border-white shadow-md bg-white flex items-center justify-center p-1">
             {displayPhoto ? (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src={displayPhoto}
                 alt={displaySender}
-                fill
-                priority
-                className="object-cover"
+                className="w-auto h-auto max-h-[360px] max-w-full object-contain rounded-xl shadow-xs"
               />
             ) : (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src="/durgapuja/durga_mata_portrait.jpg"
                 alt="Maa Durga"
-                fill
-                priority
-                className="object-cover"
+                className="w-auto h-auto max-h-[360px] max-w-full object-contain rounded-xl"
               />
             )}
           </div>
 
-          {/* Edit/Remove controls on top right of the circular frame */}
+          {/* Edit/Remove controls on top right */}
           {photoPreview && (
-            <div className="absolute top-1 right-1 flex gap-1 z-20">
+            <div className="absolute top-3 right-3 flex gap-1.5 z-20">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="bg-amber-600 text-white rounded-full p-2 shadow-lg hover:bg-amber-700 transition-all hover:scale-110 active:scale-95"
                 title="ছবি পরিবর্তন"
               >
-                <Crop className="w-4 h-4" />
+                <Upload className="w-4 h-4" />
               </button>
               <button
                 type="button"
@@ -407,7 +358,7 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
           শুভ শারদীয়া ও দুর্গাপূজা ২০২৬
         </h1>
 
-        {/* Large Clean Input Controls */}
+        {/* User Input & Action Buttons */}
         <div className="space-y-3 pt-2">
           <input
             type="text"
@@ -420,7 +371,7 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
             }}
             placeholder="আপনার নাম লিখুন..."
             maxLength={40}
-            className="w-full py-4 px-5 bg-amber-50/70 border-2 border-amber-300 rounded-2xl text-gray-900 placeholder-gray-400 text-lg sm:text-xl font-black text-center focus:outline-none focus:border-amber-500 focus:bg-white transition-all shadow-sm"
+            className="w-full py-4 px-5 bg-rose-50/70 border-2 border-rose-300 rounded-2xl text-gray-900 placeholder-gray-400 text-lg sm:text-xl font-bold text-center focus:outline-none focus:border-rose-500 focus:bg-white transition-all shadow-sm"
           />
 
           <input
@@ -435,21 +386,21 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-3.5 px-4 bg-amber-50/90 hover:bg-amber-100 border-2 border-dashed border-amber-300 rounded-2xl text-amber-900 text-base font-extrabold flex items-center justify-center gap-2 transition-all active:scale-98"
+              className="w-full py-3.5 px-4 bg-rose-50/90 hover:bg-rose-100 border-2 border-dashed border-rose-300 rounded-2xl text-rose-900 text-base font-bold flex items-center justify-center gap-2 transition-all active:scale-98"
             >
-              <Upload className="w-4 h-4 text-amber-700" />
+              <Upload className="w-4 h-4 text-rose-700" />
               <span>নিজের ছবি যোগ করুন</span>
             </button>
           )}
         </div>
 
-        {/* Big Grand 1-Tap WhatsApp Share Button with 5s Live Countdown & Milliseconds */}
+        {/* 1-Tap WhatsApp Share Button with Live 5s Countdown */}
         <div className="pt-2">
           <button
             type="button"
             disabled={isSavingDb || shareMsLeft !== null}
             onClick={handleWhatsAppShare}
-            className="relative overflow-hidden w-full py-4 sm:py-4.5 px-6 bg-[#25D366] hover:bg-[#20ba5a] text-white font-black rounded-2xl text-xl sm:text-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-600/25 active:scale-95 transition-all disabled:opacity-90 cursor-pointer"
+            className="relative overflow-hidden w-full py-4 sm:py-4.5 px-6 bg-[#25D366] hover:bg-[#20ba5a] text-white font-black rounded-2xl text-xl sm:text-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-600/25 active:scale-95 transition-all disabled:opacity-90"
           >
             {shareMsLeft !== null && (
               <div
@@ -463,7 +414,7 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
             <span className="relative z-10 font-mono tracking-tight">
               {shareMsLeft !== null
                 ? `অপেক্ষা করুন... ${Math.floor(shareMsLeft / 1000)}.${String(Math.floor((shareMsLeft % 1000) / 10)).padStart(2, "0")}s`
-                : "WhatsApp-এ শেয়ার করুন"}
+                : "WhatsApp-এ শেয়ার করুন"}
             </span>
           </button>
         </div>
@@ -472,9 +423,9 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
         <div className="pt-3 flex flex-wrap items-center justify-center gap-2">
           <Link
             href="/durgapuja2026"
-            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-red-50/80 hover:bg-red-100/90 border border-red-300 rounded-full text-xs font-bold text-red-950 transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-amber-50/80 hover:bg-amber-100/90 border border-amber-300 rounded-full text-xs font-bold text-amber-950 transition-all shadow-xs"
           >
-            <span>दुर्गा पूजा (हिंदी)</span>
+            <span>दुर्गा पूजा 2026</span>
           </Link>
           <Link
             href="/diwaliPuja2026"
@@ -492,70 +443,28 @@ export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: 
 
       </div>
 
-      {/* 1:1 Square Crop Modal */}
-      {isCropping && rawPhoto && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 text-center">
-            <h3 className="text-lg font-black text-gray-900">ছবি ক্রপ করুন (1:1)</h3>
-            <p className="text-xs text-gray-500">ছবিটি ড্র্যাগ করে সঠিক অবস্থানে আনুন</p>
-
-            <div
-              className="relative w-64 h-64 mx-auto rounded-2xl overflow-hidden bg-gray-100 border-2 border-amber-400 cursor-move touch-none select-none"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleMouseUp}
-            >
-              <img
-                ref={cropImageRef}
-                src={rawPhoto}
-                alt="Crop preview"
-                className="absolute max-w-none origin-center pointer-events-none transition-transform duration-75"
-                style={{
-                  transform: `translate(calc(-50% + ${cropPosition.x}px), calc(-50% + ${cropPosition.y}px)) scale(${cropZoom})`,
-                  top: "50%",
-                  left: "50%",
-                  maxHeight: "100%",
-                }}
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-700">জুম করুন</label>
-              <input
-                type="range"
-                min="1"
-                max="3"
-                step="0.05"
-                value={cropZoom}
-                onChange={(e) => setCropZoom(parseFloat(e.target.value))}
-                className="w-full accent-amber-500"
-              />
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setIsCropping(false)}
-                className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-sm transition-colors"
-              >
-                বাতিল করুন
-              </button>
-              <button
-                type="button"
-                onClick={applyCrop}
-                className="flex-1 py-2.5 bg-[#990012] hover:bg-[#7a000e] text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-1"
-              >
-                <Check className="w-4 h-4" />
-                <span>সেট করুন</span>
-              </button>
-            </div>
+      {/* Mini Simple Footer */}
+      <footer className="relative z-10 mt-12 pb-4 text-center text-gray-600">
+        <Link
+          href="https://xpertbite.in"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
+        >
+          <div className="relative w-6 h-6 rounded overflow-hidden bg-white border border-gray-200 p-0.5 shadow-xs">
+            <Image
+              src="/logos/xpertbite_logo_light.png"
+              alt="XpertBite"
+              fill
+              className="object-contain"
+            />
           </div>
-        </div>
-      )}
+          <span className="text-sm font-bold text-gray-800">
+            XpertBite Technologies
+          </span>
+        </Link>
+      </footer>
+
     </div>
   );
 }

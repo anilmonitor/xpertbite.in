@@ -1,7 +1,9 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { DurgaPujaBengaliClient } from "./durga-puja-bengali-client";
 import { prisma } from "@/lib/prisma";
+import { isUniqueView } from "@/lib/view-limiter";
 
 export const dynamic = "force-dynamic";
 
@@ -93,18 +95,28 @@ export default async function DurgaPujaBengali2026Page({
           },
         });
         if (found) {
-          try {
-            await (prisma as any).durgaGreeting.update({
-              where: { id: found.id },
-              data: { views: { increment: 1 } },
-            });
-          } catch {}
+          // Check unique IP before incrementing view
+          const headerList = await headers();
+          const clientIp =
+            headerList.get("x-forwarded-for") ||
+            headerList.get("x-real-ip") ||
+            "127.0.0.1";
+
+          const isUnique = isUniqueView("durgabengali", found.slug, clientIp);
+          if (isUnique) {
+            try {
+              await (prisma as any).durgaGreeting.update({
+                where: { id: found.id },
+                data: { views: { increment: 1 } },
+              });
+            } catch {}
+          }
 
           initialGreeting = {
             name: found.name,
             imageUrl: found.imageUrl,
             slug: found.slug,
-            views: found.views + 1,
+            views: found.views + (isUnique ? 1 : 0),
             blessings: found.blessings,
           };
         }

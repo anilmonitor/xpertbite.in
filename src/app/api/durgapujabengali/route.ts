@@ -138,6 +138,8 @@ export async function POST(req: NextRequest) {
   }
 }
 
+import { isUniqueView } from "@/lib/view-limiter";
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -157,13 +159,20 @@ export async function GET(req: NextRequest) {
         });
 
         if (greeting) {
+          const clientIp =
+            req.headers.get("x-forwarded-for") ||
+            req.headers.get("x-real-ip") ||
+            "127.0.0.1";
+
           let updated = greeting;
-          try {
-            updated = await (prisma as any).durgaGreeting.update({
-              where: { id: greeting.id },
-              data: { views: { increment: 1 } },
-            });
-          } catch {}
+          if (isUniqueView("durgabengali", greeting.slug, clientIp)) {
+            try {
+              updated = await (prisma as any).durgaGreeting.update({
+                where: { id: greeting.id },
+                data: { views: { increment: 1 } },
+              });
+            } catch {}
+          }
 
           return NextResponse.json({ success: true, greeting: updated });
         }

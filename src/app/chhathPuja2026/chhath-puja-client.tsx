@@ -4,17 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import {
-  Upload,
-  X,
-  ZoomIn,
-  ZoomOut,
-  RotateCw,
-  Check,
-  Crop,
-  Eye,
-  Heart,
-} from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { ChhathAudioPlayer } from "./chhath-audio-player";
 
@@ -29,19 +19,12 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
   const userSlugParam = searchParams.get("u") || searchParams.get("id") || searchParams.get("slug") || "";
   const nameParam = searchParams.get("name") || "";
 
-  const [userName, setUserName] = useState<string>(initialGreeting?.name || nameParam || "");
+  // If page was opened with a shared link (?u=...), keep input empty so new user can type their own name
+  const [userName, setUserName] = useState<string>(!userSlugParam && !initialGreeting ? nameParam : "");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [activeSlug, setActiveSlug] = useState<string | null>(initialGreeting?.slug || userSlugParam || null);
+  const [userHasEditedPhoto, setUserHasEditedPhoto] = useState<boolean>(false);
+  const [activeSlug, setActiveSlug] = useState<string | null>(null);
   const [isSavingDb, setIsSavingDb] = useState<boolean>(false);
-
-  // Image Cropper States
-  const [isCropModalOpen, setIsCropModalOpen] = useState<boolean>(false);
-  const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
-  const [cropScale, setCropScale] = useState<number>(1);
-  const [cropRotation, setCropRotation] = useState<number>(0);
-  const [cropPosition, setCropPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   // Recipient greeting data (initialized instantly from SSR)
   const [recipientGreeting, setRecipientGreeting] = useState<{
@@ -53,7 +36,6 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
   } | null>(initialGreeting || null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const cropImageRef = useRef<HTMLImageElement | null>(null);
 
   const [shareMsLeft, setShareMsLeft] = useState<number | null>(null);
   const targetWhatsappUrlRef = useRef<string | null>(null);
@@ -138,14 +120,11 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
               views: data.greeting.views,
               blessings: data.greeting.blessings,
             });
-            if (data.greeting.name && !nameParam) {
-              setUserName(data.greeting.name);
-            }
           }
         })
         .catch(() => {});
     }
-  }, [userSlugParam, nameParam, initialGreeting]);
+  }, [userSlugParam, initialGreeting]);
 
   // Check localStorage for saved photo or name
   useEffect(() => {
@@ -161,112 +140,61 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
     } catch {}
   }, [userSlugParam, photoPreview, nameParam, userName]);
 
-  // Handle Photo Selection (Opens Crop Modal)
+  // Handle Direct Photo Selection without crop (Full aspect ratio preserved)
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 15 * 1024 * 1024) {
-      toast.error("कृपया 15MB से छोटी फोटो चुनें");
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("कृपया 20MB से छोटी फोटो चुनें");
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (event) => {
       const result = event.target?.result as string;
-      setRawImageSrc(result);
-      setCropScale(1);
-      setCropRotation(0);
-      setCropPosition({ x: 0, y: 0 });
-      setIsCropModalOpen(true);
+      const img = new window.Image();
+      img.src = result;
+      img.onload = () => {
+        const maxDimension = 1200;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxDimension || h > maxDimension) {
+          if (w > h) {
+            h = Math.round((h * maxDimension) / w);
+            w = maxDimension;
+          } else {
+            w = Math.round((w * maxDimension) / h);
+            h = maxDimension;
+          }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL("image/jpeg", 0.9);
+          setPhotoPreview(compressed);
+          setUserHasEditedPhoto(true);
+          try {
+            localStorage.setItem("chhath_user_photo", compressed);
+          } catch {}
+          toast.success("फोटो सफलतापूर्वक सेट हो गई है!");
+        } else {
+          setPhotoPreview(result);
+          setUserHasEditedPhoto(true);
+          toast.success("फोटो सफलतापूर्वक सेट हो गई है!");
+        }
+      };
     };
     reader.readAsDataURL(file);
     e.target.value = "";
   };
 
-  // Perform Canvas Square Crop
-  const handleApplyCrop = () => {
-    if (!rawImageSrc) return;
-
-    const img = new window.Image();
-    img.src = rawImageSrc;
-    img.onload = () => {
-      const cropBoxSize = 600;
-      const canvas = document.createElement("canvas");
-      canvas.width = cropBoxSize;
-      canvas.height = cropBoxSize;
-      const ctx = canvas.getContext("2d");
-
-      if (!ctx) return;
-
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(0, 0, cropBoxSize, cropBoxSize);
-
-      ctx.save();
-      ctx.translate(cropBoxSize / 2, cropBoxSize / 2);
-      ctx.rotate((cropRotation * Math.PI) / 180);
-
-      const baseScale = Math.max(cropBoxSize / img.width, cropBoxSize / img.height);
-      const finalW = img.width * baseScale * cropScale;
-      const finalH = img.height * baseScale * cropScale;
-
-      ctx.drawImage(
-        img,
-        -finalW / 2 + cropPosition.x * 2,
-        -finalH / 2 + cropPosition.y * 2,
-        finalW,
-        finalH
-      );
-      ctx.restore();
-
-      const croppedDataUrl = canvas.toDataURL("image/jpeg", 0.92);
-      setPhotoPreview(croppedDataUrl);
-      try {
-        localStorage.setItem("chhath_user_photo", croppedDataUrl);
-      } catch {}
-
-      setIsCropModalOpen(false);
-      setRawImageSrc(null);
-      toast.success("फोटो स्क्वायर में क्रॉप हो गई है");
-    };
-  };
-
-  // Pan / Drag Handlers for Cropper
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setDragStart({ x: e.clientX - cropPosition.x, y: e.clientY - cropPosition.y });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    setCropPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
-    });
-  };
-
-  const handleMouseUp = () => setIsDragging(false);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length === 1) {
-      setIsDragging(true);
-      setDragStart({
-        x: e.touches[0].clientX - cropPosition.x,
-        y: e.touches[0].clientY - cropPosition.y,
-      });
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    setCropPosition({
-      x: e.touches[0].clientX - dragStart.x,
-      y: e.touches[0].clientY - dragStart.y,
-    });
-  };
-
   const handleRemovePhoto = () => {
     setPhotoPreview(null);
+    setUserHasEditedPhoto(true);
     try {
       localStorage.removeItem("chhath_user_photo");
     } catch {}
@@ -345,8 +273,15 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
       .catch(() => {});
   };
 
-  const displaySender = recipientGreeting?.name || (userName.trim() ? userName.trim() : (nameParam ? nameParam : "Anil"));
-  const displayPhoto = photoPreview || recipientGreeting?.imageUrl;
+  // When user is typing, display the typed name immediately. Otherwise fallback to recipientGreeting or Anil.
+  const displaySender = userName.trim()
+    ? userName.trim()
+    : (recipientGreeting?.name || (nameParam ? nameParam : "Anil"));
+
+  // If user uploaded a photo, show it. If user removed photo, show default. If user hasn't touched photo, show recipient's photo (if any).
+  const displayPhoto = photoPreview
+    ? photoPreview
+    : (userHasEditedPhoto ? null : (recipientGreeting?.imageUrl || null));
 
   return (
     <div className="relative min-h-screen bg-[#FFFDF9] text-gray-900 overflow-x-hidden font-hindi-heading flex flex-col items-center justify-start pt-16 sm:pt-20 pb-12 px-4 sm:px-6">
@@ -374,38 +309,36 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
           </p>
         </div>
 
-        {/* Main Divine / User Portrait (Replaced when user uploads photo) */}
-        <div className="relative w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 mx-auto rounded-full p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500 shadow-xl">
-          <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
+        {/* Main Divine / User Portrait (Complete Full Photo without Forced Cropping) */}
+        <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm mx-auto rounded-3xl p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500 shadow-xl">
+          <div className="relative w-full min-h-[220px] max-h-[380px] rounded-2xl overflow-hidden border-4 border-white shadow-md bg-white flex items-center justify-center p-1">
             {displayPhoto ? (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src={displayPhoto}
                 alt={displaySender}
-                fill
-                priority
-                className="object-cover"
+                className="w-auto h-auto max-h-[360px] max-w-full object-contain rounded-xl shadow-xs"
               />
             ) : (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src="/chhath/chhath_portrait.jpg"
                 alt="Chhath Puja"
-                fill
-                priority
-                className="object-cover"
+                className="w-auto h-auto max-h-[360px] max-w-full object-contain rounded-xl"
               />
             )}
           </div>
 
-          {/* Edit/Remove controls on top right of the circular frame */}
+          {/* Edit/Remove controls on top right */}
           {photoPreview && (
-            <div className="absolute top-1 right-1 flex gap-1 z-20">
+            <div className="absolute top-3 right-3 flex gap-1.5 z-20">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="bg-amber-600 text-white rounded-full p-2 shadow-lg hover:bg-amber-700 transition-all hover:scale-110 active:scale-95"
                 title="फोटो बदलें"
               >
-                <Crop className="w-4 h-4" />
+                <Upload className="w-4 h-4" />
               </button>
               <button
                 type="button"
@@ -419,7 +352,7 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
           )}
         </div>
 
-        {/* Grand Title */}
+        {/* Grand Title (Royal & Ultra-Bold Typography) */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-hindi-royal font-black text-[#991B1B] leading-tight tracking-tight">
           छठ पूजा की हार्दिक शुभकामनाएं
         </h1>
@@ -460,7 +393,7 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
           )}
         </div>
 
-        {/* Big Grand 1-Tap WhatsApp Share Button with 5s Live Countdown & Milliseconds */}
+        {/* Big Grand 1-Tap WhatsApp Share Button with 5s Live Countdown */}
         <div className="pt-2">
           <button
             type="button"
@@ -489,15 +422,9 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
         <div className="pt-3 flex flex-wrap items-center justify-center gap-2">
           <Link
             href="/durgapuja2026"
-            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-red-50/80 hover:bg-red-100/90 border border-red-300 rounded-full text-xs font-bold text-red-950 transition-all shadow-xs"
+            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-amber-50/80 hover:bg-amber-100/90 border border-amber-300 rounded-full text-xs font-bold text-amber-950 transition-all shadow-xs"
           >
-            <span>दुर्गा पूजा (हिंदी)</span>
-          </Link>
-          <Link
-            href="/durgapujabengali2026"
-            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-rose-50/80 hover:bg-rose-100/90 border border-rose-300 rounded-full text-xs font-bold text-rose-950 transition-all shadow-xs"
-          >
-            <span>দুর্গাপূজা ২০২৬ (বাংলা)</span>
+            <span>दुर्गा पूजा 2026</span>
           </Link>
           <Link
             href="/diwaliPuja2026"
@@ -505,129 +432,15 @@ export function ChhathPujaClient({ initialGreeting }: { initialGreeting?: any })
           >
             <span>दीपावली 2026</span>
           </Link>
+          <Link
+            href="/durgapujabengali2026"
+            className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-rose-50/80 hover:bg-rose-100/90 border border-rose-300 rounded-full text-xs font-bold text-rose-950 transition-all shadow-xs"
+          >
+            <span>দুর্গাপূজা ২০২৬ (বাংলা)</span>
+          </Link>
         </div>
 
       </div>
-
-      {/* Interactive Square Photo Crop Modal */}
-      {isCropModalOpen && rawImageSrc && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-5 sm:p-6 w-full max-w-sm sm:max-w-md shadow-2xl text-center space-y-4">
-            
-            <div className="flex justify-between items-center pb-2 border-b border-gray-100">
-              <h3 className="text-lg font-bold text-gray-900">फोटो एडजस्ट और क्रॉप करें</h3>
-              <button
-                onClick={() => setIsCropModalOpen(false)}
-                className="p-1 rounded-full text-gray-500 hover:bg-gray-100"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Square Viewport Preview Box */}
-            <div
-              className="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto rounded-2xl overflow-hidden bg-gray-950 cursor-grab active:cursor-grabbing border-2 border-amber-400 select-none shadow-inner"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleMouseUp}
-            >
-              <div
-                className="absolute inset-0 flex items-center justify-center pointer-events-none transition-transform duration-75"
-                style={{
-                  transform: `translate(${cropPosition.x}px, ${cropPosition.y}px) rotate(${cropRotation}deg) scale(${cropScale})`,
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  ref={cropImageRef}
-                  src={rawImageSrc}
-                  alt="Crop Preview"
-                  className="max-w-none w-auto h-auto max-h-[300%] object-contain"
-                  draggable={false}
-                />
-              </div>
-
-              <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none border border-white/30">
-                <div className="border-r border-b border-white/20" />
-                <div className="border-r border-b border-white/20" />
-                <div className="border-b border-white/20" />
-                <div className="border-r border-b border-white/20" />
-                <div className="border-r border-b border-white/20" />
-                <div className="border-b border-white/20" />
-                <div className="border-r border-white/20" />
-                <div className="border-r border-white/20" />
-                <div />
-              </div>
-            </div>
-
-            <p className="text-xs text-gray-500">
-              फोटो को खींचकर (Drag) बीच में सेट करें
-            </p>
-
-            <div className="flex items-center justify-center gap-4 bg-gray-50 py-2.5 px-4 rounded-xl">
-              <button
-                type="button"
-                onClick={() => setCropScale((prev) => Math.max(0.6, prev - 0.15))}
-                className="p-2 bg-white rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-100 active:scale-95"
-                title="Zoom Out"
-              >
-                <ZoomOut className="w-4 h-4" />
-              </button>
-
-              <input
-                type="range"
-                min="0.6"
-                max="3"
-                step="0.05"
-                value={cropScale}
-                onChange={(e) => setCropScale(parseFloat(e.target.value))}
-                className="w-32 accent-amber-500 cursor-pointer"
-              />
-
-              <button
-                type="button"
-                onClick={() => setCropScale((prev) => Math.min(3, prev + 0.15))}
-                className="p-2 bg-white rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-100 active:scale-95"
-                title="Zoom In"
-              >
-                <ZoomIn className="w-4 h-4" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setCropRotation((prev) => (prev + 90) % 360)}
-                className="p-2 bg-white rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-100 active:scale-95 ml-1"
-                title="घुमाएं (Rotate)"
-              >
-                <RotateCw className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="flex gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setIsCropModalOpen(false)}
-                className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 font-bold rounded-xl text-sm hover:bg-gray-200 transition-colors"
-              >
-                रद्द करें
-              </button>
-              <button
-                type="button"
-                onClick={handleApplyCrop}
-                className="flex-1 py-3 px-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-1.5 shadow-md hover:brightness-105 active:scale-95 transition-all"
-              >
-                <Check className="w-4 h-4" />
-                <span>क्रॉप करें और लगाएं</span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
 
       {/* Mini Simple Footer */}
       <footer className="relative z-10 mt-12 pb-4 text-center text-gray-600">
