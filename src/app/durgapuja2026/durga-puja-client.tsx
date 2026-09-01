@@ -303,8 +303,8 @@ export function DurgaPujaClient({ initialGreeting }: { initialGreeting?: any }) 
 
   return (
     <div className="relative min-h-screen bg-[#FFFDF9] text-gray-900 overflow-x-hidden font-hindi-heading flex flex-col items-center justify-start pt-16 sm:pt-20 pb-12 px-4 sm:px-6">
-      {/* 3-4 Seconds Live Celebration Fireworks & Confetti on Page Open */}
-      <FestiveCelebration durationMs={3500} />
+      {/* 10 Seconds Live Celebration Fireworks & Confetti Popper on Page Open */}
+      <FestiveCelebration durationMs={10000} />
 
       {/* Background Devotional Audio Player */}
       <DurgaAudioPlayer />
