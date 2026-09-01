@@ -11,41 +11,50 @@ export function DurgaAudioPlayer({
   trackSrc = "/audio/DurgapujaSong.MP3",
 }: DurgaAudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.volume = 0.9;
+    audio.volume = 1.0;
+    audio.muted = false;
 
     const playAudio = () => {
-      audio
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => {
-          // Autoplay policy might block initial unprompted play until user interaction
-        });
+      if (!audio) return;
+      audio.muted = false;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(() => {
+            // Autoplay blocked by browser until user touches the screen
+          });
+      }
     };
 
-    // 1. Attempt instant autoplay on mount
+    // 1. Try immediate play on mount
     playAudio();
 
-    // 2. Ensure audio plays on very first touch/click/scroll if browser blocked unmuted autoplay
-    const handleFirstGesture = () => {
+    // 2. Play on any initial interaction (tap, scroll, pointer, click)
+    const handleInteraction = () => {
       playAudio();
     };
 
-    window.addEventListener("pointerdown", handleFirstGesture, { passive: true });
-    window.addEventListener("touchstart", handleFirstGesture, { passive: true });
-    window.addEventListener("click", handleFirstGesture, { passive: true });
-    window.addEventListener("scroll", handleFirstGesture, { passive: true });
+    window.addEventListener("pointerdown", handleInteraction, { passive: true });
+    window.addEventListener("touchstart", handleInteraction, { passive: true });
+    window.addEventListener("click", handleInteraction, { passive: true });
+    window.addEventListener("scroll", handleInteraction, { passive: true });
+    window.addEventListener("mousemove", handleInteraction, { once: true, passive: true });
 
     return () => {
-      window.removeEventListener("pointerdown", handleFirstGesture);
-      window.removeEventListener("touchstart", handleFirstGesture);
-      window.removeEventListener("click", handleFirstGesture);
-      window.removeEventListener("scroll", handleFirstGesture);
+      window.removeEventListener("pointerdown", handleInteraction);
+      window.removeEventListener("touchstart", handleInteraction);
+      window.removeEventListener("click", handleInteraction);
+      window.removeEventListener("scroll", handleInteraction);
+      window.removeEventListener("mousemove", handleInteraction);
     };
   }, []);
 
@@ -54,6 +63,7 @@ export function DurgaAudioPlayer({
     if (!audio) return;
 
     if (audio.paused) {
+      audio.muted = false;
       audio.play().then(() => setIsPlaying(true)).catch(() => {});
     } else {
       audio.pause();
@@ -75,7 +85,7 @@ export function DurgaAudioPlayer({
         onPause={() => setIsPlaying(false)}
       />
 
-      {/* Floating Ambient Music Control Button */}
+      {/* Floating Music Control Button */}
       <button
         type="button"
         onClick={togglePlay}
