@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Mail, Phone, Calendar, Clock, Building2, Wallet, CheckCircle, ExternalLink, RefreshCw, Eye } from "lucide-react";
+import { Mail, Phone, CheckCircle, ExternalLink, RefreshCw, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { getLeads, resolveLead } from "@/actions/contacts";
 
@@ -36,6 +36,7 @@ export default function AdminLeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [filterType, setFilterType] = useState<string>("all");
 
   const fetchAllLeads = async (silent = false) => {
     if (!silent) setLoading(true);
@@ -62,9 +63,8 @@ export default function AdminLeadsPage() {
     try {
       const res = await resolveLead(id, type);
       if (res.success) {
-        toast.success("Lead marked as resolved.");
+        toast.success("Lead marked as resolved");
         
-        // Update status locally in state
         setLeads((prev) =>
           prev.map((lead) => {
             if (lead.id === id) {
@@ -75,7 +75,6 @@ export default function AdminLeadsPage() {
           })
         );
 
-        // Update selected lead state if it's currently open
         if (selectedLead && selectedLead.id === id) {
           const newStatus = type === "Contact" ? "Read" : type === "Booking" ? "Confirmed" : "Reviewed";
           setSelectedLead({ ...selectedLead, status: newStatus });
@@ -92,13 +91,13 @@ export default function AdminLeadsPage() {
     const isUnresolved = ["Unread", "New", "Pending"].includes(status);
     if (isUnresolved) {
       return (
-        <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20 font-medium">
+        <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20 font-medium text-xs">
           {status}
         </Badge>
       );
     }
     return (
-      <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 font-medium">
+      <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 font-medium text-xs">
         {status}
       </Badge>
     );
@@ -107,12 +106,12 @@ export default function AdminLeadsPage() {
   const getTypeBadge = (type: "Contact" | "Booking" | "Quote") => {
     switch (type) {
       case "Quote":
-        return <Badge className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/10 border-emerald-500/20">Estimate Request</Badge>;
+        return <Badge className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/10 border-emerald-500/20 text-xs">Estimate</Badge>;
       case "Booking":
-        return <Badge className="bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/10 border-indigo-500/20">Consultation</Badge>;
+        return <Badge className="bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/10 border-indigo-500/20 text-xs">Booking</Badge>;
       case "Contact":
       default:
-        return <Badge className="bg-sky-500/10 text-sky-500 hover:bg-sky-500/10 border-sky-500/20">Contact Message</Badge>;
+        return <Badge className="bg-sky-500/10 text-sky-500 hover:bg-sky-500/10 border-sky-500/20 text-xs">Contact</Badge>;
     }
   };
 
@@ -120,67 +119,145 @@ export default function AdminLeadsPage() {
     return ["Unread", "New", "Pending"].includes(lead.status);
   };
 
-  return (
-    <div className="space-y-8">
-      <ScrollReveal>
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold font-heading">Manage Leads</h1>
-            <p className="text-sm text-muted-foreground">Monitor and respond to customer consultations, quotes, and support inquiries.</p>
-          </div>
-          <Button variant="outline" size="sm" onClick={() => fetchAllLeads()} className="h-9">
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} /> Refresh Leads
-          </Button>
-        </div>
-      </ScrollReveal>
+  const filteredLeads = filterType === "all" ? leads : leads.filter(l => l.type.toLowerCase() === filterType.toLowerCase());
 
-      <ScrollReveal>
-        <div className="border rounded-2xl bg-card overflow-hidden shadow-sm">
-          {loading ? (
-            <div className="p-12 text-center text-muted-foreground">
-              <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-              Loading leads from database...
+  return (
+    <div className="space-y-4 max-w-7xl mx-auto pb-10">
+      {/* Clean Compact Header */}
+      <div className="flex justify-between items-center bg-card/60 p-4 sm:p-5 rounded-xl border">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold font-heading">Inquiries & Leads</h1>
+          <p className="text-xs text-muted-foreground">
+            Contact forms, quotes, and booking submissions.
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => fetchAllLeads()} 
+          className="h-8 gap-1.5 text-xs bg-background shrink-0"
+        >
+          <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} /> Refresh
+        </Button>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        {[
+          { key: "all", label: `All (${leads.length})` },
+          { key: "contact", label: `Contacts (${leads.filter(l => l.type === "Contact").length})` },
+          { key: "quote", label: `Quotes (${leads.filter(l => l.type === "Quote").length})` },
+          { key: "booking", label: `Bookings (${leads.filter(l => l.type === "Booking").length})` },
+        ].map((tab) => (
+          <Button
+            key={tab.key}
+            variant={filterType === tab.key ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilterType(tab.key)}
+            className="text-xs rounded-lg h-7 px-2.5 whitespace-nowrap"
+          >
+            {tab.label}
+          </Button>
+        ))}
+      </div>
+
+      {/* Content Container */}
+      <div className="border rounded-xl bg-card overflow-hidden shadow-sm">
+        {loading ? (
+          <div className="p-10 text-center text-muted-foreground text-xs">
+            <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2 text-primary" />
+            Loading leads...
+          </div>
+        ) : filteredLeads.length === 0 ? (
+          <div className="p-10 text-center text-muted-foreground">
+            <Mail className="h-10 w-10 mx-auto mb-2 text-muted-foreground/30" />
+            <h3 className="font-semibold text-foreground text-sm">No leads found</h3>
+            <p className="text-xs mt-0.5">Submissions will appear here in real-time.</p>
+          </div>
+        ) : (
+          <>
+            {/* CLEAN MOBILE CARDS VIEW (md:hidden) */}
+            <div className="block md:hidden divide-y">
+              {filteredLeads.map((lead) => (
+                <div 
+                  key={lead.id} 
+                  onClick={() => setSelectedLead(lead)}
+                  className="p-3.5 space-y-2 hover:bg-muted/30 active:bg-muted/50 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="font-bold text-sm text-foreground">{lead.name}</div>
+                      <div className="text-xs text-muted-foreground">{lead.email}</div>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {getStatusBadge(lead.status)}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs pt-0.5">
+                    <div className="flex items-center gap-2">
+                      {getTypeBadge(lead.type)}
+                      <span className="text-[11px] text-muted-foreground font-mono">
+                        {lead.date}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs h-7 px-2 gap-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedLead(lead);
+                        }}
+                      >
+                        <Eye className="h-3 w-3" /> View
+                      </Button>
+
+                      {isLeadUnresolved(lead) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs h-7 px-2 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                          onClick={(e) => handleResolve(lead.id, lead.type, e)}
+                        >
+                          <CheckCircle className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ) : leads.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground">
-              <Mail className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-              No website leads found in the database.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
+
+            {/* DESKTOP TABLE VIEW (hidden md:block) */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-muted/40 border-b text-sm font-semibold text-muted-foreground">
-                    <th className="p-4">Sender & Contact</th>
-                    <th className="p-4">Type</th>
-                    <th className="p-4">Subject / Context</th>
-                    <th className="p-4">Status</th>
-                    <th className="p-4">Date</th>
-                    <th className="p-4 text-right">Actions</th>
+                  <tr className="bg-muted/40 border-b text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    <th className="p-3.5">Sender</th>
+                    <th className="p-3.5">Type</th>
+                    <th className="p-3.5">Status</th>
+                    <th className="p-3.5">Date</th>
+                    <th className="p-3.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y text-sm">
-                  {leads.map((lead) => (
+                  {filteredLeads.map((lead) => (
                     <tr
                       key={lead.id}
                       onClick={() => setSelectedLead(lead)}
                       className="hover:bg-muted/20 cursor-pointer transition-colors"
                     >
-                      <td className="p-4">
+                      <td className="p-3.5">
                         <div className="font-semibold text-foreground">{lead.name}</div>
                         <div className="text-xs text-muted-foreground">{lead.email}</div>
                       </td>
-                      <td className="p-4">{getTypeBadge(lead.type)}</td>
-                      <td className="p-4 max-w-xs truncate text-muted-foreground">
-                        {lead.type === "Quote"
-                          ? `Budget: ${lead.quoteDetails?.budget} · ${lead.quoteDetails?.category}`
-                          : lead.type === "Booking"
-                          ? `${lead.bookingDetails?.callType} · ${lead.bookingDetails?.date} @ ${lead.bookingDetails?.time}`
-                          : lead.subject}
-                      </td>
-                      <td className="p-4">{getStatusBadge(lead.status)}</td>
-                      <td className="p-4 font-mono text-xs text-muted-foreground">{lead.date}</td>
-                      <td className="p-4 text-right space-x-2" onClick={(e) => e.stopPropagation()}>
+                      <td className="p-3.5">{getTypeBadge(lead.type)}</td>
+                      <td className="p-3.5">{getStatusBadge(lead.status)}</td>
+                      <td className="p-3.5 font-mono text-xs text-muted-foreground">{lead.date}</td>
+                      <td className="p-3.5 text-right space-x-1" onClick={(e) => e.stopPropagation()}>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -198,7 +275,7 @@ export default function AdminLeadsPage() {
                             onClick={(e) => handleResolve(lead.id, lead.type, e)}
                             title="Mark as Resolved"
                           >
-                            <CheckCircle className="h-4.5 w-4.5" />
+                            <CheckCircle className="h-4 w-4" />
                           </Button>
                         )}
                       </td>
@@ -207,126 +284,132 @@ export default function AdminLeadsPage() {
                 </tbody>
               </table>
             </div>
-          )}
-        </div>
-      </ScrollReveal>
+          </>
+        )}
+      </div>
 
       {/* Lead Details Popup Modal */}
       <Dialog open={selectedLead !== null} onOpenChange={(open) => !open && setSelectedLead(null)}>
         {selectedLead && (
-          <DialogContent className="max-w-xl">
-            <DialogHeader>
-              <div className="flex items-center gap-2 mb-1">
-                {getTypeBadge(selectedLead.type)}
-                {getStatusBadge(selectedLead.status)}
+          <DialogContent className="max-w-lg w-[95vw] p-5 sm:p-6 rounded-2xl">
+            {/* Header with Badges & Name */}
+            <div className="space-y-3 pb-3 border-b text-left">
+              <div className="flex items-center justify-between gap-2 pr-6">
+                <div className="flex items-center gap-1.5">
+                  {getTypeBadge(selectedLead.type)}
+                  {getStatusBadge(selectedLead.status)}
+                </div>
+                <span className="text-[11px] text-muted-foreground font-mono">
+                  {selectedLead.date}
+                </span>
               </div>
-              <DialogTitle className="text-2xl font-bold font-heading">{selectedLead.name}</DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground">
-                Submitted on {selectedLead.date}
-              </DialogDescription>
-            </DialogHeader>
 
-            <div className="space-y-4 py-4">
-              {/* Contact Info Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-3 border-b">
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="h-4 w-4 text-primary shrink-0" />
+              <div>
+                <h2 className="text-xl font-bold text-foreground font-heading leading-tight">
+                  {selectedLead.name}
+                </h2>
+                <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-muted-foreground">
                   <a
                     href={`mailto:${selectedLead.email}`}
-                    className="text-foreground hover:text-primary hover:underline flex items-center gap-1"
+                    className="flex items-center gap-1 text-primary hover:underline"
                   >
-                    {selectedLead.email}
-                    <ExternalLink className="h-3 w-3" />
+                    <Mail className="h-3.5 w-3.5" />
+                    <span>{selectedLead.email}</span>
                   </a>
-                </div>
-                {selectedLead.phone && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-primary shrink-0" />
+
+                  {selectedLead.phone && (
                     <a
                       href={`tel:${selectedLead.phone}`}
-                      className="text-foreground hover:text-primary hover:underline flex items-center gap-1"
+                      className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline font-mono"
                     >
-                      {selectedLead.phone}
-                      <ExternalLink className="h-3 w-3" />
+                      <Phone className="h-3.5 w-3.5" />
+                      <span>{selectedLead.phone}</span>
                     </a>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
+            </div>
 
-              {/* Dynamic Metadata based on type */}
+            <div className="space-y-3.5 py-1 text-left">
+              {/* Quote specific info */}
               {selectedLead.type === "Quote" && selectedLead.quoteDetails && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-xl bg-muted/50 border text-sm">
-                  <div className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span>
-                      <strong className="text-muted-foreground">Company:</strong> {selectedLead.quoteDetails.company}
+                <div className="grid grid-cols-3 gap-2 bg-muted/40 p-3 rounded-xl border text-xs">
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold">Company</span>
+                    <span className="font-semibold text-foreground truncate block mt-0.5">
+                      {selectedLead.quoteDetails.company || "Individual"}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Wallet className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span>
-                      <strong className="text-muted-foreground">Budget:</strong> {selectedLead.quoteDetails.budget}
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold">Category</span>
+                    <span className="font-semibold text-foreground truncate block mt-0.5">
+                      {selectedLead.quoteDetails.category}
                     </span>
                   </div>
-                  <div className="col-span-1 sm:col-span-2 flex items-center gap-2 border-t pt-2 mt-1">
-                    <span className="font-semibold text-muted-foreground">Category:</span>
-                    <Badge variant="secondary">{selectedLead.quoteDetails.category}</Badge>
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold">Budget</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5">
+                      {selectedLead.quoteDetails.budget}
+                    </span>
                   </div>
                 </div>
               )}
 
+              {/* Booking specific info */}
               {selectedLead.type === "Booking" && selectedLead.bookingDetails && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-xl bg-muted/50 border text-sm">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span>
-                      <strong className="text-muted-foreground">Date:</strong> {selectedLead.bookingDetails.date}
+                <div className="grid grid-cols-3 gap-2 bg-muted/40 p-3 rounded-xl border text-xs">
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold">Mode</span>
+                    <span className="font-semibold text-foreground block mt-0.5">
+                      {selectedLead.bookingDetails.callType}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span>
-                      <strong className="text-muted-foreground">Time:</strong> {selectedLead.bookingDetails.time}
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold">Date</span>
+                    <span className="font-semibold text-foreground block mt-0.5">
+                      {selectedLead.bookingDetails.date}
                     </span>
                   </div>
-                  <div className="col-span-1 sm:col-span-2 flex items-center gap-2 border-t pt-2 mt-1">
-                    <span className="font-semibold text-muted-foreground">Call Type:</span>
-                    <Badge variant="secondary">{selectedLead.bookingDetails.callType}</Badge>
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold">Time</span>
+                    <span className="font-bold text-indigo-600 dark:text-indigo-400 block mt-0.5">
+                      {selectedLead.bookingDetails.time}
+                    </span>
                   </div>
                 </div>
               )}
 
-              {selectedLead.type === "Contact" && (
-                <div className="space-y-1">
-                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Subject</span>
-                  <div className="p-2.5 rounded-lg bg-muted/40 font-medium">{selectedLead.subject}</div>
-                </div>
-              )}
-
-              {/* Message Well */}
+              {/* Full Message content */}
               <div className="space-y-1">
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  {selectedLead.type === "Contact" ? "Message" : "Requirements / Description"}
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+                  Requirement / Message
                 </span>
-                <div className="p-4 rounded-xl border bg-muted/30 whitespace-pre-wrap max-h-[180px] overflow-y-auto leading-relaxed text-foreground/90">
+                <div className="p-3.5 rounded-xl bg-muted/40 border text-xs sm:text-sm text-foreground whitespace-pre-wrap leading-relaxed">
                   {selectedLead.message}
                 </div>
               </div>
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-0">
-              <Button variant="outline" onClick={() => setSelectedLead(null)}>
-                Close Window
+            {/* Footer Actions */}
+            <div className="flex items-center justify-end gap-2 pt-3 border-t mt-1">
+              <Button 
+                variant="outline" 
+                onClick={() => setSelectedLead(null)}
+                className="text-xs h-9 px-4 flex-1 sm:flex-none"
+              >
+                Close
               </Button>
+
               {isLeadUnresolved(selectedLead) && (
                 <Button
-                  variant="gradient"
-                  onClick={() => handleResolve(selectedLead.id, selectedLead.type)}
+                  onClick={(e) => handleResolve(selectedLead.id, selectedLead.type, e)}
+                  variant="default"
+                  className="text-xs h-9 px-4 gap-1.5 flex-1 sm:flex-none"
                 >
-                  <CheckCircle className="h-4 w-4 mr-2" /> Mark Resolved
+                  <CheckCircle className="h-4 w-4" /> Mark as Resolved
                 </Button>
               )}
-            </DialogFooter>
+            </div>
           </DialogContent>
         )}
       </Dialog>

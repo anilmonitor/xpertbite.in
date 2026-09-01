@@ -12,6 +12,8 @@ import {
   RotateCw,
   Check,
   Crop,
+  Eye,
+  Heart,
 } from "lucide-react";
 import { toast } from "sonner";
 import { DurgaAudioPlayer } from "./durga-audio-player";
@@ -21,15 +23,15 @@ function generateClientSlug(name: string): string {
   return `${clean}-1`;
 }
 
-export function DurgaPujaClient() {
+export function DurgaPujaClient({ initialGreeting }: { initialGreeting?: any }) {
   const searchParams = useSearchParams();
 
   const userSlugParam = searchParams.get("u") || searchParams.get("id") || searchParams.get("slug") || "";
   const nameParam = searchParams.get("name") || "";
 
-  const [userName, setUserName] = useState<string>(nameParam || "");
+  const [userName, setUserName] = useState<string>(initialGreeting?.name || nameParam || "");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [activeSlug, setActiveSlug] = useState<string | null>(userSlugParam || null);
+  const [activeSlug, setActiveSlug] = useState<string | null>(initialGreeting?.slug || userSlugParam || null);
   const [isSavingDb, setIsSavingDb] = useState<boolean>(false);
 
   // Image Cropper States
@@ -41,11 +43,14 @@ export function DurgaPujaClient() {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // Recipient greeting data fetched from server
+  // Recipient greeting data (initialized instantly from SSR)
   const [recipientGreeting, setRecipientGreeting] = useState<{
     name: string;
     imageUrl?: string | null;
-  } | null>(null);
+    slug?: string;
+    views?: number;
+    blessings?: number;
+  } | null>(initialGreeting || null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cropImageRef = useRef<HTMLImageElement | null>(null);
@@ -120,9 +125,9 @@ export function DurgaPujaClient() {
     return () => clearInterval(timerInterval);
   }, []);
 
-  // Fetch greeting from DB if ?u=... is in URL
+  // Fetch greeting from DB if not already supplied via SSR
   useEffect(() => {
-    if (userSlugParam) {
+    if (userSlugParam && !initialGreeting) {
       fetch(`/api/durgapuja?u=${encodeURIComponent(userSlugParam)}`)
         .then((res) => res.json())
         .then((data) => {
@@ -130,6 +135,8 @@ export function DurgaPujaClient() {
             setRecipientGreeting({
               name: data.greeting.name,
               imageUrl: data.greeting.imageUrl,
+              views: data.greeting.views,
+              blessings: data.greeting.blessings,
             });
             if (data.greeting.name && !nameParam) {
               setUserName(data.greeting.name);
@@ -138,7 +145,7 @@ export function DurgaPujaClient() {
         })
         .catch(() => {});
     }
-  }, [userSlugParam, nameParam]);
+  }, [userSlugParam, nameParam, initialGreeting]);
 
   // Check localStorage for saved photo or name
   useEffect(() => {
@@ -284,6 +291,7 @@ export function DurgaPujaClient() {
           name: nameToSave,
           message: "दुर्गा पूजा की हार्दिक शुभकामनाएं",
           imageBase64: photoPreview,
+          referredBy: userSlugParam || null,
         }),
       });
 
@@ -358,7 +366,7 @@ export function DurgaPujaClient() {
       {/* Main Clean Page Layout */}
       <div className="relative z-10 w-full max-w-lg sm:max-w-xl text-center text-gray-900 my-auto space-y-6">
         
-        {/* Large Flowing Countdown & Sender Header (Clean: Milliseconds removed from top) */}
+        {/* Large Flowing Countdown & Sender Header */}
         <div className="text-center space-y-2 pt-2">
           <div className="text-xl sm:text-2xl md:text-3xl font-black text-[#991B1B] font-mono tracking-tight leading-tight">
             <div>
@@ -378,50 +386,55 @@ export function DurgaPujaClient() {
           </p>
         </div>
 
-        {/* Grand Maa Durga Divine Portrait (Large & High Definition) */}
-        <div className="relative w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 mx-auto rounded-full p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500">
-          <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md">
-            <Image
-              src="/durgapuja/durga_mata_portrait.jpg"
-              alt="Maa Durga"
-              fill
-              priority
-              className="object-cover"
-            />
+        {/* Main Divine / User Portrait (Replaced when user uploads photo) */}
+        <div className="relative w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 mx-auto rounded-full p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500 shadow-xl">
+          <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
+            {displayPhoto ? (
+              <Image
+                src={displayPhoto}
+                alt={displaySender}
+                fill
+                priority
+                className="object-cover"
+              />
+            ) : (
+              <Image
+                src="/durgapuja/durga_mata_portrait.jpg"
+                alt="Maa Durga"
+                fill
+                priority
+                className="object-cover"
+              />
+            )}
           </div>
+
+          {/* Edit/Remove controls on top right of the circular frame */}
+          {photoPreview && (
+            <div className="absolute top-1 right-1 flex gap-1 z-20">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-amber-600 text-white rounded-full p-2 shadow-lg hover:bg-amber-700 transition-all hover:scale-110 active:scale-95"
+                title="फोटो बदलें"
+              >
+                <Crop className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleRemovePhoto}
+                className="bg-red-600 text-white rounded-full p-2 shadow-lg hover:bg-red-700 transition-all hover:scale-110 active:scale-95"
+                title="फोटो हटाएं"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Grand Title (Royal & Ultra-Bold Typography) */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-hindi-royal font-black text-[#991B1B] leading-tight tracking-tight">
           दुर्गा पूजा की हार्दिक शुभकामनाएं
         </h1>
-
-        {/* Square Framed User Photo */}
-        {displayPhoto && (
-          <div className="relative inline-block mx-auto pt-2">
-            <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border-4 border-amber-400 shadow-lg bg-white">
-              <Image src={displayPhoto} alt="User" fill className="object-cover" />
-            </div>
-            {photoPreview && (
-              <div className="absolute top-0 right-0 flex gap-1">
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="bg-amber-600 text-white rounded-full p-1.5 shadow hover:bg-amber-700 transition-colors"
-                  title="क्रॉप / बदलें"
-                >
-                  <Crop className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={handleRemovePhoto}
-                  className="bg-red-600 text-white rounded-full p-1.5 shadow hover:bg-red-700 transition-colors"
-                  title="हटाएं"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Large Clean Input Controls */}
         <div className="space-y-3 pt-2">

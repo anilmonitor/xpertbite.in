@@ -1,16 +1,29 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { DurgaPujaClient } from "./durga-puja-client";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ name?: string; u?: string; id?: string }>;
+  searchParams: Promise<{ name?: string; u?: string; id?: string; slug?: string }>;
 }): Promise<Metadata> {
   const params = await searchParams;
-  const senderName = params.name ? decodeURIComponent(params.name) : "";
+  const userSlug = params.u || params.slug || params.id;
+  let senderName = params.name ? decodeURIComponent(params.name) : "";
+
+  if (!senderName && userSlug) {
+    try {
+      if ("durgaGreeting" in prisma) {
+        const found = await (prisma as any).durgaGreeting.findFirst({
+          where: { OR: [{ slug: userSlug }, { id: userSlug }] },
+        });
+        if (found?.name) senderName = found.name;
+      }
+    } catch {}
+  }
 
   const title = senderName
     ? `${senderName} की तरफ से दुर्गा पूजा 2026 की हार्दिक शुभकामनाएं | Durga Puja Greeting Card`
@@ -37,10 +50,6 @@ export async function generateMetadata({
       "shubh durga puja 2026",
       "durga puja countdown 2026",
       "durga puja greeting card online generator",
-      "दुर्गा पूजा विशेस 2026",
-      "माँ दुर्गा की हार्दिक बधाई",
-      "durga puja festival 2026 date",
-      "durga puja photo greeting card whatsapp link",
     ],
     alternates: {
       canonical: "https://xpertbite.in/durgapuja2026",
@@ -70,7 +79,44 @@ export async function generateMetadata({
   };
 }
 
-export default function DurgaPuja2026Page() {
+export default async function DurgaPuja2026Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ name?: string; u?: string; id?: string; slug?: string }>;
+}) {
+  const params = await searchParams;
+  const userSlug = params.u || params.slug || params.id;
+
+  let initialGreeting = null;
+  if (userSlug) {
+    try {
+      if ("durgaGreeting" in prisma) {
+        const found = await (prisma as any).durgaGreeting.findFirst({
+          where: {
+            OR: [{ slug: userSlug }, { id: userSlug }],
+          },
+        });
+        if (found) {
+          // Increment views on server
+          try {
+            await (prisma as any).durgaGreeting.update({
+              where: { id: found.id },
+              data: { views: { increment: 1 } },
+            });
+          } catch {}
+
+          initialGreeting = {
+            name: found.name,
+            imageUrl: found.imageUrl,
+            slug: found.slug,
+            views: found.views + 1,
+            blessings: found.blessings,
+          };
+        }
+      }
+    } catch {}
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -86,30 +132,6 @@ export default function DurgaPuja2026Page() {
           price: "0",
           priceCurrency: "INR",
         },
-        featureList: [
-          "Interactive Square 1:1 Image Cropper",
-          "Fast Milliseconds WhatsApp Share Timer",
-          "Sequential Custom Share Link",
-          "Devotional Background Audio Player",
-          "100% Free & Mobile Friendly",
-        ],
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://xpertbite.in",
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Durga Puja 2026 Greeting",
-            item: "https://xpertbite.in/durgapuja2026",
-          },
-        ],
       },
     ],
   };
@@ -120,23 +142,6 @@ export default function DurgaPuja2026Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      
-      {/* Semantic SEO & Keyword Indexing (Hidden for accessibility bots & search crawlers) */}
-      <section className="sr-only" aria-label="Durga Puja 2026 Information and Greetings">
-        <h1>दुर्गा पूजा 2026 की हार्दिक शुभकामनाएं - Happy Durga Puja Greeting Card Generator</h1>
-        <p>
-          Celebrate Durga Puja 2026 with joyful festive greetings. Create and share personalized 
-          Durga Puja wishes, Navratri greetings, and Maa Durga blessings with your custom name and photo.
-          Features include live countdown timers, 1:1 image cropping, devotional music, and direct 1-tap WhatsApp sharing.
-        </p>
-        <h2>Most Searched Durga Puja Keywords</h2>
-        <ul>
-          <li>Durga Puja 2026 Date and Shubh Muhurat</li>
-          <li>दुर्गा पूजा की हार्दिक शुभकामनाएं संदेश एवं फोटो कार्ड</li>
-          <li>Happy Durga Puja WhatsApp Greeting Link Generator</li>
-          <li>Maa Durga Divine Blessings Photo Frame 2026</li>
-        </ul>
-      </section>
 
       <Suspense
         fallback={
@@ -147,9 +152,8 @@ export default function DurgaPuja2026Page() {
           </div>
         }
       >
-        <DurgaPujaClient />
+        <DurgaPujaClient initialGreeting={initialGreeting} />
       </Suspense>
     </main>
   );
 }
-

@@ -16,14 +16,14 @@ import {
 } from "lucide-react";
 import { DurgaAudioBengaliPlayer } from "./durga-audio-bengali-player";
 
-export function DurgaPujaBengaliClient() {
+export function DurgaPujaBengaliClient({ initialGreeting }: { initialGreeting?: any }) {
   const searchParams = useSearchParams();
   const nameParam = searchParams.get("name") || "";
   const userSlugParam = searchParams.get("u") || searchParams.get("id") || "";
 
   // User input states
-  const [userName, setUserName] = useState<string>("");
-  const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>(initialGreeting?.name || nameParam || "");
+  const [activeSlug, setActiveSlug] = useState<string | null>(initialGreeting?.slug || userSlugParam || null);
 
   // Photo upload & 1:1 square crop states
   const [rawPhoto, setRawPhoto] = useState<string | null>(null);
@@ -34,17 +34,16 @@ export function DurgaPujaBengaliClient() {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // Floating animations
-  const [blessingCount, setBlessingCount] = useState<number>(108);
-  const [hasBlessed, setHasBlessed] = useState<boolean>(false);
-  const [viewCount, setViewCount] = useState<number>(3520);
   const [isSavingDb, setIsSavingDb] = useState<boolean>(false);
 
   // Saved / Dynamic URL greeting state
   const [recipientGreeting, setRecipientGreeting] = useState<{
     name: string;
     imageUrl?: string | null;
-  } | null>(null);
+    slug?: string;
+    views?: number;
+    blessings?: number;
+  } | null>(initialGreeting || null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const cropImageRef = useRef<HTMLImageElement | null>(null);
@@ -119,9 +118,9 @@ export function DurgaPujaBengaliClient() {
     return () => clearInterval(timerInterval);
   }, []);
 
-  // Fetch greeting from DB if ?u=... is in URL
+  // Fetch greeting from DB if not already supplied via SSR
   useEffect(() => {
-    if (userSlugParam) {
+    if (userSlugParam && !initialGreeting) {
       fetch(`/api/durgapujabengali?u=${encodeURIComponent(userSlugParam)}`)
         .then((res) => res.json())
         .then((data) => {
@@ -129,33 +128,26 @@ export function DurgaPujaBengaliClient() {
             setRecipientGreeting({
               name: data.greeting.name,
               imageUrl: data.greeting.imageUrl,
+              views: data.greeting.views,
+              blessings: data.greeting.blessings,
             });
-            if (data.greeting.views) setViewCount(data.greeting.views + 120);
-            if (data.greeting.blessings) setBlessingCount(data.greeting.blessings + 24);
+            if (data.greeting.name && !nameParam) setUserName(data.greeting.name);
           }
         })
         .catch(() => {});
     }
-  }, [userSlugParam]);
+  }, [userSlugParam, nameParam, initialGreeting]);
 
   // Load saved local user info
   useEffect(() => {
     try {
       const savedName = localStorage.getItem("durga_bengali_user_name");
-      if (savedName && !userName) setUserName(savedName);
+      if (savedName && !userName && !initialGreeting) setUserName(savedName);
 
       const savedPhoto = localStorage.getItem("durga_bengali_user_photo");
-      if (savedPhoto && !photoPreview) setPhotoPreview(savedPhoto);
+      if (savedPhoto && !photoPreview && !userSlugParam) setPhotoPreview(savedPhoto);
     } catch {}
-  }, []);
-
-  const handleSendBlessing = () => {
-    if (!hasBlessed) {
-      setBlessingCount((prev) => prev + 1);
-      setHasBlessed(true);
-      toast.success("মা দুর্গার আশীর্বাদ গ্রহণ করা হলো! 🙏");
-    }
-  };
+  }, [userName, photoPreview, userSlugParam, initialGreeting]);
 
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -365,50 +357,55 @@ export function DurgaPujaBengaliClient() {
           </p>
         </div>
 
-        {/* Grand Maa Durga Divine Portrait */}
-        <div className="relative w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 mx-auto rounded-full p-2 bg-gradient-to-tr from-amber-500 via-red-600 to-amber-400">
-          <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md">
-            <Image
-              src="/durgapuja/durga_mata_portrait.jpg"
-              alt="Maa Durga Puja Bengali"
-              fill
-              priority
-              className="object-cover"
-            />
+        {/* Main Divine / User Portrait (Replaced when user uploads photo) */}
+        <div className="relative w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 mx-auto rounded-full p-2 bg-gradient-to-tr from-amber-400 via-amber-300 to-amber-500 shadow-xl">
+          <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md bg-white">
+            {displayPhoto ? (
+              <Image
+                src={displayPhoto}
+                alt={displaySender}
+                fill
+                priority
+                className="object-cover"
+              />
+            ) : (
+              <Image
+                src="/durgapuja/durga_mata_portrait.jpg"
+                alt="Maa Durga"
+                fill
+                priority
+                className="object-cover"
+              />
+            )}
           </div>
+
+          {/* Edit/Remove controls on top right of the circular frame */}
+          {photoPreview && (
+            <div className="absolute top-1 right-1 flex gap-1 z-20">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-amber-600 text-white rounded-full p-2 shadow-lg hover:bg-amber-700 transition-all hover:scale-110 active:scale-95"
+                title="ছবি পরিবর্তন"
+              >
+                <Crop className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleRemovePhoto}
+                className="bg-red-600 text-white rounded-full p-2 shadow-lg hover:bg-red-700 transition-all hover:scale-110 active:scale-95"
+                title="ছবি সরান"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Grand Bengali Festive Title */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#990012] leading-tight tracking-tight">
           শুভ শারদীয়া ও দুর্গাপূজা ২০২৬
         </h1>
-
-        {/* Square Framed User Photo */}
-        {displayPhoto && (
-          <div className="relative inline-block mx-auto pt-2">
-            <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border-4 border-amber-400 shadow-lg bg-white">
-              <Image src={displayPhoto} alt="User" fill className="object-cover" />
-            </div>
-            {photoPreview && (
-              <div className="absolute top-0 right-0 flex gap-1">
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="bg-amber-600 text-white rounded-full p-1.5 shadow hover:bg-amber-700 transition-colors"
-                  title="ক্রপ / পরিবর্তন করুন"
-                >
-                  <Crop className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={handleRemovePhoto}
-                  className="bg-red-600 text-white rounded-full p-1.5 shadow hover:bg-red-700 transition-colors"
-                  title="মুছে ফেলুন"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Large Clean Input Controls */}
         <div className="space-y-3 pt-2">
@@ -491,25 +488,6 @@ export function DurgaPujaBengaliClient() {
           >
             <span>छठ पूजा 2026</span>
           </Link>
-        </div>
-
-        {/* Blessings & Views Counter */}
-        <div className="pt-2 flex items-center justify-center gap-4 text-xs font-bold text-gray-500">
-          <button
-            onClick={handleSendBlessing}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all ${
-              hasBlessed
-                ? "bg-rose-100 border-rose-300 text-rose-700"
-                : "bg-white border-gray-200 text-gray-700 hover:bg-rose-50"
-            }`}
-          >
-            <Heart className={`w-3.5 h-3.5 ${hasBlessed ? "fill-rose-500 text-rose-500" : "text-gray-400"}`} />
-            <span>{blessingCount} আশীর্বাদ</span>
-          </button>
-          <span className="inline-flex items-center gap-1 text-gray-500">
-            <Eye className="w-3.5 h-3.5" />
-            <span>{viewCount} জন দেখেছেন</span>
-          </span>
         </div>
 
       </div>

@@ -1,16 +1,29 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { DiwaliPujaClient } from "./diwali-puja-client";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ name?: string; u?: string; id?: string }>;
+  searchParams: Promise<{ name?: string; u?: string; id?: string; slug?: string }>;
 }): Promise<Metadata> {
   const params = await searchParams;
-  const senderName = params.name ? decodeURIComponent(params.name) : "";
+  const userSlug = params.u || params.slug || params.id;
+  let senderName = params.name ? decodeURIComponent(params.name) : "";
+
+  if (!senderName && userSlug) {
+    try {
+      if ("diwaliGreeting" in prisma) {
+        const found = await (prisma as any).diwaliGreeting.findFirst({
+          where: { OR: [{ slug: userSlug }, { id: userSlug }] },
+        });
+        if (found?.name) senderName = found.name;
+      }
+    } catch {}
+  }
 
   const title = senderName
     ? `${senderName} की तरफ से दीपावली 2026 की हार्दिक शुभकामनाएं | Happy Diwali Greeting Card`
@@ -38,8 +51,6 @@ export async function generateMetadata({
       "shubh deepawali 2026 wishes",
       "diwali countdown 2026",
       "free diwali greeting card generator",
-      "दिवाली कार्ड ऑनलाइन बनाएं",
-      "लक्ष्मी गणेश पूजा ग्रीटिंग कार्ड",
     ],
     alternates: {
       canonical: "https://xpertbite.in/diwaliPuja2026",
@@ -69,7 +80,43 @@ export async function generateMetadata({
   };
 }
 
-export default function DiwaliPujaPage() {
+export default async function DiwaliPujaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ name?: string; u?: string; id?: string; slug?: string }>;
+}) {
+  const params = await searchParams;
+  const userSlug = params.u || params.slug || params.id;
+
+  let initialGreeting = null;
+  if (userSlug) {
+    try {
+      if ("diwaliGreeting" in prisma) {
+        const found = await (prisma as any).diwaliGreeting.findFirst({
+          where: {
+            OR: [{ slug: userSlug }, { id: userSlug }],
+          },
+        });
+        if (found) {
+          try {
+            await (prisma as any).diwaliGreeting.update({
+              where: { id: found.id },
+              data: { views: { increment: 1 } },
+            });
+          } catch {}
+
+          initialGreeting = {
+            name: found.name,
+            imageUrl: found.imageUrl,
+            slug: found.slug,
+            views: found.views + 1,
+            blessings: found.blessings,
+          };
+        }
+      }
+    } catch {}
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -85,30 +132,6 @@ export default function DiwaliPujaPage() {
           price: "0",
           priceCurrency: "INR",
         },
-        featureList: [
-          "Interactive Square 1:1 Image Cropper",
-          "Fast Milliseconds WhatsApp Share Timer",
-          "Sequential Custom Share Link",
-          "Devotional Background Audio Player",
-          "100% Free & Mobile Friendly",
-        ],
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://xpertbite.in",
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Diwali 2026 Greeting",
-            item: "https://xpertbite.in/diwaliPuja2026",
-          },
-        ],
       },
     ],
   };
@@ -120,23 +143,6 @@ export default function DiwaliPujaPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Semantic SEO & Keyword Indexing (Hidden for accessibility bots & search crawlers) */}
-      <section className="sr-only" aria-label="Diwali 2026 Information and Greetings">
-        <h1>दीपावली 2026 की हार्दिक शुभकामनाएं - Happy Deepawali Greeting Card Generator</h1>
-        <p>
-          Celebrate Diwali 2026 (Shubh Deepawali) with joyful lights and devotion. Create and share personalized 
-          Diwali wishes, Lakshmi Ganesh blessings, and festive cards with your custom name and photo.
-          Features include live countdown timers, 1:1 image cropping, devotional music, and direct 1-tap WhatsApp sharing.
-        </p>
-        <h2>Most Searched Diwali Keywords</h2>
-        <ul>
-          <li>Diwali 2026 Date and Lakshmi Puja Muhurat</li>
-          <li>दीपावली की हार्दिक शुभकामनाएं संदेश एवं फोटो कार्ड</li>
-          <li>Happy Deepawali WhatsApp Greeting Link Generator</li>
-          <li>Maa Lakshmi & Lord Ganesha Divine Blessings Photo Frame 2026</li>
-        </ul>
-      </section>
-
       <Suspense
         fallback={
           <div className="min-h-screen bg-[#FCF8F3] flex items-center justify-center text-amber-900">
@@ -146,7 +152,7 @@ export default function DiwaliPujaPage() {
           </div>
         }
       >
-        <DiwaliPujaClient />
+        <DiwaliPujaClient initialGreeting={initialGreeting} />
       </Suspense>
     </main>
   );

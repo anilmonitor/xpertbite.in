@@ -1,5 +1,5 @@
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,7 +15,7 @@ model User {
   email         String        @unique
   password      String
   emailVerified DateTime?
-  image         String?
+  image         String?       @db.Text
   roleId        String
   role          Role          @relation(fields: [roleId], references: [id])
   sessions      Session[]
@@ -57,7 +57,7 @@ model RolePermission {
 
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
+  sessionToken String   @unique @db.VarChar(500)
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -71,12 +71,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -102,8 +102,8 @@ model Service {
   id               String           @id @default(cuid())
   title            String
   slug             String           @unique
-  shortDescription String
-  description      String
+  shortDescription String           @db.Text
+  description      String           @db.Text
   icon             String?
   features         ServiceFeature[]
   technologies     Technology[]
@@ -117,7 +117,7 @@ model Service {
 
 model ServiceFeature {
   id        String   @id @default(cuid())
-  feature   String
+  feature   String   @db.Text
   serviceId String
   service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
@@ -128,7 +128,7 @@ model Technology {
   id          String      @id @default(cuid())
   name        String      @unique
   category    String // e.g. "Frontend", "Backend", "Cloud"
-  description String?
+  description String?     @db.Text
   proficiency Int         @default(90)
   services    Service[]
   products    Product[]
@@ -142,14 +142,14 @@ model Product {
   name         String
   slug         String              @unique
   tagline      String
-  description  String
+  description  String              @db.Text
   price        String
   status       String // e.g. "Live", "Beta", "Coming Soon"
   demoUrl      String?
   githubUrl    String?
   docUrl       String?
   version      String              @default("1.0.0")
-  releaseNotes String?
+  releaseNotes String?             @db.Text
   videoUrl     String?
   categoryId   String
   category     Category            @relation(fields: [categoryId], references: [id])
@@ -164,7 +164,7 @@ model Product {
 
 model ProductFeature {
   id        String  @id @default(cuid())
-  feature   String
+  feature   String  @db.Text
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
@@ -173,7 +173,7 @@ model ProductFeature {
 
 model ProductScreenshot {
   id        String  @id @default(cuid())
-  url       String
+  url       String  @db.Text
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
@@ -186,17 +186,17 @@ model Portfolio {
   id           String           @id @default(cuid())
   title        String
   slug         String           @unique
-  description  String
+  description  String           @db.Text
   client       String
   duration     String
-  challenge    String
-  solution     String
+  challenge    String           @db.Text
+  solution     String           @db.Text
   liveUrl      String?
   categoryId   String
   category     Category         @relation(fields: [categoryId], references: [id])
   images       PortfolioImage[]
   technologies Technology[]
-  results      String?
+  results      String?          @db.Text
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
@@ -205,7 +205,7 @@ model Portfolio {
 
 model PortfolioImage {
   id          String    @id @default(cuid())
-  url         String
+  url         String    @db.Text
   portfolioId String
   portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
 
@@ -216,11 +216,11 @@ model CaseStudy {
   id           String   @id @default(cuid())
   title        String
   slug         String   @unique
-  challenge    String
-  solution     String
-  result       String
-  technologies String // Comma separated list of tech
-  imageUrl     String?
+  challenge    String   @db.Text
+  solution     String   @db.Text
+  result       String   @db.Text
+  technologies String   @db.Text // Comma separated list of tech
+  imageUrl     String?  @db.Text
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -228,22 +228,22 @@ model CaseStudy {
 // ─── Blog System ─────────────────────────────────────────────
 
 model Blog {
-  id        String    @id @default(cuid())
-  title     String
-  slug      String    @unique
-  excerpt   String
-  content   String
-  featured  Boolean   @default(false)
-  published Boolean   @default(true)
-  author    String
+  id         String    @id @default(cuid())
+  title      String
+  slug       String    @unique
+  excerpt    String    @db.Text
+  content    String    @db.LongText
+  featured   Boolean   @default(false)
+  published  Boolean   @default(true)
+  author     String
   authorRole String
-  readTime  String
+  readTime   String
   categoryId String
-  category  Category  @relation(fields: [categoryId], references: [id])
-  tags      Tag[]
-  comments  Comment[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  category   Category  @relation(fields: [categoryId], references: [id])
+  tags       Tag[]
+  comments   Comment[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   @@index([categoryId])
 }
@@ -260,7 +260,7 @@ model Comment {
   id        String   @id @default(cuid())
   author    String
   email     String
-  content   String
+  content   String   @db.Text
   approved  Boolean  @default(false)
   blogId    String
   blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
@@ -279,7 +279,7 @@ model Booking {
   type        String // "Video Call" or "Voice Call"
   date        String
   time        String
-  description String
+  description String   @db.Text
   status      String   @default("Pending") // Pending, Confirmed, Cancelled
   createdAt   DateTime @default(now())
 }
@@ -291,7 +291,7 @@ model Quote {
   email       String
   category    String
   budget      String
-  description String
+  description String   @db.Text
   status      String   @default("New") // New, Reviewed, Responded
   createdAt   DateTime @default(now())
 }
@@ -302,7 +302,7 @@ model Contact {
   email     String
   phone     String?
   subject   String
-  message   String
+  message   String   @db.Text
   status    String   @default("Unread") // Unread, Read, Replied
   createdAt DateTime @default(now())
 }
@@ -317,20 +317,20 @@ model Subscriber {
 // ─── Careers & Internships ───────────────────────────────────
 
 model Career {
-  id              String        @id @default(cuid())
-  title           String
-  slug            String        @unique
-  department      String
-  location        String
-  type            String
-  experience      String
-  description     String
-  responsibilities String
-  requirements    String
-  benefits        String
-  applications    Application[]
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id               String        @id @default(cuid())
+  title            String
+  slug             String        @unique
+  department       String
+  location         String
+  type             String
+  experience       String
+  description      String        @db.Text
+  responsibilities String        @db.Text
+  requirements     String        @db.Text
+  benefits         String        @db.Text
+  applications     Application[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 }
 
 model Application {
@@ -339,8 +339,8 @@ model Application {
   email     String
   phone     String?
   linkedin  String?
-  resumeUrl String
-  cover     String?
+  resumeUrl String   @db.Text
+  cover     String?  @db.Text
   status    String   @default("Applied") // Applied, Reviewing, Shortlisted, Rejected
   careerId  String
   career    Career   @relation(fields: [careerId], references: [id], onDelete: Cascade)
@@ -355,8 +355,8 @@ model Internship {
   slug        String   @unique
   duration    String
   stipend     String
-  skills      String // Comma separated list of tech
-  description String
+  skills      String   @db.Text // Comma separated list of tech
+  description String   @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -368,23 +368,23 @@ model Testimonial {
   name      String
   role      String
   company   String
-  content   String
+  content   String   @db.Text
   rating    Int      @default(5)
-  avatar    String?
+  avatar    String?  @db.Text
   createdAt DateTime @default(now())
 }
 
 model Client {
   id        String   @id @default(cuid())
   name      String   @unique
-  logoUrl   String?
+  logoUrl   String?  @db.Text
   createdAt DateTime @default(now())
 }
 
 model FAQ {
   id        String   @id @default(cuid())
-  question  String
-  answer    String
+  question  String   @db.Text
+  answer    String   @db.Text
   category  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -395,7 +395,7 @@ model FAQ {
 model Media {
   id        String   @id @default(cuid())
   name      String
-  url       String
+  url       String   @db.Text
   mimeType  String
   size      Int
   createdAt DateTime @default(now())
@@ -404,7 +404,7 @@ model Media {
 model Settings {
   id        String   @id @default(cuid())
   key       String   @unique
-  value     String
+  value     String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -413,8 +413,8 @@ model SEO {
   id          String   @id @default(cuid())
   path        String   @unique // e.g. "/services/web-development"
   title       String
-  description String
-  keywords    String?
+  description String   @db.Text
+  keywords    String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -432,7 +432,7 @@ model Navigation {
 model ActivityLog {
   id        String   @id @default(cuid())
   action    String
-  details   String?
+  details   String?  @db.Text
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
@@ -443,16 +443,16 @@ model ActivityLog {
 // ─── Durga Puja 2026 Greetings ───────────────────────────────
 
 model DurgaGreeting {
-  id                  String   @id @default(cuid())
-  slug                String   @unique @default(cuid())
-  name                String
-  message             String?
-  imageUrl            String?
-  cloudinaryPublicId  String?
-  views               Int      @default(0)
-  blessings           Int      @default(0)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  slug               String   @unique
+  name               String
+  message            String?  @db.Text
+  imageUrl           String?  @db.LongText
+  cloudinaryPublicId String?
+  views              Int      @default(0)
+  blessings          Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@index([slug])
 }
@@ -460,16 +460,16 @@ model DurgaGreeting {
 // ─── Diwali 2026 Greetings ───────────────────────────────────
 
 model DiwaliGreeting {
-  id                  String   @id @default(cuid())
-  slug                String   @unique @default(cuid())
-  name                String
-  message             String?
-  imageUrl            String?
-  cloudinaryPublicId  String?
-  views               Int      @default(0)
-  blessings           Int      @default(0)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  slug               String   @unique
+  name               String
+  message            String?  @db.Text
+  imageUrl           String?  @db.LongText
+  cloudinaryPublicId String?
+  views              Int      @default(0)
+  blessings          Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@index([slug])
 }
@@ -477,17 +477,16 @@ model DiwaliGreeting {
 // ─── Chhath Puja 2026 Greetings ──────────────────────────────
 
 model ChhathGreeting {
-  id                  String   @id @default(cuid())
-  slug                String   @unique @default(cuid())
-  name                String
-  message             String?
-  imageUrl            String?
-  cloudinaryPublicId  String?
-  views               Int      @default(0)
-  blessings           Int      @default(0)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  slug               String   @unique
+  name               String
+  message            String?  @db.Text
+  imageUrl           String?  @db.LongText
+  cloudinaryPublicId String?
+  views              Int      @default(0)
+  blessings          Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@index([slug])
 }
-

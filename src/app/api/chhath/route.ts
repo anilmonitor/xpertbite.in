@@ -10,8 +10,8 @@ async function generateSequentialSlug(name: string): Promise<string> {
 
   if (!clean || clean.length < 2) {
     clean = "anil";
-  } else if (clean.length > 15) {
-    clean = clean.substring(0, 15);
+  } else if (clean.length > 20) {
+    clean = clean.substring(0, 20);
   }
 
   let nextNumber = 1;
@@ -30,7 +30,7 @@ async function generateSequentialSlug(name: string): Promise<string> {
         where: { slug: candidateSlug },
       });
       let attempts = 0;
-      while (exists && attempts < 50) {
+      while (exists && attempts < 100) {
         nextNumber++;
         candidateSlug = `${clean}-${nextNumber}`;
         exists = await (prisma as any).chhathGreeting.findFirst({
@@ -47,7 +47,7 @@ async function generateSequentialSlug(name: string): Promise<string> {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, message, imageBase64 } = body;
+    const { name, message, imageBase64, referredBy } = body;
 
     if (!name || typeof name !== "string") {
       return NextResponse.json(
@@ -83,6 +83,16 @@ export async function POST(req: NextRequest) {
             cloudinaryPublicId,
           },
         });
+
+        // If created from someone's link, increment that referrer's blessings / heart count
+        if (referredBy && typeof referredBy === "string") {
+          try {
+            await (prisma as any).chhathGreeting.updateMany({
+              where: { OR: [{ slug: referredBy }, { id: referredBy }] },
+              data: { blessings: { increment: 1 } },
+            });
+          } catch {}
+        }
       } else {
         savedGreeting = {
           id: slug,
@@ -148,14 +158,15 @@ export async function GET(req: NextRequest) {
         });
 
         if (greeting) {
+          let updated = greeting;
           try {
-            await (prisma as any).chhathGreeting.update({
+            updated = await (prisma as any).chhathGreeting.update({
               where: { id: greeting.id },
               data: { views: { increment: 1 } },
             });
           } catch {}
 
-          return NextResponse.json({ success: true, greeting });
+          return NextResponse.json({ success: true, greeting: updated });
         }
       }
     }
@@ -166,5 +177,32 @@ export async function GET(req: NextRequest) {
       { success: false, error: error?.message || "Internal server error" },
       { status: 500 }
     );
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { slug, action } = body;
+    if (!slug) {
+      return NextResponse.json({ success: false, error: "Slug is required" }, { status: 400 });
+    }
+
+    if (action === "bless" || action === "heart") {
+      const greeting = await (prisma as any).chhathGreeting.findFirst({
+        where: { OR: [{ slug: slug }, { id: slug }] },
+      });
+      if (greeting) {
+        const updated = await (prisma as any).chhathGreeting.update({
+          where: { id: greeting.id },
+          data: { blessings: { increment: 1 } },
+        });
+        return NextResponse.json({ success: true, blessings: updated.blessings });
+      }
+    }
+
+    return NextResponse.json({ success: false, error: "Greeting not found" }, { status: 404 });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error?.message || "Internal error" }, { status: 500 });
   }
 }

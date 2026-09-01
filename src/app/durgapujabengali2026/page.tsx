@@ -1,16 +1,29 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { DurgaPujaBengaliClient } from "./durga-puja-bengali-client";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ name?: string; u?: string; id?: string }>;
+  searchParams: Promise<{ name?: string; u?: string; id?: string; slug?: string }>;
 }): Promise<Metadata> {
   const params = await searchParams;
-  const senderName = params.name ? decodeURIComponent(params.name) : "";
+  const userSlug = params.u || params.slug || params.id;
+  let senderName = params.name ? decodeURIComponent(params.name) : "";
+
+  if (!senderName && userSlug) {
+    try {
+      if ("durgaGreeting" in prisma) {
+        const found = await (prisma as any).durgaGreeting.findFirst({
+          where: { OR: [{ slug: userSlug }, { id: userSlug }] },
+        });
+        if (found?.name) senderName = found.name;
+      }
+    } catch {}
+  }
 
   const title = senderName
     ? `${senderName} এর পক্ষ থেকে শুভ শারদীয়া ও দুর্গাপূজা ২০২৬ এর আন্তরিক শুভেচ্ছা | Subho Durga Puja Greeting Card`
@@ -33,11 +46,6 @@ export async function generateMetadata({
       "durga puja photo frame bengali",
       "bengali durga puja whatsapp status",
       "durga puja 2026 bengali wishes with photo",
-      "maa durga bengali status maker",
-      "শারদীয়া শুভেচ্ছা বার্তা",
-      "durga puja bengali card generator online",
-      "kolkata durga puja 2026 date",
-      "subho durga puja greeting link with name and photo",
     ],
     alternates: {
       canonical: "https://xpertbite.in/durgapujabengali2026",
@@ -67,7 +75,43 @@ export async function generateMetadata({
   };
 }
 
-export default function DurgaPujaBengali2026Page() {
+export default async function DurgaPujaBengali2026Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ name?: string; u?: string; id?: string; slug?: string }>;
+}) {
+  const params = await searchParams;
+  const userSlug = params.u || params.slug || params.id;
+
+  let initialGreeting = null;
+  if (userSlug) {
+    try {
+      if ("durgaGreeting" in prisma) {
+        const found = await (prisma as any).durgaGreeting.findFirst({
+          where: {
+            OR: [{ slug: userSlug }, { id: userSlug }],
+          },
+        });
+        if (found) {
+          try {
+            await (prisma as any).durgaGreeting.update({
+              where: { id: found.id },
+              data: { views: { increment: 1 } },
+            });
+          } catch {}
+
+          initialGreeting = {
+            name: found.name,
+            imageUrl: found.imageUrl,
+            slug: found.slug,
+            views: found.views + 1,
+            blessings: found.blessings,
+          };
+        }
+      }
+    } catch {}
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -83,30 +127,6 @@ export default function DurgaPujaBengali2026Page() {
           price: "0",
           priceCurrency: "INR",
         },
-        featureList: [
-          "Interactive Square 1:1 Image Cropper",
-          "Fast Milliseconds WhatsApp Share Timer",
-          "Custom Bengali Share Link",
-          "Devotional Background Audio Player",
-          "100% Free & Mobile Friendly",
-        ],
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://xpertbite.in",
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Bengali Durga Puja 2026",
-            item: "https://xpertbite.in/durgapujabengali2026",
-          },
-        ],
       },
     ],
   };
@@ -118,23 +138,6 @@ export default function DurgaPujaBengali2026Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Semantic SEO & Keyword Indexing for Bengali Durga Puja */}
-      <section className="sr-only" aria-label="Bengali Durga Puja 2026 Information and Greetings">
-        <h1>শুভ শারদীয়া ও দুর্গাপূজা ২০২৬ - Bengali Happy Durga Puja Greeting Card Generator</h1>
-        <p>
-          Celebrate Bengali Durga Puja 2026 with joy. Create and share personalized Subho Sharadiya greetings, 
-          Durga Puja wishes, and Maa Durga blessings with your custom Bengali name and photo.
-          Features include live countdown timers, 1:1 image cropping, devotional Agomoni music, and direct 1-tap WhatsApp sharing.
-        </p>
-        <h2>Most Searched Bengali Durga Puja Keywords</h2>
-        <ul>
-          <li>Bengali Durga Puja 2026 Date and Shobho Muhurat</li>
-          <li>শুভ শারদীয়া ও দুর্গাপূজার শুভেচ্ছা বার্তা ও ফটো কার্ড</li>
-          <li>Subho Durga Puja WhatsApp Greeting Link Generator</li>
-          <li>Maa Durga Divine Blessings Bengali Photo Frame 2026</li>
-        </ul>
-      </section>
-
       <Suspense
         fallback={
           <div className="min-h-screen bg-[#FCF8F3] flex items-center justify-center text-red-900">
@@ -144,7 +147,7 @@ export default function DurgaPujaBengali2026Page() {
           </div>
         }
       >
-        <DurgaPujaBengaliClient />
+        <DurgaPujaBengaliClient initialGreeting={initialGreeting} />
       </Suspense>
     </main>
   );

@@ -1,42 +1,95 @@
 "use client";
 
-import { SectionHeader } from "@/components/ui/section-header";
+import { useEffect, useState } from "react";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/scroll-reveal";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Users, FileText, Calendar, MessageSquare, TrendingUp, Sparkles, Plus } from "lucide-react";
+import { Users, FileText, Calendar, MessageSquare, Plus, ArrowRight, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function AdminDashboardPage() {
-  const statCards = [
-    { title: "Active Visitors", value: "24,560", desc: "+12.5% vs last month", icon: Users, color: "text-blue-500" },
-    { title: "New Leads", value: "148", desc: "+8.2% vs last month", icon: FileText, color: "text-purple-500" },
-    { title: "Consultation Sessions", value: "42", desc: "+15% vs last month", icon: Calendar, color: "text-cyan-500" },
-    { title: "Pending Estimates", value: "18", desc: "-4% vs last month", icon: MessageSquare, color: "text-amber-500" },
-  ];
+  const [stats, setStats] = useState<any>({
+    totalFestivalGreetings: 0,
+    durgaCount: 0,
+    diwaliCount: 0,
+    chhathCount: 0,
+    leadsCount: 0,
+    quotesCount: 0,
+    bookingsCount: 0,
+    blogsCount: 0,
+    servicesCount: 0,
+    productsCount: 0,
+    portfolioCount: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
-  const recentMessages = [
-    { name: "David Miller", email: "david@innovatelabs.co", subject: "SaaS Platform estimate", date: "July 12" },
-    { name: "Elena Rostova", email: "elena@meditech.org", subject: "Telemedicine application", date: "July 11" },
-    { name: "Marcus Thompson", email: "marcus@logix.com", subject: "Custom warehouse CRM", date: "July 10" },
+  useEffect(() => {
+    fetch("/api/admin/stats")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setStats(data.stats);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const statCards = [
+    { 
+      title: "Festival Greetings", 
+      value: stats.totalFestivalGreetings.toString(), 
+      desc: "Durga, Diwali & Chhath cards", 
+      icon: ImageIcon, 
+      color: "text-amber-500",
+      href: "/admin/festivals"
+    },
+    { 
+      title: "Client Inquiries", 
+      value: stats.leadsCount.toString(), 
+      desc: "Contact form messages", 
+      icon: MessageSquare, 
+      color: "text-blue-500",
+      href: "/admin/leads"
+    },
+    { 
+      title: "Project Estimates", 
+      value: stats.quotesCount.toString(), 
+      desc: "Quote requests", 
+      icon: FileText, 
+      color: "text-purple-500",
+      href: "/admin/leads"
+    },
+    { 
+      title: "Consultations", 
+      value: stats.bookingsCount.toString(), 
+      desc: "Booked sessions", 
+      icon: Calendar, 
+      color: "text-emerald-500",
+      href: "/admin/leads"
+    },
   ];
 
   return (
-    <div className="space-y-8">
-      {/* Welcome header banner */}
+    <div className="space-y-6 max-w-7xl mx-auto pb-10">
+      {/* Clean Header */}
       <ScrollReveal>
-        <div className="p-6 md:p-8 rounded-2xl border bg-gradient-to-br from-primary/10 via-accent/5 to-transparent flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
-          <div className="space-y-1 relative z-10">
-            <h1 className="text-2xl md:text-3xl font-bold font-heading flex items-center gap-2">
-              Website Command Center <Sparkles className="h-5 w-5 text-primary animate-pulse-glow" />
-            </h1>
-            <p className="text-sm text-muted-foreground">Manage service catalogues, check user requests, write blogs, and configure settings.</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-card/60 p-5 sm:p-6 rounded-2xl border">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold font-heading">Dashboard Overview</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+              Live statistics from Hostinger MySQL database.
+            </p>
           </div>
-          <div className="flex gap-2 relative z-10 shrink-0">
-            <Button variant="default" size="sm" asChild>
-              <Link href="/admin/blogs/new" className="inline-flex items-center gap-1">
-                <Plus className="h-4 w-4" /> New Blog Post
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button variant="default" size="sm" asChild className="w-full sm:w-auto text-xs h-9">
+              <Link href="/admin/festivals">
+                View Festival Cards
+              </Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild className="w-full sm:w-auto text-xs h-9">
+              <Link href="/admin/blogs/new">
+                <Plus className="h-3.5 w-3.5 mr-1" /> New Blog
               </Link>
             </Button>
           </div>
@@ -44,65 +97,86 @@ export default function AdminDashboardPage() {
       </ScrollReveal>
 
       {/* Grid of stats */}
-      <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((stat, idx) => {
+      <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
             <StaggerItem key={stat.title}>
-              <Card className="hover:shadow-md transition-shadow">
-                <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                  <CardTitle className="text-sm font-semibold text-muted-foreground">{stat.title}</CardTitle>
-                  <Icon className={`h-5 w-5 ${stat.color}`} />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                    <TrendingUp className="h-3.5 w-3.5 text-emerald-500" /> {stat.desc}
-                  </p>
-                </CardContent>
-              </Card>
+              <Link href={stat.href}>
+                <Card className="hover:shadow-md hover:border-primary/40 transition-all cursor-pointer shadow-sm">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 p-4 sm:p-5 space-y-0">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
+                    <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.color}`} />
+                  </CardHeader>
+                  <CardContent className="p-4 sm:p-5 pt-0">
+                    <div className="text-2xl sm:text-3xl font-bold">{loading ? "..." : stat.value}</div>
+                    <p className="text-[11px] text-muted-foreground mt-1 truncate">
+                      {stat.desc}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
             </StaggerItem>
           );
         })}
       </StaggerContainer>
 
       {/* Split details panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent project requests */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Recent Project Leads</CardTitle>
-            <CardDescription>Form submissions from contact and request-quote pages.</CardDescription>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Festival Quick Breakdown */}
+        <Card className="lg:col-span-2 shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between p-5 pb-3">
+            <div>
+              <CardTitle className="text-base sm:text-lg font-bold">
+                Festival Cards Breakdown
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Greetings and photos stored in Cloudinary and MySQL.
+              </CardDescription>
+            </div>
+            <Button variant="ghost" size="sm" asChild className="text-xs h-8">
+              <Link href="/admin/festivals" className="gap-1">
+                View All <ArrowRight className="h-3 w-3" />
+              </Link>
+            </Button>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {recentMessages.map((msg, idx) => (
-              <div key={idx} className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-muted/30 transition-colors">
-                <div className="space-y-1">
-                  <div className="font-semibold text-sm">{msg.name}</div>
-                  <div className="text-xs text-muted-foreground">{msg.email} · {msg.subject}</div>
-                </div>
-                <div className="text-xs text-muted-foreground font-medium shrink-0">{msg.date}</div>
-              </div>
-            ))}
+          <CardContent className="grid grid-cols-3 gap-3 p-5 pt-2">
+            <div className="p-3.5 rounded-xl border bg-muted/20 text-center">
+              <span className="text-xs font-medium text-muted-foreground block">Durga Puja</span>
+              <div className="text-2xl font-bold mt-1.5">{stats.durgaCount}</div>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Cards</p>
+            </div>
+
+            <div className="p-3.5 rounded-xl border bg-muted/20 text-center">
+              <span className="text-xs font-medium text-muted-foreground block">Diwali</span>
+              <div className="text-2xl font-bold mt-1.5">{stats.diwaliCount}</div>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Cards</p>
+            </div>
+
+            <div className="p-3.5 rounded-xl border bg-muted/20 text-center">
+              <span className="text-xs font-medium text-muted-foreground block">Chhath</span>
+              <div className="text-2xl font-bold mt-1.5">{stats.chhathCount}</div>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Cards</p>
+            </div>
           </CardContent>
         </Card>
 
         {/* Database overview card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Resource Statistics</CardTitle>
-            <CardDescription>Total active catalogue metrics.</CardDescription>
+        <Card className="shadow-sm">
+          <CardHeader className="p-5 pb-3">
+            <CardTitle className="text-base sm:text-lg font-bold">Content Catalog</CardTitle>
+            <CardDescription className="text-xs">Active website resources.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 p-5 pt-1">
             {[
-              { label: "Services Catalogues", count: "12 active" },
-              { label: "Showcased Products", count: "4 items" },
-              { label: "Portfolio Items", count: "6 items" },
-              { label: "Blog Posts Published", count: "6 posts" },
+              { label: "Active Services", count: `${stats.servicesCount} items` },
+              { label: "Products", count: `${stats.productsCount} items` },
+              { label: "Portfolio Items", count: `${stats.portfolioCount} items` },
+              { label: "Blog Posts", count: `${stats.blogsCount} posts` },
             ].map((item, idx) => (
-              <div key={idx} className="flex justify-between items-center text-sm py-2 border-b last:border-0">
+              <div key={idx} className="flex justify-between items-center text-xs py-2 border-b last:border-0">
                 <span className="font-medium text-muted-foreground">{item.label}</span>
-                <span className="font-semibold">{item.count}</span>
+                <span className="font-semibold text-foreground">{loading ? "..." : item.count}</span>
               </div>
             ))}
           </CardContent>

@@ -9,9 +9,9 @@ async function generateSequentialSlug(name: string): Promise<string> {
     .replace(/[^a-z0-9]/g, "");
 
   if (!clean || clean.length < 2) {
-    clean = "sharad";
-  } else if (clean.length > 15) {
-    clean = clean.substring(0, 15);
+    clean = "anil";
+  } else if (clean.length > 20) {
+    clean = clean.substring(0, 20);
   }
 
   let nextNumber = 1;
@@ -22,7 +22,7 @@ async function generateSequentialSlug(name: string): Promise<string> {
     }
   } catch {}
 
-  let candidateSlug = `bn-${clean}-${nextNumber}`;
+  let candidateSlug = `${clean}-${nextNumber}`;
 
   try {
     if ("durgaGreeting" in prisma) {
@@ -30,9 +30,9 @@ async function generateSequentialSlug(name: string): Promise<string> {
         where: { slug: candidateSlug },
       });
       let attempts = 0;
-      while (exists && attempts < 50) {
+      while (exists && attempts < 100) {
         nextNumber++;
-        candidateSlug = `bn-${clean}-${nextNumber}`;
+        candidateSlug = `${clean}-${nextNumber}`;
         exists = await (prisma as any).durgaGreeting.findFirst({
           where: { slug: candidateSlug },
         });
@@ -47,7 +47,7 @@ async function generateSequentialSlug(name: string): Promise<string> {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, message, imageBase64 } = body;
+    const { name, message, imageBase64, referredBy } = body;
 
     if (!name || typeof name !== "string") {
       return NextResponse.json(
@@ -59,9 +59,8 @@ export async function POST(req: NextRequest) {
     let finalImageUrl: string | null = null;
     let cloudinaryPublicId: string | null = null;
 
-    // 1. Upload to Cloudinary if imageBase64 is provided
     if (imageBase64 && typeof imageBase64 === "string" && imageBase64.startsWith("data:image")) {
-      const cloudinaryResult = await uploadToCloudinary(imageBase64, "durgapujabengali2026");
+      const cloudinaryResult = await uploadToCloudinary(imageBase64, "durgapuja2026");
       if (cloudinaryResult) {
         finalImageUrl = cloudinaryResult.secure_url;
         cloudinaryPublicId = cloudinaryResult.public_id;
@@ -70,10 +69,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Generate sequential unique slug
     const slug = await generateSequentialSlug(name);
 
-    // 3. Save into Database via Prisma
     let savedGreeting;
     try {
       if ("durgaGreeting" in prisma) {
@@ -81,17 +78,26 @@ export async function POST(req: NextRequest) {
           data: {
             slug,
             name: name.trim(),
-            message: message || "শুভ শারদীয়া ও দুর্গাপূজার আন্তরিক প্রীতি ও শুভেচ্ছা",
+            message: message || "শুভ শারদীয়া ও দুর্গাপূজা ২০২৬",
             imageUrl: finalImageUrl,
             cloudinaryPublicId,
           },
         });
+
+        if (referredBy && typeof referredBy === "string") {
+          try {
+            await (prisma as any).durgaGreeting.updateMany({
+              where: { OR: [{ slug: referredBy }, { id: referredBy }] },
+              data: { blessings: { increment: 1 } },
+            });
+          } catch {}
+        }
       } else {
         savedGreeting = {
           id: slug,
           slug,
           name: name.trim(),
-          message: message || "শুভ শারদীয়া ও দুর্গাপূজার আন্তরিক প্রীতি ও শুভেচ্ছা",
+          message: message || "শুভ শারদীয়া ও দুর্গাপূজা ২০২৬",
           imageUrl: finalImageUrl,
           cloudinaryPublicId,
           createdAt: new Date(),
@@ -103,7 +109,7 @@ export async function POST(req: NextRequest) {
         id: slug,
         slug,
         name: name.trim(),
-        message: message || "শুভ শারদীয়া ও দুর্গাপূজার আন্তরিক প্রীতি ও শুভেচ্ছা",
+        message: message || "শুভ শারদীয়া ও দুর্গাপূজা ২০২৬",
         imageUrl: finalImageUrl,
         cloudinaryPublicId,
         createdAt: new Date(),
@@ -151,14 +157,15 @@ export async function GET(req: NextRequest) {
         });
 
         if (greeting) {
+          let updated = greeting;
           try {
-            await (prisma as any).durgaGreeting.update({
+            updated = await (prisma as any).durgaGreeting.update({
               where: { id: greeting.id },
               data: { views: { increment: 1 } },
             });
           } catch {}
 
-          return NextResponse.json({ success: true, greeting });
+          return NextResponse.json({ success: true, greeting: updated });
         }
       }
     }
@@ -169,5 +176,32 @@ export async function GET(req: NextRequest) {
       { success: false, error: error?.message || "Internal server error" },
       { status: 500 }
     );
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { slug, action } = body;
+    if (!slug) {
+      return NextResponse.json({ success: false, error: "Slug is required" }, { status: 400 });
+    }
+
+    if (action === "bless" || action === "heart") {
+      const greeting = await (prisma as any).durgaGreeting.findFirst({
+        where: { OR: [{ slug: slug }, { id: slug }] },
+      });
+      if (greeting) {
+        const updated = await (prisma as any).durgaGreeting.update({
+          where: { id: greeting.id },
+          data: { blessings: { increment: 1 } },
+        });
+        return NextResponse.json({ success: true, blessings: updated.blessings });
+      }
+    }
+
+    return NextResponse.json({ success: false, error: "Greeting not found" }, { status: 404 });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error?.message || "Internal error" }, { status: 500 });
   }
 }

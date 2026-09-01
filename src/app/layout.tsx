@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Inter, Outfit, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { AuthProvider } from "@/components/providers/auth-provider";
 import { Toaster } from "sonner";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
@@ -144,9 +145,11 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          {children}
-          <WhatsAppButton />
-          <ScrollToTop />
+          <AuthProvider>
+            {children}
+            <WhatsAppButton />
+            <ScrollToTop />
+          </AuthProvider>
           <Toaster
             position="top-right"
             toastOptions={{

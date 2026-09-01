@@ -1,16 +1,29 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { ChhathPujaClient } from "./chhath-puja-client";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ name?: string; u?: string; id?: string }>;
+  searchParams: Promise<{ name?: string; u?: string; id?: string; slug?: string }>;
 }): Promise<Metadata> {
   const params = await searchParams;
-  const senderName = params.name ? decodeURIComponent(params.name) : "";
+  const userSlug = params.u || params.slug || params.id;
+  let senderName = params.name ? decodeURIComponent(params.name) : "";
+
+  if (!senderName && userSlug) {
+    try {
+      if ("chhathGreeting" in prisma) {
+        const found = await (prisma as any).chhathGreeting.findFirst({
+          where: { OR: [{ slug: userSlug }, { id: userSlug }] },
+        });
+        if (found?.name) senderName = found.name;
+      }
+    } catch {}
+  }
 
   const title = senderName
     ? `${senderName} की तरफ से छठ पूजा 2026 की हार्दिक शुभकामनाएं | Happy Chhath Puja Greeting Card`
@@ -37,9 +50,6 @@ export async function generateMetadata({
       "shubh chhath puja wishes",
       "chhath countdown 2026",
       "free chhath greeting card generator",
-      "छठ पूजा कार्ड ऑनलाइन बनाएं",
-      "भगवान सूर्य अर्घ्य ग्रीटिंग कार्ड",
-      "bihar chhath puja greeting online",
     ],
     alternates: {
       canonical: "https://xpertbite.in/chhathPuja2026",
@@ -69,7 +79,43 @@ export async function generateMetadata({
   };
 }
 
-export default function ChhathPujaPage() {
+export default async function ChhathPujaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ name?: string; u?: string; id?: string; slug?: string }>;
+}) {
+  const params = await searchParams;
+  const userSlug = params.u || params.slug || params.id;
+
+  let initialGreeting = null;
+  if (userSlug) {
+    try {
+      if ("chhathGreeting" in prisma) {
+        const found = await (prisma as any).chhathGreeting.findFirst({
+          where: {
+            OR: [{ slug: userSlug }, { id: userSlug }],
+          },
+        });
+        if (found) {
+          try {
+            await (prisma as any).chhathGreeting.update({
+              where: { id: found.id },
+              data: { views: { increment: 1 } },
+            });
+          } catch {}
+
+          initialGreeting = {
+            name: found.name,
+            imageUrl: found.imageUrl,
+            slug: found.slug,
+            views: found.views + 1,
+            blessings: found.blessings,
+          };
+        }
+      }
+    } catch {}
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -85,30 +131,6 @@ export default function ChhathPujaPage() {
           price: "0",
           priceCurrency: "INR",
         },
-        featureList: [
-          "Interactive Square 1:1 Image Cropper",
-          "Fast Milliseconds WhatsApp Share Timer",
-          "Sequential Custom Share Link",
-          "Devotional Background Audio Player",
-          "100% Free & Mobile Friendly",
-        ],
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://xpertbite.in",
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Chhath Puja 2026 Greeting",
-            item: "https://xpertbite.in/chhathPuja2026",
-          },
-        ],
       },
     ],
   };
@@ -120,23 +142,6 @@ export default function ChhathPujaPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Semantic SEO & Keyword Indexing (Hidden for accessibility bots & search crawlers) */}
-      <section className="sr-only" aria-label="Chhath Puja 2026 Information and Greetings">
-        <h1>छठ पूजा 2026 की हार्दिक शुभकामनाएं - Happy Chhath Puja Greeting Card Generator</h1>
-        <p>
-          Celebrate Chhath Puja Mahaparv 2026 with pious devotion to Lord Surya and Chhathi Maiya. Create and share personalized 
-          Chhath wishes, Sandhya and Usha Arghya blessings, and festive cards with your custom name and photo.
-          Features include live countdown timers, 1:1 image cropping, devotional music, and direct 1-tap WhatsApp sharing.
-        </p>
-        <h2>Most Searched Chhath Puja Keywords</h2>
-        <ul>
-          <li>Chhath Puja 2026 Date and Sandhya/Usha Arghya Timings</li>
-          <li>छठ पूजा की हार्दिक शुभकामनाएं संदेश एवं फोटो कार्ड</li>
-          <li>Happy Chhath Puja WhatsApp Greeting Link Generator</li>
-          <li>Lord Surya Deva & Chhathi Maiya Divine Blessings Photo Frame 2026</li>
-        </ul>
-      </section>
-
       <Suspense
         fallback={
           <div className="min-h-screen bg-[#FCF8F3] flex items-center justify-center text-amber-900">
@@ -146,7 +151,7 @@ export default function ChhathPujaPage() {
           </div>
         }
       >
-        <ChhathPujaClient />
+        <ChhathPujaClient initialGreeting={initialGreeting} />
       </Suspense>
     </main>
   );

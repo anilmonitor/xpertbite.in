@@ -7,6 +7,7 @@ export function WhatsAppButton() {
   const pathname = usePathname();
 
   if (
+    pathname?.startsWith("/admin") ||
     pathname?.startsWith("/durgapuja2026") ||
     pathname?.startsWith("/diwaliPuja2026") ||
     pathname?.startsWith("/chhathPuja2026")

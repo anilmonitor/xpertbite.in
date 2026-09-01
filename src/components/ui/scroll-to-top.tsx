@@ -35,7 +35,12 @@ export function ScrollToTop() {
     });
   };
 
-  if (pathname?.startsWith("/durgapuja2026")) {
+  if (
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/durgapuja2026") ||
+    pathname?.startsWith("/diwaliPuja2026") ||
+    pathname?.startsWith("/chhathPuja2026")
+  ) {
     return null;
   }
 
