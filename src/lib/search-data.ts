@@ -12,6 +12,39 @@ export interface SearchItem {
 export const SEARCH_ITEMS: SearchItem[] = [
   // ─── Featured Tools & Guides ──────────────────────────────────
   {
+    id: "tool-90s-viral-image-prompt",
+    title: "90's Viral AI Image Prompt (ChatGPT & DALL-E 80s Retro Indian Photo Generator) - चैटजीपीटी 90s फोटो प्रॉमप्ट",
+    description: "Copy the trending viral 90s retro AI prompt for ChatGPT, Gemini & Bing. Convert any photo into late 1980s Indian vintage with 35mm film aesthetic. Includes Hindi & Hinglish step-by-step tutorial and Before/After examples.",
+    category: "Tools & Guides",
+    href: "/90s-viral-image-prompt",
+    keywords: [
+      // English Queries
+      "90s", "90's", "90", "90s prompt", "90's prompt", "90s viral", "90's viral", "90s viral image prompt", "90s image prompt",
+      "80s", "80's", "80s prompt", "80's prompt", "80s viral", "80s viral image prompt", "1980s", "1990s", "1988", "1992", "1994", "1995",
+      "chatgpt", "chatgpt prompt", "chatgpt 90s", "chatgpt 90s prompt", "chatgpt viral prompt", "chatgpt image prompt",
+      "gpt-4o", "dall-e", "dalle 3", "dall-e 3", "gemini prompt", "bing image creator", "midjourney 90s prompt", "copilot prompt",
+      "viral prompt", "viral image prompt", "viral ai photo", "viral ai filter", "instagram 90s prompt", "instagram viral prompt",
+      "retro prompt", "retro ai", "retro photo", "retro ai photo prompt", "retro image generator", "vintage prompt", "vintage photo prompt",
+      "vintage ai prompt", "indian 90s retro photo prompt", "indian 90s prompt", "indian retro", "90s bollywood prompt",
+      "use the uploaded photo and recreate the same person", "how to make 90s photo in chatgpt",
+
+      // Hinglish Queries
+      "chatgpt se 90s photo kaise banaye", "90s photo kaise banaye chatgpt", "photo ko 90s look kaise de",
+      "chatgpt me purani photo kaise banaye", "90s retro photo prompt hindi", "chatgpt viral prompt 90s photo",
+      "instagram 90s trending prompt copy", "apni photo ko 90s jaisa kaise banaye", "chatgpt image prompt 90s style",
+      "80s vintage photo kaise banaye", "chatgpt dalle 3 90s prompt in hindi", "recreate photo late 1980s prompt",
+      "photo ko vintage retro kaise banaye ai se", "90s viral photo prompt free copy", "purani photo kaise banaye chatgpt se",
+      "chatgpt photo prompt", "chatgpt viral prompt copy", "ai se photo kaise banaye", "retro photo kaise banaye",
+
+      // Hindi Queries (हिंदी)
+      "90s वायरल इमेज प्रॉमप्ट", "चैटजीपीटी से 90s फोटो कैसे बनाएं", "90s विंटेज फोटो प्रॉमप्ट",
+      "80s 90s रेट्रो फोटो कैसे बनाएं", "chatgpt 90s फोटो प्रॉमप्ट", "इंस्टाग्राम 90s फोटो प्रॉमप्ट",
+      "पुराने जमाने की फोटो कैसे बनाएं", "90s रेट्रो इंडियन फोटो जनरेटर", "फोटो को 90s लुक कैसे दें",
+      "चैटजीपीटी से पुरानी फोटो कैसे बनाएं", "एआई फोटो प्रॉमप्ट", "वायरल प्रॉमप्ट"
+    ],
+    badge: "🔥 Viral Trending",
+  },
+  {
     id: "tool-college-id-card",
     title: "College ID Card Maker (CSMU & Student AI Discount Free Generator)",
     description: "Make free 300 DPI student ID cards online with photo, name, roll no, dates & barcode. Claim Gemini AI and Claude student offers.",

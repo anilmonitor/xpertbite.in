@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // 1. Static Routes
   const staticRoutes = [
     "",
+    "/90s-viral-image-prompt",
     "/collegeid",
     "/idcard",
     "/tiranga-idcard",
@@ -45,6 +46,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       "/durgapujabengali2026",
       "/diwaliPuja2026",
       "/chhathPuja2026",
+      "/90s-viral-image-prompt",
     ].includes(route);
     return {
       url: `${baseUrl}${route}`,
@@ -56,6 +58,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
           : isFestiveRoute
           ? 0.95
           : [
+              "/90s-viral-image-prompt",
               "/collegeid",
               "/idcard",
               "/tiranga-idcard",

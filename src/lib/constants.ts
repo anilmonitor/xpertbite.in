@@ -74,11 +74,12 @@ export const NAV_ITEMS = [
     label: "Resources",
     href: "/blog",
     children: [
-      { label: "Blog", href: "/blog", description: "Insights, tutorials, and updates" },
+      { label: "90s Viral AI Prompt 📸", href: "/90s-viral-image-prompt", description: "Viral 80s/90s Retro AI Photo Generator Prompt" },
       { label: "College ID Card 🎓", href: "/collegeid", description: "Free Student ID Card Maker (300 DPI)" },
       { label: "Tiranga ID Card (V1) 🇮🇳", href: "/idcard", description: "Step-by-step Har Ghar Tiranga ID Card Guide" },
       { label: "Tiranga ID Card (V2) ✨", href: "/tiranga-idcard", description: "Online Photo ID Card Maker 2026" },
       { label: "Har Ghar Tiranga (V3) 🔥", href: "/har-ghar-tiranga", description: "How to Make Tiranga ID Card Online" },
+      { label: "Blog", href: "/blog", description: "Insights, tutorials, and updates" },
       { label: "Industries", href: "/industries", description: "Sectors we serve" },
       { label: "Testimonials", href: "/testimonials", description: "What our clients say" },
       { label: "FAQ", href: "/faq", description: "Frequently asked questions" },
@@ -102,6 +103,8 @@ export const FOOTER_LINKS = {
     { label: "Pricing", href: "/pricing" },
   ],
   resources: [
+    { label: "90s Viral AI Prompt 📸", href: "/90s-viral-image-prompt" },
+    { label: "College ID Card 🎓", href: "/collegeid" },
     { label: "Blog", href: "/blog" },
     // { label: "Tiranga ID Card (V1) 🇮🇳", href: "/idcard" },
     // { label: "Tiranga ID Card (V2) ✨", href: "/tiranga-idcard" },

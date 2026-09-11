@@ -138,10 +138,11 @@ function SearchContent() {
                 Suggested:
               </span>
               {[
+                { label: "90s Viral AI Prompt 📸", query: "90s" },
                 { label: "Tiranga ID Card 🇮🇳", query: "tiranga" },
+                { label: "College ID Card 🎓", query: "college" },
                 { label: "Web Development", query: "web development" },
                 { label: "Next.js 15", query: "next.js" },
-                { label: "Mobile Apps", query: "mobile" },
                 { label: "Quote & Estimate", query: "quote" },
               ].map((item) => (
                 <button
