@@ -112,18 +112,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* AdSense ad code temporarily removed during limited ad serving period
-      <head>
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6651461551545723"
-          crossOrigin="anonymous"
-        />
-      </head>
-      */}
       <body
         className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} font-sans overflow-x-hidden`}
       >
+        {/* Google AdSense Script */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6651461551545723"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {/* Google Analytics (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-HF4LG0FVRD"
