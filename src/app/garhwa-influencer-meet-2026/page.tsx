@@ -43,10 +43,10 @@ export const metadata: Metadata = {
       "Join creators for the grandest creator meet of 2026 in Garhwa, Jharkhand. Free Google Form registration is open!",
     images: [
       {
-        url: "https://xpertbite.in/garhwa-meet/hero.jpg",
+        url: "https://xpertbite.in/garhwa-meet/Garhwa%20Influencer%20Meet%20Stage%20Celebration.jpg",
         width: 1280,
         height: 720,
-        alt: "Garhwa Influencer Meet 2026 Auditorium Stage and Creators",
+        alt: "Garhwa Influencer Meet 2026 Stage Celebration",
       },
     ],
   },
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     title: "Garhwa Influencer Meet 2026 | Creator Summit Jharkhand",
     description:
       "Official Garhwa Influencer Meet 2026 portal. Free Google Form registration open!",
-    images: ["https://xpertbite.in/garhwa-meet/hero.jpg"],
+    images: ["https://xpertbite.in/garhwa-meet/Garhwa%20Influencer%20Meet%20Stage%20Celebration.jpg"],
   },
 };
 
@@ -85,7 +85,7 @@ export default function GarhwaInfluencerMeetPage() {
             addressCountry: "IN",
           },
         },
-        image: ["https://xpertbite.in/garhwa-meet/hero.jpg"],
+        image: ["https://xpertbite.in/garhwa-meet/Garhwa%20Influencer%20Meet%20Stage%20Celebration.jpg"],
         organizer: {
           "@type": "Organization",
           name: "Garhwa Creator Community",

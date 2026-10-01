@@ -115,13 +115,15 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} font-sans overflow-x-hidden`}
       >
-        {/* Google AdSense Script */}
+        {/* Google AdSense Script (Temporarily commented out - ready to turn on when needed) */}
+        {/*
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6651461551545723"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        */}
 
         {/* Google Analytics (gtag.js) */}
         <Script
