@@ -10,6 +10,31 @@ export interface SearchItem {
 }
 
 export const SEARCH_ITEMS: SearchItem[] = [
+  // ─── Garhwa Influencer Meet 2026 ──────────────────────────────
+  {
+    id: "page-garhwa-influencer-meet-2026",
+    title: "Garhwa Influencer Meet 2026 (गढ़वा इन्फ्लुएंसर मीट 2026) - Jharkhand Mega Creator Summit",
+    description: "Official event portal for Garhwa Influencer Meet 2026. Featuring Anil Monitor, Priyanshu, Rajaram Ji Garhwa, and creators from Garhwa, Meral, Ramuna, Palamu & across Jharkhand. Partnered with Distdel.com (Garhwa food delivery app). Free Google Form registration.",
+    category: "Pages",
+    href: "/garhwa-influencer-meet-2026",
+    keywords: [
+      // Prefix & Core Tokens for Fast Keystroke Matching
+      "g", "ga", "gar", "garh", "garhwa", "garhwa influencer", "garhwa influencer meet", "garhwa meet",
+      "influencer", "influencers", "influencer meet", "creator", "creators", "creator meet", "youtuber", "youtuber meet",
+      "palamu", "palamu influencer meet", "meral", "garhwa meral influencer meet", "meral creators",
+      "miral", "garhwa miral influencer meet", "ramuna", "garhwa ramuna influencer meet",
+      "priyanshu", "priyanshu influencer meet", "rajaram", "rajaram ji", "rajaram ji garhwa",
+      "anil", "anil monitor", "anil monitor vlogs", "anil monitor vlog garhwa", "vlog", "vlogs", "garhwa vlog",
+      "garhwa influencers", "jharkhand influencer meet", "garhwa blogger meet",
+      "garhwa content creators", "garhwa event", "garhwa trending vlog", "garhwa lifestyle vlog",
+      "garhwa city vlog", "garhwa jharkhand", "palamu jharkhand", "garhwa mein influencer meet",
+      "garhwa ke influencers", "garhwa ka vlog", "garhwa creator community", "daltonganj", "banshidhar", "nagar untari",
+      "distdel", "distdel.com", "distdel garhwa", "food", "food delivery", "garhwa food delivery app",
+      "local food delivery app", "local food delivery appp", "food delivery in garhwa",
+      "गढ़वा", "गढ़वा इन्फ्लुएंसर मीट", "अनिल मॉनिटर", "पलामू इन्फ्लुएंसर मीट", "मेराल", "रमुना", "डिस्टडेल"
+    ],
+    badge: "🔥 Registration Open",
+  },
   // ─── Featured Tools & Guides ──────────────────────────────────
   {
     id: "tool-90s-viral-image-prompt",

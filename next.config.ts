@@ -9,6 +9,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/Garhwa%20influencer%20meet%202026",
+        destination: "/garhwa-influencer-meet-2026",
+      },
+      {
+        source: "/Garhwa-influencer-meet-2026",
+        destination: "/garhwa-influencer-meet-2026",
+      },
+      {
+        source: "/garhwa-influencer-meet",
+        destination: "/garhwa-influencer-meet-2026",
+      },
+    ];
+  },
   async headers() {
     return [
       {

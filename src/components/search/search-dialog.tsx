@@ -174,7 +174,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl p-0 gap-0 overflow-hidden border-border bg-background shadow-2xl rounded-2xl sm:rounded-2xl">
+      <DialogContent className="max-w-xl p-0 gap-0 overflow-hidden border-border bg-background shadow-2xl rounded-2xl sm:rounded-2xl top-[12%] sm:top-[15%] translate-y-0">
         <DialogTitle className="sr-only">Search</DialogTitle>
         <DialogDescription className="sr-only">
           Live instant search across website
@@ -189,7 +189,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type to search anything (e.g. Tiranga, Web, Pricing)..."
+            placeholder="Type to search (e.g. Garhwa, Services, Pricing)..."
             className="w-full py-3.5 text-sm sm:text-base bg-transparent border-none outline-none focus:outline-none focus:ring-0 placeholder:text-muted-foreground/60 text-foreground"
           />
           {query && (
@@ -203,118 +203,109 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
           )}
         </div>
 
-        {/* Real-time Live Results Area */}
-        <div className="max-h-[380px] overflow-y-auto p-2">
-          {!query.trim() ? (
-            /* Simple Clean Initial State */
-            <div className="py-10 px-4 text-center">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2.5 text-primary">
-                <Search className="h-5 w-5" />
-              </div>
-              <p className="text-sm font-semibold text-foreground mb-1">
-                Live Instant Search
-              </p>
-              <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                Type letters like &ldquo;t&rdquo;, &ldquo;ti&rdquo;, &ldquo;tiranga&rdquo;, &ldquo;web&rdquo; to see matching results instantly.
-              </p>
-            </div>
-          ) : filteredItems.length > 0 ? (
-            /* Live Instant Results */
-            <div className="space-y-1">
-              {filteredItems.map((item, index) => {
-                const Icon = categoryIcons[item.category] || Layers;
-                const isSelected = index === selectedIndex;
-                const isTiranga = item.id.includes("tiranga");
+        {/* Real-time Live Results Area - appears when user searches */}
+        {query.trim() && (
+          <div className="max-h-[380px] overflow-y-auto p-2">
+            {filteredItems.length > 0 ? (
+              <div className="space-y-1">
+                {filteredItems.map((item, index) => {
+                  const Icon = categoryIcons[item.category] || Layers;
+                  const isSelected = index === selectedIndex;
+                  const isTiranga = item.id.includes("tiranga");
+                  const isGarhwa = item.id.includes("garhwa");
 
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => handleSelect(item)}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                    className={cn(
-                      "flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors group",
-                      isSelected
-                        ? "bg-primary/10 text-primary"
-                        : "hover:bg-muted/60 text-foreground"
-                    )}
-                  >
+                  return (
                     <div
+                      key={item.id}
+                      onClick={() => handleSelect(item)}
+                      onMouseEnter={() => setSelectedIndex(index)}
                       className={cn(
-                        "h-8 w-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold",
-                        isTiranga
-                          ? "bg-gradient-to-br from-orange-500 to-green-600 text-white shadow-sm"
-                          : isSelected
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground group-hover:text-foreground"
+                        "flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-colors group",
+                        isSelected
+                          ? "bg-primary/10 text-primary"
+                          : "hover:bg-muted/60 text-foreground"
                       )}
                     >
-                      {isTiranga ? "🇮🇳" : <Icon className="h-4 w-4" />}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span
-                          className={cn(
-                            "text-sm font-semibold truncate transition-colors",
-                            isSelected ? "text-primary" : "text-foreground group-hover:text-primary"
-                          )}
-                        >
-                          <HighlightText text={item.title} query={query} />
-                        </span>
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] px-1.5 py-0 rounded font-normal shrink-0 ml-auto"
-                        >
-                          {item.category}
-                        </Badge>
+                      <div
+                        className={cn(
+                          "h-8 w-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold",
+                          isTiranga
+                            ? "bg-gradient-to-br from-orange-500 to-green-600 text-white shadow-sm"
+                            : isGarhwa
+                            ? "bg-gradient-to-br from-rose-500 via-purple-600 to-amber-500 text-white shadow-sm"
+                            : isSelected
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground group-hover:text-foreground"
+                        )}
+                      >
+                        {isTiranga ? "🇮🇳" : isGarhwa ? "✨" : <Icon className="h-4 w-4" />}
                       </div>
-                      <p className="text-xs text-muted-foreground line-clamp-1">
-                        <HighlightText text={item.description} query={query} />
-                      </p>
-                    </div>
 
-                    <div className="shrink-0 self-center">
-                      {item.isExternal ? (
-                        <ExternalLink className="h-4 w-4 text-muted-foreground opacity-60 group-hover:opacity-100 group-hover:text-primary" />
-                      ) : (
-                        <ArrowRight
-                          className={cn(
-                            "h-4 w-4 text-muted-foreground transition-all",
-                            isSelected
-                              ? "opacity-100 text-primary translate-x-0"
-                              : "opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0"
-                          )}
-                        />
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            /* No Results */
-            <div className="py-10 px-4 text-center">
-              <p className="text-sm font-medium text-foreground mb-1">
-                No results found for &ldquo;{query}&rdquo;
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Try searching for &ldquo;Tiranga&rdquo;, &ldquo;Web&rdquo;, &ldquo;Quote&rdquo;, or &ldquo;Pricing&rdquo;.
-              </p>
-            </div>
-          )}
-        </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span
+                            className={cn(
+                              "text-sm font-semibold truncate transition-colors",
+                              isSelected ? "text-primary" : "text-foreground group-hover:text-primary"
+                            )}
+                          >
+                            <HighlightText text={item.title} query={query} />
+                          </span>
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] px-1.5 py-0 rounded font-normal shrink-0 ml-auto"
+                          >
+                            {item.category}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          <HighlightText text={item.description} query={query} />
+                        </p>
+                      </div>
 
-        {/* Clean Footer Counter */}
-        <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-muted/30 text-[11px] text-muted-foreground">
-          <span>
-            {query.trim()
-              ? `${filteredItems.length} result${filteredItems.length !== 1 ? "s" : ""} found`
-              : "Live Real-Time Search"}
-          </span>
-          <span className="text-[10px]">
-            Press <kbd className="px-1 py-0.5 rounded border border-border bg-background font-mono text-[9px]">Enter ↵</kbd> to open
-          </span>
-        </div>
+                      <div className="shrink-0 self-center">
+                        {item.isExternal ? (
+                          <ExternalLink className="h-4 w-4 text-muted-foreground opacity-60 group-hover:opacity-100 group-hover:text-primary" />
+                        ) : (
+                          <ArrowRight
+                            className={cn(
+                              "h-4 w-4 text-muted-foreground transition-all",
+                              isSelected
+                                ? "opacity-100 text-primary translate-x-0"
+                                : "opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0"
+                            )}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              /* No Results */
+              <div className="py-8 px-4 text-center">
+                <p className="text-sm font-medium text-foreground mb-1">
+                  No results found for &ldquo;{query}&rdquo;
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Try checking your spelling or search with general keywords.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Clean Footer Counter - shown when searching */}
+        {query.trim() && (
+          <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-muted/30 text-[11px] text-muted-foreground">
+            <span>
+              {`${filteredItems.length} result${filteredItems.length !== 1 ? "s" : ""} found`}
+            </span>
+            <span className="text-[10px]">
+              Press <kbd className="px-1 py-0.5 rounded border border-border bg-background font-mono text-[9px]">Enter ↵</kbd> to open
+            </span>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

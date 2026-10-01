@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/durgapujabengali2026",
     "/diwaliPuja2026",
     "/chhathPuja2026",
+    "/garhwa-influencer-meet-2026",
     "/search",
     "/services",
     "/products",
@@ -47,6 +48,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       "/diwaliPuja2026",
       "/chhathPuja2026",
       "/90s-viral-image-prompt",
+      "/garhwa-influencer-meet-2026",
     ].includes(route);
     return {
       url: `${baseUrl}${route}`,
